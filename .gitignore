@@ -1,2 +1,9 @@
 .github/
 .vscode/
+
+venv/
+**/venv/
+
+/node_modules/
+
+**/.env
