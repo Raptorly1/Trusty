@@ -1,98 +1,51 @@
+
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trusty - Digital Safety for Seniors</title>
-    <link rel="stylesheet" href="assets/css/styles.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TRUSTY Digital Safety Course</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Kalam:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+      }
+      .font-kalam {
+        font-family: 'Kalam', cursive;
+      }
+      .paper-texture {
+        background-color: #fdfdfc;
+        background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e5e7eb' fill-opacity='0.2'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      }
+      @media print {
+        .no-print {
+          display: none !important;
+        }
+        .printable-area {
+          margin: 0;
+          padding: 0;
+          box-shadow: none;
+          border: none;
+        }
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.1.0/",
+    "react": "https://esm.sh/react@^19.1.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
+    "@google/genai": "https://esm.sh/@google/genai"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
 </head>
-<body>
-    <header>
-        <div class="container">
-            <div class="logo">
-                <h1>Trusty</h1>
-                <p>Digital Safety for Everyone</p>
-            </div>
-            <nav>
-                <ul>
-                    <li><a href="#home" class="active">Home</a></li>
-                    <li><a href="#curriculum">Curriculum</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
-
-    <main>
-        <section id="home" class="hero">
-            <div class="container">
-                <div class="hero-content">
-                    <h2>Why Trust Matters Online</h2>
-                    <div class="story">
-                        <h3>Story from Clara, 72</h3>
-                        <p>"One morning, I got an email that looked like it came from my bank. It asked me to click a link and update my information.</p>
-                        <p>It looked real, but something felt a little off. So I showed it to my son, Mason. He told me it was a scam, and I'm glad I didn't click it.</p>
-                        <p>That's when I realized: the internet is helpful, but it's also important to be careful. I wanted to learn more, and that's how I found Trusty."</p>
-                    </div>
-
-                    <div class="stats">
-                        <h3>Why Trusty matters</h3>
-                        <ul>
-                            <li>"Over $3 billion was lost to scams by seniors in the U.S. last year."</li>
-                            <li>"1 in 4 adults over 60 has encountered a phishing attempt."</li>
-                        </ul>
-                        <p>But don't worry! You don't need to be a tech expert. Trusty will guide you, one simple step at a time. Trusty is always here for you, trust.</p>
-                    </div>
-
-                    <div class="cta">
-                        <a href="pages/curriculum.html" class="btn-primary">Start Learning</a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="curriculum" class="curriculum-preview">
-            <div class="container">
-                <h2>What you'll learn</h2>
-                <div class="learning-points">
-                    <ul>
-                        <li>How to recognize online scams</li>
-                        <li>How to spot fake news and photos</li>
-                        <li>How to browse the internet safely</li>
-                        <li>Where to go for help if something seems suspicious</li>
-                    </ul>
-                    <p>And all explained in a calm, friendly way, with big text, short lessons, and helpful examples!</p>
-                </div>
-                
-                <div class="testimonial">
-                    <p>"I feel more confident now. And I know Trusty will always be by my side."</p>
-                    <p class="author">— Clara, Trusty user</p>
-                </div>
-
-                <div class="cta-center">
-                    <a href="pages/curriculum.html" class="btn-primary">Start the Course!</a>
-                </div>
-
-                <div class="curriculum-overview">
-                    <h3>Curriculum Overview: TRUSTY Digital Safety Course</h3>
-                    <ul>
-                        <li><a href="pages/modules/module1.html">Module 1: The Basics</a></li>
-                        <li><a href="pages/modules/module2.html">Module 2: Common Scams Explained</a></li>
-                        <li><a href="pages/modules/module3.html">Module 3: Spotting Fake News & Deepfakes</a></li>
-                        <li><a href="pages/modules/module4.html">Module 4: Safe Browsing & Websites</a></li>
-                        <li><a href="pages/modules/module5.html">Module 5: Passwords & Privacy</a></li>
-                        <li><a href="pages/modules/module6.html">Module 6: AI & Misinformation</a></li>
-                        <li><a href="pages/modules/module7.html">Module 7: Cyber Hygiene Habits</a></li>
-                        <li><a href="pages/modules/module8.html">Module 8: Reporting & Getting Help</a></li>
-                        <li><a href="pages/final-quiz.html">Final Quiz & Certificate</a></li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <script src="assets/js/scripts.js"></script>
+  <body class="bg-slate-50 text-slate-800">
+    <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
 </body>
 </html>
