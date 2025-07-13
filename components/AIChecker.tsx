@@ -176,20 +176,40 @@ const FactCheckModal: React.FC<{
                     {result && (
                         <div className="space-y-6">
                             {result.sources.length > 0 && (
-                                 <div>
+                                <div>
                                     <h3 className="text-lg font-bold text-slate-800 mb-3 font-kalam">
-                                        {result.sources.length > 1 ? 'Switch Source' : 'Source'}
+                                        Sources
                                     </h3>
-                                    <div className="flex flex-wrap gap-2">
+                                    <div className="flex flex-col gap-3">
                                         {result.sources.map((source, index) => (
-                                            <button 
-                                                key={index}
-                                                onClick={() => setActiveSourceUrl(source.web.uri)}
-                                                title={source.web.title}
-                                                className={`text-left p-2 rounded-lg border-2 transition-colors text-sm font-semibold max-w-xs truncate ${activeSourceUrl === source.web.uri ? 'bg-blue-600 border-blue-700 text-white' : 'bg-slate-100 border-slate-200 hover:bg-slate-200 hover:border-slate-300 text-slate-700'}`}
-                                            >
-                                                {source.web.title || 'Untitled Source'}
-                                            </button>
+                                            <div key={source.web.uri || source.web.title || index} className="p-3 rounded-lg border border-slate-200 bg-slate-50">
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <span className="font-bold text-blue-700">[{source.credibility || 'Medium'}]</span>
+                                                    <span className="font-semibold">{source.web.title || 'Untitled Source'}</span>
+                                                    {source.web.uri && (
+                                                        <a href={source.web.uri} target="_blank" rel="noopener noreferrer" className="ml-2 text-sky-600 underline text-xs">View Source</a>
+                                                    )}
+                                                </div>
+                                                <div className="text-slate-600 text-sm mb-1">{source.justification || 'No justification provided.'}</div>
+                                                {activeSourceUrl === source.web.uri && source.web.uri && (
+                                                    <div className="mt-2 border border-slate-300 rounded shadow-inner overflow-hidden" style={{height: '40vh'}}>
+                                                        <iframe
+                                                            src={source.web.uri}
+                                                            title={source.web.title || 'Source Viewer'}
+                                                            className="w-full h-full border-0 bg-white"
+                                                            sandbox="allow-scripts allow-same-origin"
+                                                        ></iframe>
+                                                    </div>
+                                                )}
+                                                {source.web.uri && (
+                                                    <button
+                                                        className={`mt-2 px-3 py-1 rounded bg-blue-100 text-blue-700 text-xs font-semibold ${activeSourceUrl === source.web.uri ? 'bg-blue-300' : ''}`}
+                                                        onClick={() => setActiveSourceUrl(source.web.uri)}
+                                                    >
+                                                        {activeSourceUrl === source.web.uri ? 'Hide Preview' : 'Preview Source'}
+                                                    </button>
+                                                )}
+                                            </div>
                                         ))}
                                     </div>
                                 </div>
