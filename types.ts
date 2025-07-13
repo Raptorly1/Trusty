@@ -37,9 +37,17 @@ export interface AnalysisObservation {
     quote: string;
 }
 
+export interface HighlightedSegment {
+    start: number;
+    end: number;
+    text: string;
+    reason: string;
+}
+
 export interface AnalysisResult {
     likelihood_score: number;
     observations: AnalysisObservation[];
+    highlights?: HighlightedSegment[];
 }
 
 // Types for the Fact-Check feature
