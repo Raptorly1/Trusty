@@ -4,7 +4,14 @@ const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
-app.use(cors());
+const corsOptions = {
+  origin: [
+    'https://trusty-rho.vercel.app', // Vercel production frontend
+    'http://localhost:5173',         // Local dev
+  ],
+  credentials: true,
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1/models/gemini-2.5-pro:generateContent';
