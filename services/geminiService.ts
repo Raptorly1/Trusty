@@ -2,7 +2,7 @@
 
 import { AnalysisResult, SourceCheckResult, HumanTextExplanationResult } from '../types';
 
-const GEMINI_PROXY_URL = 'http://localhost:5001/api/gemini';
+const GEMINI_PROXY_URL = import.meta.env.VITE_GEMINI_PROXY_URL || 'http://localhost:5001/api/gemini';
 
 export async function analyzeTextForAI(text: string): Promise<AnalysisResult> {
   try {
