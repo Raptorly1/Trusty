@@ -1,0 +1,15 @@
+{
+  "name": "gemini-proxy-server",
+  "version": "1.0.0",
+  "main": "geminiProxy.cjs",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node geminiProxy.cjs"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "axios": "^1.10.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.0"
+  }
+}
