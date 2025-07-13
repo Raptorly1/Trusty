@@ -27,7 +27,7 @@ export async function analyzeTextForAI(text: string): Promise<AnalysisResult> {
 // For now, stub out the other functions to avoid direct Gemini API calls
 export async function findSourcesForText(text: string): Promise<SourceCheckResult> {
   try {
-    const prompt = `Fact-check the following text. Return a JSON object with:\n- analysis: a summary of your findings\n- sources: an array of objects with 'web.title' and 'web.uri' for each relevant web source you used.\nText: ${text}`;
+    const prompt = `Fact-check the following text. Return a JSON object with:\n- summary: a summary of your findings\n- sources: an array of objects with 'web.title' and 'web.uri' for each relevant web source you used.\nText: ${text}`;
     const response = await fetch(GEMINI_PROXY_URL, {
       method: 'POST',
       headers: {
@@ -39,7 +39,10 @@ export async function findSourcesForText(text: string): Promise<SourceCheckResul
       throw new Error('Failed to fetch source check from Gemini proxy');
     }
     const result = await response.json();
-    return result as SourceCheckResult;
+    // Accept both {summary, sources} and {analysis, sources}
+    const analysis = result.summary || result.analysis || 'No summary available.';
+    const sources = Array.isArray(result.sources) ? result.sources : [];
+    return { analysis, sources };
   } catch (error) {
     console.error('Error fact-checking text with Gemini proxy:', error);
     throw new Error('Could not fact-check the text. The service may be temporarily unavailable.');
