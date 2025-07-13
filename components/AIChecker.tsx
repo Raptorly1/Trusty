@@ -93,7 +93,17 @@ const LikelihoodMeter: React.FC<{ score: number }> = ({ score }) => {
 };
 
 
-const CommentBubble: React.FC<{ observation: AnalysisObservation; onClose: () => void; }> = ({ observation, onClose }) => {
+const CommentBubble: React.FC<{ observation: AnalysisObservation | string | null; onClose: () => void; }> = ({ observation, onClose }) => {
+    // Support both string and object for backward compatibility
+    let trait = '';
+    let explanation = '';
+    if (typeof observation === 'string') {
+        explanation = observation;
+    } else if (observation) {
+        trait = observation.trait || '';
+        explanation = observation.explanation || '';
+    }
+    const hasNote = explanation && explanation.trim().length > 0;
     return (
         <div className="bg-amber-100 border-2 border-amber-300 rounded-xl shadow-lg p-4 w-64 animate-fade-in-fast relative">
             <button onClick={onClose} className="absolute top-2 right-2 text-amber-600 hover:text-amber-800">
@@ -101,10 +111,14 @@ const CommentBubble: React.FC<{ observation: AnalysisObservation; onClose: () =>
             </button>
             <div className="flex items-center gap-3 mb-2">
                 <ChatBubble className="h-6 w-6 text-amber-700 flex-shrink-0" />
-                <h3 className="font-kalam text-lg font-bold text-amber-800">{observation.trait}</h3>
+                <h3 className="font-kalam text-lg font-bold text-amber-800">{trait || 'AI Checker Note'}</h3>
             </div>
             <div className="text-sm text-slate-700 leading-relaxed">
-                <ReactMarkdown>{observation.explanation}</ReactMarkdown>
+                {hasNote ? (
+                    <ReactMarkdown>{explanation}</ReactMarkdown>
+                ) : (
+                    <span className="italic text-slate-500">No specific note for this highlight.</span>
+                )}
             </div>
         </div>
     );
@@ -260,7 +274,7 @@ const ExplanationModal: React.FC<{
                 )}
                 {explanation && (
                      <div>
-                        <h3 className="text-lg font-bold text-slate-800 mb-2 font-kalam">My thoughts...</h3>
+                        <h3 className="text-lg font-bold text-slate-800 mb-2 font-kalam">Our thoughts...</h3>
                         <div className="text-slate-700 leading-relaxed">
                             <ReactMarkdown>{explanation.explanation}</ReactMarkdown>
                         </div>
@@ -461,7 +475,13 @@ const AIChecker: React.FC<AICheckerProps> = ({ onBack }) => {
         return <div ref={resultsContainerRef} className="whitespace-pre-wrap leading-loose text-lg text-slate-800">{parts}</div>;
     };
     
-    const activeObservation = activeObservationIndex !== null ? result?.observations[activeObservationIndex] : null;
+    // Defensive: support both string[] and AnalysisObservation[]
+    let activeObservation: AnalysisObservation | string | null = null;
+    if (activeObservationIndex !== null && result?.observations) {
+        if (Array.isArray(result.observations)) {
+            activeObservation = result.observations[activeObservationIndex] || null;
+        }
+    }
     const activeHighlightEl = activeObservationIndex !== null ? highlightRefs.current[activeObservationIndex] : null;
     
     const commentPosition = useMemo(() => {
@@ -555,7 +575,7 @@ const AIChecker: React.FC<AICheckerProps> = ({ onBack }) => {
                                             <div className="border-t-2 border-dashed border-slate-300 pt-6">
                                                 {result.observations.length > 0 ? (
                                                     <>
-                                                        <p className="text-center font-kalam text-slate-600 mb-6 -mt-2">Click highlights to see my notes, or select any text to fact-check it!</p>
+                                                        <p className="text-center font-kalam text-slate-600 mb-6 -mt-2">Click highlights to see notes, or select any text to fact-check it!</p>
                                                         {renderHighlightedText()}
                                                     </>
                                                 ) : (
