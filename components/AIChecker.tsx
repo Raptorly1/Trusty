@@ -301,7 +301,8 @@ const AIChecker: React.FC<AICheckerProps> = ({ onBack }) => {
     const resultsContainerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        highlightRefs.current = highlightRefs.current.slice(0, result?.observations.length ?? 0);
+        const obsLength = Array.isArray(result?.observations) ? result.observations.length : 0;
+        highlightRefs.current = highlightRefs.current.slice(0, obsLength);
     }, [result]);
     
     const resetAll = () => {
@@ -565,36 +566,46 @@ const AIChecker: React.FC<AICheckerProps> = ({ onBack }) => {
                 </div>
 
                 {(isLoading || result) && (
-                     <div className="mt-6 relative">
+                    <div className="mt-6 relative">
                         <div ref={containerRef} onMouseUp={handleMouseUp} className="paper-texture bg-white rounded-2xl shadow-xl border border-slate-200 p-8 sm:p-12 min-h-[30rem] relative">
-                             {isLoading && <LoadingSpinner text="Analyzing your text..." />}
-                             {result && !isLoading && (
+                            {isLoading && <LoadingSpinner text="Analyzing your text..." />}
+                            {result && !isLoading && (
                                 <>
-                                    <LikelihoodMeter score={result.likelihood_score} />
-                                    <div className="border-t-2 border-dashed border-slate-300 pt-6">
-                                        {result.observations.length > 0 ? (
-                                            <>
-                                                <p className="text-center font-kalam text-slate-600 mb-6 -mt-2">Click highlights to see my notes, or select any text to fact-check it!</p>
-                                                {renderHighlightedText()}
-                                            </>
-                                        ) : (
-                                            <>
-                                                <div className="text-center p-6 bg-emerald-50 border border-emerald-200 rounded-lg">
-                                                    <CheckCircle className="h-10 w-10 mx-auto text-emerald-500 mb-2" />
-                                                    <h3 className="text-lg font-semibold text-emerald-800 font-kalam">All clear!</h3>
-                                                    <p className="text-emerald-700">This text appears to be written by a human. No common AI traits were detected.</p>
-                                                </div>
-                                                <div className="mt-4 border-t-2 border-dashed border-slate-300 pt-6">
-                                                     <p className="text-center font-kalam text-slate-600 mb-6 -mt-2">You can still select any text to fact-check it!</p>
-                                                     {renderHighlightedText()}
-                                                </div>
-                                            </>
-                                        )}
-                                    </div>
+                                    {typeof result.likelihood_score !== 'number' || !Array.isArray(result.observations) ? (
+                                        <div className="text-center p-6 bg-red-50 border border-red-200 rounded-lg">
+                                            <AlertTriangle className="h-10 w-10 mx-auto text-red-500 mb-2" />
+                                            <h3 className="text-lg font-semibold text-red-800 font-kalam">Unexpected response from AI service</h3>
+                                            <p className="text-red-700">Sorry, we couldn't analyze your text due to a service error. Please try again later.</p>
+                                        </div>
+                                    ) : (
+                                        <>
+                                            <LikelihoodMeter score={result.likelihood_score} />
+                                            <div className="border-t-2 border-dashed border-slate-300 pt-6">
+                                                {result.observations.length > 0 ? (
+                                                    <>
+                                                        <p className="text-center font-kalam text-slate-600 mb-6 -mt-2">Click highlights to see my notes, or select any text to fact-check it!</p>
+                                                        {renderHighlightedText()}
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <div className="text-center p-6 bg-emerald-50 border border-emerald-200 rounded-lg">
+                                                            <CheckCircle className="h-10 w-10 mx-auto text-emerald-500 mb-2" />
+                                                            <h3 className="text-lg font-semibold text-emerald-800 font-kalam">All clear!</h3>
+                                                            <p className="text-emerald-700">This text appears to be written by a human. No common AI traits were detected.</p>
+                                                        </div>
+                                                        <div className="mt-4 border-t-2 border-dashed border-slate-300 pt-6">
+                                                            <p className="text-center font-kalam text-slate-600 mb-6 -mt-2">You can still select any text to fact-check it!</p>
+                                                            {renderHighlightedText()}
+                                                        </div>
+                                                    </>
+                                                )}
+                                            </div>
+                                        </>
+                                    )}
                                 </>
-                             )}
+                            )}
                         </div>
-                         {popupPosition && (
+                        {popupPosition && (
                             <div
                                 className="absolute z-20"
                                 style={{ top: `${popupPosition.top}px`, left: `${popupPosition.left}px`, transform: 'translateX(-50%)' }}
