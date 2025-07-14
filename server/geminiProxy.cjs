@@ -21,10 +21,11 @@ app.post('/api/gemini', async (req, res) => {
   console.log('Received request to /api/gemini:', req.body);
   try {
     let { prompt } = req.body;
-    // Detect if this is a fact-check prompt
+    // Detect if this is a fact-check or explanation prompt
     const isFactCheck = /fact-?check|Fact-?check|Fact-check|fact-check|sources|summary/i.test(prompt);
+    const isHumanExplanation = /explain why the following text sounds like it was written by a human|why this sounds human|explanation/i.test(prompt);
     let geminiPrompt = prompt;
-    if (!isFactCheck) {
+    if (!isFactCheck && !isHumanExplanation) {
       // Use the default detection prompt for AI-generated text
       geminiPrompt = `Analyze the following text and estimate the likelihood that it was written by an AI system.\nReturn only a JSON object with the following fields:\n- likelihood_score: a number from 0 (very likely human) to 100 (very likely AI-generated)\n- highlights: an array of objects, each with:\n    - start: the start index of the suspicious text span\n    - end: the end index of the suspicious text span\n    - text: the exact text span\n    - reason: a short explanation of why this segment is suspicious\n- observations: an array of short, clear strings explaining what features or patterns led to your score (e.g., repetition, unnatural phrasing, lack of personal experience, etc.)\nText: ${prompt}\n\nReturn only a JSON object, with no extra text or formatting.`;
     }
@@ -44,6 +45,27 @@ app.post('/api/gemini', async (req, res) => {
       rawText = rawText.replace(/^```json[\r\n]+/, '').replace(/```\s*$/, '');
     } else if (rawText.startsWith('```')) {
       rawText = rawText.replace(/^```[\w]*[\r\n]+/, '').replace(/```\s*$/, '');
+    }
+
+    if (isHumanExplanation) {
+      // Try to extract explanation from JSON or markdown
+      let explanation = '';
+      // Try JSON
+      try {
+        const match = /\{[\s\S]*\}/.exec(rawText);
+        if (match) {
+          const parsed = JSON.parse(match[0]);
+          explanation = parsed.explanation || '';
+        }
+      } catch (e) {}
+      // Try markdown fallback
+      if (!explanation) {
+        const mdMatch = /explanation\s*[:\-]?\s*([\s\S]*)/i.exec(rawText);
+        explanation = mdMatch ? mdMatch[1].trim() : '';
+      }
+      if (!explanation) explanation = 'No explanation available.';
+      res.json({ explanation });
+      return;
     }
 
     if (isFactCheck) {
