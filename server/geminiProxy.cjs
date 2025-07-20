@@ -44,7 +44,7 @@ app.post('/api/gemini', async (req, res) => {
     if (rawText.startsWith('```json')) {
       rawText = rawText.replace(/^```json[\r\n]+/, '').replace(/```\s*$/, '');
     } else if (rawText.startsWith('```')) {
-      rawText = rawText.replace(/^```[\w]*[\r\n]+/, '').replace(/```\s*$/, '');
+      rawText = rawText.replace(/^```\w*[\r\n]+/, '').replace(/```\s*$/, '');
     }
 
     if (isHumanExplanation) {
@@ -57,10 +57,12 @@ app.post('/api/gemini', async (req, res) => {
           const parsed = JSON.parse(match[0]);
           explanation = parsed.explanation || '';
         }
-      } catch (e) {}
+      } catch (e) {
+        console.error('Error parsing explanation JSON:', e);
+      }
       // Try markdown fallback
       if (!explanation) {
-        const mdMatch = /explanation\s*[:\-]?\s*([\s\S]*)/i.exec(rawText);
+        const mdMatch = /explanation\s*[:-]?\s*([\s\S]*)/i.exec(rawText);
         explanation = mdMatch ? mdMatch[1].trim() : '';
       }
       if (!explanation) explanation = 'No explanation available.';
@@ -96,6 +98,7 @@ app.post('/api/gemini', async (req, res) => {
               }));
             }
           } catch (e) {
+            console.error('Error parsing sources as JSON:', e);
             // Fallback to markdown parsing below
           }
         }
