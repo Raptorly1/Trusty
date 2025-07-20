@@ -286,11 +286,11 @@ const ExplanationModal: React.FC<{
                         </div>
                     </div>
                 )}
-                {explanation?.explanation?.trim().length > 0 ? (
+                {explanation && explanation.explanation && explanation.explanation.trim().length > 0 ? (
                     <div>
                         <h3 className="text-lg font-bold text-slate-800 mb-2 font-kalam">Our thoughts...</h3>
                         <div className="text-slate-700 leading-relaxed">
-                            <ReactMarkdown>{explanation!.explanation}</ReactMarkdown>
+                            <ReactMarkdown>{explanation.explanation}</ReactMarkdown>
                         </div>
                     </div>
                 ) : (
