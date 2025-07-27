@@ -295,7 +295,7 @@ const ExplanationModal: React.FC<{
                     </div>
                 ) : (
                     <div className="text-center p-4 bg-amber-50 border border-amber-200 rounded-lg">
-                        <p className="text-amber-700">No explanation was returned for this query. The AI could not provide a reason why this sounds human.</p>
+                        <p className="text-amber-700">Error: No explanation available.</p>
                     </div>
                 )}
             </div>
