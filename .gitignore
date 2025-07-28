@@ -9,3 +9,6 @@ venv/
 **/.env
 
 dist/
+
+# personal reference files from past projects
+/reference 
