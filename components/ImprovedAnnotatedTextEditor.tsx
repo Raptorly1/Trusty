@@ -109,18 +109,32 @@ export const AnnotatedTextEditor: React.FC<AnnotatedTextEditorProps> = ({
   // Synchronize scroll between textarea and overlay
   const handleScroll = useCallback(() => {
     if (textareaRef.current && overlayRef.current) {
-      overlayRef.current.scrollTop = textareaRef.current.scrollTop;
-      overlayRef.current.scrollLeft = textareaRef.current.scrollLeft;
+      const textarea = textareaRef.current;
+      const overlay = overlayRef.current;
+      
+      // Directly set scroll positions
+      overlay.scrollTop = textarea.scrollTop;
+      overlay.scrollLeft = textarea.scrollLeft;
     }
   }, []);
 
   useEffect(() => {
     const textarea = textareaRef.current;
     if (textarea) {
-      textarea.addEventListener('scroll', handleScroll);
-      return () => textarea.removeEventListener('scroll', handleScroll);
+      // Add comprehensive scroll event listeners
+      textarea.addEventListener('scroll', handleScroll, { passive: true });
+      textarea.addEventListener('input', handleScroll);
+      
+      // Also sync on initial render and text changes
+      const timeoutId = setTimeout(handleScroll, 0);
+      
+      return () => {
+        textarea.removeEventListener('scroll', handleScroll);
+        textarea.removeEventListener('input', handleScroll);
+        clearTimeout(timeoutId);
+      };
     }
-  }, [handleScroll]);
+  }, [handleScroll, text]);
 
   const handleTextChangeInternal = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
     onTextChange(e.target.value);
@@ -207,6 +221,14 @@ export const AnnotatedTextEditor: React.FC<AnnotatedTextEditorProps> = ({
 
   return (
     <div className="space-y-4">
+      <style>
+        {`
+          .scroll-overlay::-webkit-scrollbar {
+            display: none;
+          }
+        `}
+      </style>
+      
       {/* Annotation Legend */}
       <div className="flex flex-wrap gap-4 text-sm">
         <div className="flex items-center gap-2">
@@ -247,10 +269,12 @@ export const AnnotatedTextEditor: React.FC<AnnotatedTextEditorProps> = ({
         {/* Overlay with highlighting */}
         <div
           ref={overlayRef}
-          className="absolute inset-0 p-4 pointer-events-none overflow-hidden font-mono text-sm leading-relaxed whitespace-pre-wrap break-words"
+          className="absolute inset-0 p-4 pointer-events-none overflow-auto font-mono text-sm leading-relaxed whitespace-pre-wrap break-words scroll-overlay"
           style={{
             color: '#000',
-            wordBreak: 'break-word'
+            wordBreak: 'break-word',
+            scrollbarWidth: 'none', /* Firefox */
+            msOverflowStyle: 'none'  /* IE and Edge */
           }}
         >
           {segments.map((segment, index) => {
