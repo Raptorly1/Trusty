@@ -14,31 +14,60 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1/models/gemini-2.5-pro:generateContent';
+const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
 const API_KEY = process.env.GEMINI_API_KEY;
 
 app.post('/api/gemini', async (req, res) => {
   console.log('Received request to /api/gemini:', req.body);
   try {
-    let { prompt } = req.body;
-    // Detect if this is a fact-check or explanation prompt
-    const isFactCheck = /fact-?check|Fact-?check|Fact-check|fact-check|sources|summary/i.test(prompt);
+    let { prompt, structured, schema } = req.body;
+    
+    // Detect if this is a fact-check request based on structured flag or content
+    const isFactCheck = structured || /fact-?check|Fact-?check|sources|summary|statement.*verify/i.test(prompt);
     const isHumanExplanation = /explain why the following text sounds like it was written by a human|why this sounds human|explanation/i.test(prompt);
+    
     let geminiPrompt = prompt;
-    if (!isFactCheck && !isHumanExplanation) {
+    let requestConfig = {
+      contents: [{ parts: [{ text: geminiPrompt }] }]
+    };
+
+    // If structured response is requested (for fact-checking)
+    if (structured && schema) {
+      requestConfig = {
+        contents: [{ parts: [{ text: geminiPrompt }] }],
+        generationConfig: {
+          responseMimeType: "application/json",
+          responseSchema: schema,
+          temperature: 0.2,
+        }
+      };
+    } else if (!isFactCheck && !isHumanExplanation) {
       // Use the default detection prompt for AI-generated text
       geminiPrompt = `Analyze the following text and estimate the likelihood that it was written by an AI system.\nReturn only a JSON object with the following fields:\n- likelihood_score: a number from 0 (very likely human) to 100 (very likely AI-generated)\n- highlights: an array of objects, each with:\n    - start: the start index of the suspicious text span\n    - end: the end index of the suspicious text span\n    - text: the exact text span\n    - reason: a short explanation of why this segment is suspicious\n- observations: an array of short, clear strings explaining what features or patterns led to your score (e.g., repetition, unnatural phrasing, lack of personal experience, etc.)\nText: ${prompt}\n\nReturn only a JSON object, with no extra text or formatting.`;
+      requestConfig.contents = [{ parts: [{ text: geminiPrompt }] }];
     }
 
-    const response = await axios.post(`${GEMINI_API_URL}?key=${API_KEY}`, {
-      contents: [{ parts: [{ text: geminiPrompt }] }]
-    });
+    const response = await axios.post(`${GEMINI_API_URL}?key=${API_KEY}`, requestConfig);
     console.log('Gemini API response:', response.data);
+    
     let rawText = '';
     if (response.data?.candidates?.[0]?.content?.parts?.[0]?.text) {
       rawText = response.data.candidates[0].content.parts[0].text;
     }
     console.log('Gemini raw response text:', rawText);
+
+    // For structured fact-check responses, parse as JSON directly
+    if (structured && schema) {
+      try {
+        const parsedResult = JSON.parse(rawText.trim());
+        res.json(parsedResult);
+        return;
+      } catch (e) {
+        console.error("Failed to parse structured JSON response:", rawText);
+        throw new Error("API returned malformed JSON.");
+      }
+    }
+
     // Remove markdown code block if present
     rawText = rawText.trim();
     if (rawText.startsWith('```json')) {
