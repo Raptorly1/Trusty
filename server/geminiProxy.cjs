@@ -20,10 +20,10 @@ const API_KEY = process.env.GEMINI_API_KEY;
 app.post('/api/gemini', async (req, res) => {
   console.log('Received request to /api/gemini:', req.body);
   try {
-    let { prompt, structured, schema } = req.body;
+    let { prompt, structured } = req.body;
     
     // Detect if this is a fact-check request based on structured flag or content
-    const isFactCheck = structured || /fact-?check|Fact-?check|sources|summary|statement.*verify/i.test(prompt);
+    const isFactCheck = structured || /You are a meticulous and unbiased fact-checking expert|Context Paragraph|Statement to Verify/i.test(prompt);
     const isHumanExplanation = /explain why the following text sounds like it was written by a human|why this sounds human|explanation/i.test(prompt);
     
     let geminiPrompt = prompt;
@@ -31,13 +31,12 @@ app.post('/api/gemini', async (req, res) => {
       contents: [{ parts: [{ text: geminiPrompt }] }]
     };
 
-    // If structured response is requested (for fact-checking)
-    if (structured && schema) {
+    // If structured response is requested (for fact-checking), use simple JSON request
+    if (structured || isFactCheck) {
+      // Don't use responseSchema as it's causing issues, just request JSON in the prompt
       requestConfig = {
         contents: [{ parts: [{ text: geminiPrompt }] }],
         generationConfig: {
-          responseMimeType: "application/json",
-          responseSchema: schema,
           temperature: 0.2,
         }
       };
@@ -57,14 +56,34 @@ app.post('/api/gemini', async (req, res) => {
     console.log('Gemini raw response text:', rawText);
 
     // For structured fact-check responses, parse as JSON directly
-    if (structured && schema) {
+    if (structured || isFactCheck) {
       try {
-        const parsedResult = JSON.parse(rawText.trim());
+        // Remove markdown code blocks first
+        let cleanText = rawText.trim();
+        if (cleanText.startsWith('```json')) {
+          cleanText = cleanText.replace(/^```json[\r\n]+/, '').replace(/```\s*$/, '');
+        } else if (cleanText.startsWith('```')) {
+          cleanText = cleanText.replace(/^```\w*[\r\n]+/, '').replace(/```\s*$/, '');
+        }
+        
+        const parsedResult = JSON.parse(cleanText);
         res.json(parsedResult);
         return;
       } catch (e) {
         console.error("Failed to parse structured JSON response:", rawText);
-        throw new Error("API returned malformed JSON.");
+        // Try to extract JSON from the response if it's embedded in text
+        const jsonMatch = /\{[\s\S]*\}/.exec(rawText);
+        if (jsonMatch) {
+          try {
+            const parsedResult = JSON.parse(jsonMatch[0]);
+            res.json(parsedResult);
+            return;
+          } catch (e2) {
+            console.error("Failed to parse extracted JSON:", e2);
+          }
+        }
+        res.status(500).json({ error: "Failed to parse fact-check response" });
+        return;
       }
     }
 
