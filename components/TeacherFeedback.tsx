@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { BookOpen, Feather, ZapIcon } from './Icons';
-import { AnnotatedTextEditor } from './AnnotatedTextEditor';
+import { AnnotatedTextEditor } from './ImprovedAnnotatedTextEditor';
 import { AnnotationsSidebar } from './AnnotationsSidebar';
 import { ResultsDisplay } from './ResultsDisplay';
 import { FileUpload } from './FileUpload';
@@ -11,7 +11,7 @@ import ActionToolbar from './ActionToolbar';
 import { CardSkeleton, AnnotationSkeleton } from './LoadingSkeleton';
 import { Annotation, TeacherFeedbackState } from '../types/teacherFeedbackTypes';
 import { annotationService, detectAIInText } from '../services/annotationService';
-import { autoAnnotationService } from '../services/autoAnnotationService';
+import { smartAutoAnnotationService } from '../services/smartAutoAnnotationService';
 import { getFactCheck } from '../services/factCheckService';
 import { FactCheckResult } from '../types/factCheckTypes';
 
@@ -45,8 +45,8 @@ export const TeacherFeedback: React.FC<TeacherFeedbackProps> = ({ onBack }) => {
       if (state.text) {
         setIsGeneratingAnnotations(true);
         try {
-          // Generate helpful annotations for seniors
-          const autoAnnotations = await autoAnnotationService.generateAutoAnnotations(state.text);
+          // Generate helpful annotations for seniors with smart filtering
+          const autoAnnotations = await smartAutoAnnotationService.generateAutoAnnotations(state.text);
           setState(prev => ({ ...prev, annotations: autoAnnotations }));
           
           // Save generated annotations
@@ -108,16 +108,12 @@ export const TeacherFeedback: React.FC<TeacherFeedbackProps> = ({ onBack }) => {
     setFactCheckError(null);
   }, []);
 
-  const handleSelectionChange = useCallback((selection: { start: number; end: number; text: string } | null) => {
-    setState(prev => ({ ...prev, selectedRange: selection, activeAnnotationId: null }));
-  }, []);
-
   const handleRegenerateAnnotations = useCallback(async () => {
     if (!state.text) return;
     
     setIsGeneratingAnnotations(true);
     try {
-      const autoAnnotations = await autoAnnotationService.generateAutoAnnotations(state.text);
+      const autoAnnotations = await smartAutoAnnotationService.generateAutoAnnotations(state.text);
       setState(prev => ({ ...prev, annotations: autoAnnotations, activeAnnotationId: null }));
       
       if (autoAnnotations.length > 0) {
@@ -284,9 +280,19 @@ export const TeacherFeedback: React.FC<TeacherFeedbackProps> = ({ onBack }) => {
               <AnnotatedTextEditor
                 text={state.text}
                 annotations={state.annotations}
+                activeAnnotationId={state.activeAnnotationId}
                 onTextChange={handleTextChange}
-                onSelectionChange={handleSelectionChange}
-                onAnnotationClick={handleAnnotationClick}
+                onAnnotationChange={(annotations: Annotation[]) => {
+                  setState(prev => ({ ...prev, annotations }));
+                }}
+                onAnnotationSelect={(id: string | null) => setState(prev => ({ ...prev, activeAnnotationId: id }))}
+                onAnnotationEdit={(id: string, text: string, comment: string) => {
+                  const updatedAnnotations = state.annotations.map(ann =>
+                    ann.id === id ? { ...ann, text, comment } : ann
+                  );
+                  setState(prev => ({ ...prev, annotations: updatedAnnotations }));
+                }}
+                onAnnotationDelete={handleDeleteAnnotation}
                 placeholder="Paste or upload text here for analysis. Select any text to add highlights, comments, tags, or fact-check it."
               />
             </div>
