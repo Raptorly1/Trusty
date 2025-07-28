@@ -97,7 +97,10 @@ export async function detectAIInText(text: string): Promise<{
   }
 
   try {
-    const GEMINI_PROXY_URL = import.meta.env.VITE_GEMINI_PROXY_URL || 'http://localhost:5001/api/gemini';
+    // Use localhost for development, production URL for deployed version
+    const GEMINI_PROXY_URL = window.location.hostname === 'localhost' 
+      ? 'http://localhost:5001/api/gemini'
+      : 'https://trusty-ldqx.onrender.com/api/gemini';
     
     const response = await fetch(GEMINI_PROXY_URL, {
       method: 'POST',
