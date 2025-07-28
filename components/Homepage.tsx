@@ -5,9 +5,10 @@ import { ArrowRight, GraduationCap, Sparkles } from './Icons';
 interface HomepageProps {
   onStartCourse: () => void;
   onGoToAIChecker: () => void;
+  onGoToTeacherFeedback: () => void;
 }
 
-const Homepage: React.FC<HomepageProps> = ({ onStartCourse, onGoToAIChecker }) => {
+const Homepage: React.FC<HomepageProps> = ({ onStartCourse, onGoToAIChecker, onGoToTeacherFeedback }) => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 p-4 sm:p-6 lg:p-8">
       <div className="w-full max-w-4xl mx-auto text-center">
@@ -81,6 +82,12 @@ const Homepage: React.FC<HomepageProps> = ({ onStartCourse, onGoToAIChecker }) =
           >
             <Sparkles className="h-6 w-6 text-blue-500 transition-transform group-hover:scale-110" />
             Try our AI Text Checker
+          </button>
+          <button 
+            onClick={onGoToTeacherFeedback}
+            className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-green-600 text-white font-bold text-lg py-3 px-8 rounded-full shadow-md hover:bg-green-700 transition-all focus:outline-none focus:ring-4 focus:ring-green-300"
+          >
+            Feedback Tool (includes AI Detection)
           </button>
         </div>
 
