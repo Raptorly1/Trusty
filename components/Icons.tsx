@@ -173,3 +173,32 @@ export const EyeSlashIcon: React.FC<IconProps> = ({ className }) => (
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
   </svg>
 );
+
+export const BarChart3: React.FC<IconProps> = ({ className }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3v18h18M7 16V8m4 8V6m4 8V4" />
+  </svg>
+);
+
+export const Brain: React.FC<IconProps> = ({ className }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1-1h-2.5a2.5 2.5 0 01-2.5-2.5v-7a2.5 2.5 0 012.5-2.5h1.5l.5-.5v-2a2.5 2.5 0 012.5-2.5 2.5 2.5 0 012.5 2.5v2l.5.5h1.5a2.5 2.5 0 012.5 2.5v7a2.5 2.5 0 01-2.5 2.5H15l-1 1-4-3z" />
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 12h.01M16 12h.01M8 12h.01" />
+  </svg>
+);
+
+// Aliases for the existing Eye icons to match the expected imports
+export const Eye = EyeIcon;
+export const EyeOff = EyeSlashIcon;
+
+export const ChevronDown: React.FC<IconProps> = ({ className }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+  </svg>
+);
+
+export const ChevronRight: React.FC<IconProps> = ({ className }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+  </svg>
+);

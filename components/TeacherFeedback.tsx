@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { ArrowLeft, BookOpen, Feather, ZapIcon } from './Icons';
+import { BookOpen, Feather, ZapIcon } from './Icons';
 import { AnnotatedTextEditor } from './AnnotatedTextEditor';
 import { AnnotationsSidebar } from './AnnotationsSidebar';
-import { AIDetectionWidget } from './AIDetectionWidget';
 import { ResultsDisplay } from './ResultsDisplay';
 import { FileUpload } from './FileUpload';
-import { TextStatsWidget } from './TextStatsWidget';
 import { AnnotationStatus } from './AnnotationStatus';
+import OverviewCard from './OverviewCard';
+import SmartAnalysisPanel from './SmartAnalysisPanel';
+import ActionToolbar from './ActionToolbar';
+import { CardSkeleton, AnnotationSkeleton } from './LoadingSkeleton';
 import { Annotation, TeacherFeedbackState } from '../types/teacherFeedbackTypes';
 import { annotationService, detectAIInText } from '../services/annotationService';
 import { autoAnnotationService } from '../services/autoAnnotationService';
@@ -23,7 +25,6 @@ export const TeacherFeedback: React.FC<TeacherFeedbackProps> = ({ onBack }) => {
     annotations: [],
     aiDetection: null,
     selectedRange: null,
-    showAIScore: true,
     activeAnnotationId: null
   });
 
@@ -167,10 +168,6 @@ export const TeacherFeedback: React.FC<TeacherFeedbackProps> = ({ onBack }) => {
     }
   }, [state.text, state.selectedRange]);
 
-  const handleToggleAIScore = useCallback(() => {
-    setState(prev => ({ ...prev, showAIScore: !prev.showAIScore }));
-  }, []);
-
   const handleClearAllAnnotations = useCallback(async () => {
     if (state.annotations.length === 0) return;
     
@@ -199,7 +196,6 @@ export const TeacherFeedback: React.FC<TeacherFeedbackProps> = ({ onBack }) => {
       annotations: [],
       aiDetection: null,
       selectedRange: null,
-      showAIScore: true,
       activeAnnotationId: null
     });
     setFactCheckResult(null);
@@ -208,53 +204,53 @@ export const TeacherFeedback: React.FC<TeacherFeedbackProps> = ({ onBack }) => {
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 font-sans">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b border-gray-200">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <button 
-                onClick={onBack} 
-                className="group flex items-center gap-2 text-slate-600 hover:text-blue-600 font-semibold transition-colors"
-              >
-                <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
-                Back to Home
-              </button>
-              <div className="flex items-center gap-2">
-                <Feather className="h-6 w-6 text-blue-600" />
-                <h1 className="text-xl font-bold text-gray-900">Trusty's Feedback</h1>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="text-sm text-gray-600">
-                {state.annotations.length} annotations
-              </div>
-              {state.aiDetection && (
-                <div className="flex items-center gap-1 text-sm">
-                  <ZapIcon className="h-4 w-4 text-blue-500" />
-                  <span className="text-gray-600">AI: {state.aiDetection.likelihood_score}%</span>
-                </div>
-              )}
-              {state.text && (
-                <div className="flex items-center gap-2">
-                  {state.annotations.length > 0 && (
-                    <button
-                      onClick={handleClearAllAnnotations}
-                      className="text-xs text-red-600 hover:text-red-800 px-2 py-1 border border-red-300 rounded hover:bg-red-50 transition-colors"
-                    >
-                      Clear Annotations
-                    </button>
-                  )}
-                  <button
-                    onClick={handleClearText}
-                    className="text-xs text-gray-600 hover:text-gray-800 px-2 py-1 border border-gray-300 rounded hover:bg-gray-50 transition-colors"
-                  >
-                    Clear All
-                  </button>
-                </div>
-              )}
+      {/* Action Toolbar */}
+      <ActionToolbar
+        onBack={onBack}
+        onRegenerate={handleRegenerateAnnotations}
+        onClearAll={handleClearAllAnnotations}
+        onClearText={handleClearText}
+        isGenerating={isGeneratingAnnotations}
+        hasText={!!state.text.trim()}
+        hasAnnotations={state.annotations.length > 0}
+        disabled={isLoadingAI || isFactChecking}
+      />
+
+      {/* Page Header */}
+      <div className="bg-white border-b border-gray-200">
+        <div className="container mx-auto px-4 py-6">
+          <div className="flex items-center gap-3">
+            <Feather className="h-8 w-8 text-blue-600" />
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">Trusty's Text Analysis</h1>
+              <p className="text-gray-600 mt-1">
+                Analyze text for clarity, comprehension, and potential issues for seniors
+              </p>
             </div>
           </div>
+          
+          {/* Status Summary */}
+          {state.text && (
+            <div className="mt-4 flex items-center gap-6 text-sm">
+              <div className="flex items-center gap-2">
+                <span className="text-gray-600">Annotations:</span>
+                <span className="font-semibold text-blue-600">{state.annotations.length}</span>
+              </div>
+              {state.aiDetection && (
+                <div className="flex items-center gap-2">
+                  <ZapIcon className="h-4 w-4 text-yellow-500" />
+                  <span className="text-gray-600">AI Likelihood:</span>
+                  <span className="font-semibold text-yellow-600">{state.aiDetection.likelihood_score}%</span>
+                </div>
+              )}
+              {isGeneratingAnnotations && (
+                <div className="flex items-center gap-2 text-blue-600">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                  <span>Generating insights...</span>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
@@ -321,27 +317,58 @@ export const TeacherFeedback: React.FC<TeacherFeedbackProps> = ({ onBack }) => {
 
           {/* Right Column - Sidebar */}
           <div className="space-y-6">
-            {/* Text Statistics */}
-            <TextStatsWidget
+            {/* Overview Card - Combined Text Statistics and AI Detection */}
+            {!state.text ? (
+              <CardSkeleton hasHeader={true} hasStats={true} />
+            ) : (
+              <OverviewCard
+                text={state.text}
+                aiLikelihood={state.aiDetection?.likelihood_score || null}
+                isAnalyzing={isLoadingAI}
+                onAnalyze={() => {
+                  if (state.text.trim()) {
+                    setIsLoadingAI(true);
+                    detectAIInText(state.text)
+                      .then(detection => {
+                        setState(prev => ({
+                          ...prev,
+                          aiDetection: {
+                            ...detection,
+                            last_updated: Date.now()
+                          }
+                        }));
+                      })
+                      .catch(error => {
+                        console.error('AI detection failed:', error);
+                        setState(prev => ({ ...prev, aiDetection: null }));
+                      })
+                      .finally(() => setIsLoadingAI(false));
+                  }
+                }}
+              />
+            )}
+
+            {/* Smart Analysis Panel */}
+            <SmartAnalysisPanel
               text={state.text}
               annotations={state.annotations}
-            />
-            
-            {/* AI Detection Widget */}
-            <AIDetectionWidget
-              result={state.aiDetection}
-              isVisible={state.showAIScore}
-              onToggleVisibility={handleToggleAIScore}
-              isLoading={isLoadingAI}
+              aiDetection={state.aiDetection}
             />
 
             {/* Annotations Sidebar */}
-            <AnnotationsSidebar
-              annotations={state.annotations}
-              onDeleteAnnotation={handleDeleteAnnotation}
-              onAnnotationClick={handleAnnotationClick}
-              activeAnnotationId={state.activeAnnotationId}
-            />
+            {isGeneratingAnnotations ? (
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h3 className="text-lg font-semibold mb-4">Annotations</h3>
+                <AnnotationSkeleton count={3} />
+              </div>
+            ) : (
+              <AnnotationsSidebar
+                annotations={state.annotations}
+                onDeleteAnnotation={handleDeleteAnnotation}
+                onAnnotationClick={handleAnnotationClick}
+                activeAnnotationId={state.activeAnnotationId}
+              />
+            )}
           </div>
         </div>
       </div>
