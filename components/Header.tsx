@@ -11,7 +11,7 @@ export const Header: React.FC = () => {
             Fact-Check Highlighter
           </h1>
         </div>
-        <p className="hidden md:block text-gray-500 dark:text-gray-400">AI-Powered Truth Verification</p>
+        <p className="hidden md:block text-gray-500 dark:text-gray-400">Trusty Truth Verification</p>
       </div>
     </header>
   );
