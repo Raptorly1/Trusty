@@ -68,86 +68,135 @@ export class AutoAnnotationService {
       // Generate summary annotations for long paragraphs
       annotations.push(...this.createSummaryAnnotations(text));
       
+      // If no annotations were generated (possibly due to API issues), provide basic fallback
+      if (annotations.length === 0) {
+        annotations.push({
+          id: `fallback-${Date.now()}`,
+          start: 0,
+          end: Math.min(50, text.length),
+          text: text.substring(0, 50) + (text.length > 50 ? '...' : ''),
+          type: 'comment',
+          comment: '💡 Analysis services are temporarily unavailable. Please verify any important information from reliable sources.',
+          timestamp: Date.now()
+        });
+      }
+      
       return annotations;
     } catch (error) {
       console.error('Failed to generate auto annotations:', error);
-      return [];
+      
+      // Return fallback annotation when everything fails
+      return [{
+        id: `error-fallback-${Date.now()}`,
+        start: 0,
+        end: Math.min(100, text.length),
+        text: text.substring(0, 100) + (text.length > 100 ? '...' : ''),
+        type: 'comment',
+        comment: '⚠️ Unable to analyze this text automatically. When reading online content, always verify information from trusted sources and be cautious of potentially misleading information.',
+        timestamp: Date.now()
+      }];
     }
   }
 
   private async getAIAnalysis(text: string): Promise<AIAnalysisResult> {
-    const response = await fetch(this.getProxyURL(), {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ 
-        prompt: text,
-        structured: false
-      }),
-    });
+    try {
+      const response = await fetch(this.getProxyURL(), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          prompt: text,
+          structured: false
+        }),
+      });
 
-    if (!response.ok) {
-      throw new Error('Failed to fetch AI analysis');
+      if (!response.ok) {
+        throw new Error('Failed to fetch AI analysis');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('AI analysis failed:', error);
+      // Return fallback data when API is unavailable
+      return {
+        likelihood_score: 0,
+        observations: ['AI detection service temporarily unavailable'],
+        highlights: []
+      };
     }
-
-    return await response.json();
   }
 
   private async getTextComplexity(text: string): Promise<TextComplexityResult> {
-    const prompt = `Analyze this text for complexity and identify difficult words that seniors might not understand. Return JSON with:
-    - readingLevel: elementary/middle/high/college
-    - complexWords: array of {word, position, simplification}
-    - longSentences: array of {sentence, start, end, wordCount} for sentences over 20 words
-    
-    Text: ${text}
-    
-    Return only JSON, no extra text.`;
+    try {
+      const prompt = `Analyze this text for complexity and identify difficult words that seniors might not understand. Return JSON with:
+      - readingLevel: elementary/middle/high/college
+      - complexWords: array of {word, position, simplification}
+      - longSentences: array of {sentence, start, end, wordCount} for sentences over 20 words
+      
+      Text: ${text}
+      
+      Return only JSON, no extra text.`;
 
-    const response = await fetch(this.getProxyURL(), {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ 
-        prompt,
-        structured: true
-      }),
-    });
+      const response = await fetch(this.getProxyURL(), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          prompt,
+          structured: true
+        }),
+      });
 
-    if (!response.ok) {
-      throw new Error('Failed to analyze text complexity');
+      if (!response.ok) {
+        throw new Error('Failed to analyze text complexity');
+      }
+
+      const result = await response.json();
+      return result || { readingLevel: 'middle', complexWords: [], longSentences: [] };
+    } catch (error) {
+      console.error('Text complexity analysis failed:', error);
+      // Return fallback data
+      return { 
+        readingLevel: 'middle', 
+        complexWords: [], 
+        longSentences: [] 
+      };
     }
-
-    const result = await response.json();
-    return result || { readingLevel: 'middle', complexWords: [], longSentences: [] };
   }
 
   private async getFactualClaims(text: string): Promise<FactualClaimsResult> {
-    const prompt = `Identify factual claims in this text that seniors should verify. Return JSON with:
-    - claims: array of {text, start, end, confidence, type} where type is statistic/claim/quote/date
-    
-    Text: ${text}
-    
-    Return only JSON, no extra text.`;
+    try {
+      const prompt = `Identify factual claims in this text that seniors should verify. Return JSON with:
+      - claims: array of {text, start, end, confidence, type} where type is statistic/claim/quote/date
+      
+      Text: ${text}
+      
+      Return only JSON, no extra text.`;
 
-    const response = await fetch(this.getProxyURL(), {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ 
-        prompt,
-        structured: true
-      }),
-    });
+      const response = await fetch(this.getProxyURL(), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          prompt,
+          structured: true
+        }),
+      });
 
-    if (!response.ok) {
-      throw new Error('Failed to analyze factual claims');
+      if (!response.ok) {
+        throw new Error('Failed to analyze factual claims');
+      }
+
+      const result = await response.json();
+      return result || { claims: [] };
+    } catch (error) {
+      console.error('Factual claims analysis failed:', error);
+      // Return fallback data
+      return { claims: [] };
     }
-
-    const result = await response.json();
-    return result || { claims: [] };
   }
 
   private createAIAnnotations(analysis: AIAnalysisResult): Annotation[] {
