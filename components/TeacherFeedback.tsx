@@ -1,14 +1,15 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { ArrowLeft, BookOpen, Feather, ZapIcon } from './Icons';
 import { AnnotatedTextEditor } from './AnnotatedTextEditor';
-import { AnnotationControls } from './AnnotationControls';
 import { AnnotationsSidebar } from './AnnotationsSidebar';
 import { AIDetectionWidget } from './AIDetectionWidget';
 import { ResultsDisplay } from './ResultsDisplay';
 import { FileUpload } from './FileUpload';
 import { TextStatsWidget } from './TextStatsWidget';
+import { AnnotationStatus } from './AnnotationStatus';
 import { Annotation, TeacherFeedbackState } from '../types/teacherFeedbackTypes';
 import { annotationService, detectAIInText } from '../services/annotationService';
+import { autoAnnotationService } from '../services/autoAnnotationService';
 import { getFactCheck } from '../services/factCheckService';
 import { FactCheckResult } from '../types/factCheckTypes';
 
@@ -27,6 +28,7 @@ export const TeacherFeedback: React.FC<TeacherFeedbackProps> = ({ onBack }) => {
   });
 
   const [isLoadingAI, setIsLoadingAI] = useState(false);
+  const [isGeneratingAnnotations, setIsGeneratingAnnotations] = useState(false);
   const [isFactChecking, setIsFactChecking] = useState(false);
   const [factCheckResult, setFactCheckResult] = useState<FactCheckResult | null>(null);
   const [factCheckError, setFactCheckError] = useState<string | null>(null);
@@ -36,30 +38,33 @@ export const TeacherFeedback: React.FC<TeacherFeedbackProps> = ({ onBack }) => {
     return state.text ? `text_${state.text.slice(0, 50).replace(/\s+/g, '_')}` : 'empty';
   }, [state.text]);
 
-  // Load annotations when text changes
+  // Generate automatic annotations when text changes
   useEffect(() => {
-    const loadAnnotations = async () => {
+    const generateAnnotations = async () => {
       if (state.text) {
+        setIsGeneratingAnnotations(true);
         try {
-          const savedAnnotations = await annotationService.loadAnnotations(textId);
-          setState(prev => ({ ...prev, annotations: savedAnnotations }));
+          // Generate helpful annotations for seniors
+          const autoAnnotations = await autoAnnotationService.generateAutoAnnotations(state.text);
+          setState(prev => ({ ...prev, annotations: autoAnnotations }));
+          
+          // Save generated annotations
+          if (autoAnnotations.length > 0) {
+            await annotationService.saveAnnotations(textId, autoAnnotations);
+          }
         } catch (error) {
-          console.error('Failed to load annotations:', error);
+          console.error('Failed to generate annotations:', error);
+        } finally {
+          setIsGeneratingAnnotations(false);
         }
+      } else {
+        setState(prev => ({ ...prev, annotations: [] }));
       }
     };
-    loadAnnotations();
-  }, [textId, state.text]);
 
-  // Save annotations when they change
-  const saveAnnotations = useCallback(async (annotations: Annotation[]) => {
-    if (state.text && annotations.length > 0) {
-      try {
-        await annotationService.saveAnnotations(textId, annotations);
-      } catch (error) {
-        console.error('Failed to save annotations:', error);
-      }
-    }
+    // Debounce annotation generation
+    const debounceTimer = setTimeout(generateAnnotations, 1500);
+    return () => clearTimeout(debounceTimer);
   }, [textId, state.text]);
 
   // AI Detection with debouncing
@@ -106,76 +111,23 @@ export const TeacherFeedback: React.FC<TeacherFeedbackProps> = ({ onBack }) => {
     setState(prev => ({ ...prev, selectedRange: selection, activeAnnotationId: null }));
   }, []);
 
-  const generateAnnotationId = () => `annotation_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
-
-  const handleAddHighlight = useCallback(async (color: string) => {
-    if (!state.selectedRange) return;
-
-    const newAnnotation: Annotation = {
-      id: generateAnnotationId(),
-      start: state.selectedRange.start,
-      end: state.selectedRange.end,
-      text: state.selectedRange.text,
-      type: 'highlight',
-      color: color as any,
-      timestamp: Date.now()
-    };
-
-    const updatedAnnotations = [...state.annotations, newAnnotation];
-    setState(prev => ({ 
-      ...prev, 
-      annotations: updatedAnnotations,
-      selectedRange: null,
-      activeAnnotationId: newAnnotation.id
-    }));
-    await saveAnnotations(updatedAnnotations);
-  }, [state.selectedRange, state.annotations, saveAnnotations]);
-
-  const handleAddComment = useCallback(async (comment: string) => {
-    if (!state.selectedRange) return;
-
-    const newAnnotation: Annotation = {
-      id: generateAnnotationId(),
-      start: state.selectedRange.start,
-      end: state.selectedRange.end,
-      text: state.selectedRange.text,
-      type: 'comment',
-      comment,
-      timestamp: Date.now()
-    };
-
-    const updatedAnnotations = [...state.annotations, newAnnotation];
-    setState(prev => ({ 
-      ...prev, 
-      annotations: updatedAnnotations,
-      selectedRange: null,
-      activeAnnotationId: newAnnotation.id
-    }));
-    await saveAnnotations(updatedAnnotations);
-  }, [state.selectedRange, state.annotations, saveAnnotations]);
-
-  const handleAddTag = useCallback(async (tags: string[]) => {
-    if (!state.selectedRange) return;
-
-    const newAnnotation: Annotation = {
-      id: generateAnnotationId(),
-      start: state.selectedRange.start,
-      end: state.selectedRange.end,
-      text: state.selectedRange.text,
-      type: 'tag',
-      tags,
-      timestamp: Date.now()
-    };
-
-    const updatedAnnotations = [...state.annotations, newAnnotation];
-    setState(prev => ({ 
-      ...prev, 
-      annotations: updatedAnnotations,
-      selectedRange: null,
-      activeAnnotationId: newAnnotation.id
-    }));
-    await saveAnnotations(updatedAnnotations);
-  }, [state.selectedRange, state.annotations, saveAnnotations]);
+  const handleRegenerateAnnotations = useCallback(async () => {
+    if (!state.text) return;
+    
+    setIsGeneratingAnnotations(true);
+    try {
+      const autoAnnotations = await autoAnnotationService.generateAutoAnnotations(state.text);
+      setState(prev => ({ ...prev, annotations: autoAnnotations, activeAnnotationId: null }));
+      
+      if (autoAnnotations.length > 0) {
+        await annotationService.saveAnnotations(textId, autoAnnotations);
+      }
+    } catch (error) {
+      console.error('Failed to regenerate annotations:', error);
+    } finally {
+      setIsGeneratingAnnotations(false);
+    }
+  }, [state.text, textId]);
 
   const handleDeleteAnnotation = useCallback(async (annotationId: string) => {
     const updatedAnnotations = state.annotations.filter(a => a.id !== annotationId);
@@ -343,12 +295,12 @@ export const TeacherFeedback: React.FC<TeacherFeedbackProps> = ({ onBack }) => {
               />
             </div>
 
-            {/* Annotation Controls */}
-            <AnnotationControls
-              selectedRange={state.selectedRange}
-              onAddHighlight={handleAddHighlight}
-              onAddComment={handleAddComment}
-              onAddTag={handleAddTag}
+            {/* Auto-Annotation Status */}
+            <AnnotationStatus
+              isGenerating={isGeneratingAnnotations}
+              annotationCount={state.annotations.length}
+              onRegenerate={handleRegenerateAnnotations}
+              disabled={!state.text.trim()}
             />
 
             {/* Fact-Check Results */}

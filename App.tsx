@@ -87,7 +87,7 @@ const App: React.FC = () => {
           </div>
         );
       default:
-        return <Homepage onStartCourse={handleStartCourse} onGoToAIChecker={handleGoToAIChecker} />;
+        return <Homepage onStartCourse={handleStartCourse} onGoToAIChecker={handleGoToAIChecker} onGoToTeacherFeedback={handleGoToTeacherFeedback} />;
     }
   };
 
