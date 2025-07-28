@@ -126,6 +126,12 @@ export async function detectAIInText(text: string): Promise<{
     };
   } catch (error) {
     console.error('Error detecting AI in text:', error);
-    throw new Error('Could not analyze text for AI generation');
+    
+    // Provide fallback data when API is not available
+    return {
+      likelihood_score: 0,
+      observations: ['⚠️ AI detection service temporarily unavailable. Analysis cannot be performed at this time.'],
+      highlights: []
+    };
   }
 }
