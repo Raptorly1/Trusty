@@ -61,7 +61,7 @@ const SmartAnalysisPanel: React.FC<SmartAnalysisPanelProps> = ({
         )}
         {totalInsights === 0 && (
           <div className="text-green-600 text-sm">
-            ✓ Text looks clear and straightforward
+            Analyzing...
           </div>
         )}
       </div>
