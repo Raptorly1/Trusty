@@ -250,30 +250,40 @@ export class SmartAutoAnnotationService {
   private createSmartAIAnnotations(text: string, analysis: AIAnalysisResult): Annotation[] {
     const annotations: Annotation[] = [];
     
+    // Ensure analysis has the expected structure
+    if (!analysis || typeof analysis.likelihood_score !== 'number') {
+      console.warn('Invalid AI analysis result:', analysis);
+      return annotations;
+    }
+    
     // Only create annotation for high-confidence AI detection
     if (analysis.likelihood_score > 70) {
       const endPos = Math.min(150, text.length);
+      const observations = Array.isArray(analysis.observations) ? analysis.observations : [];
       annotations.push({
         id: `ai-warning-${Date.now()}`,
         start: 0,
         end: endPos,
         text: text.substring(0, endPos),
         type: 'comment',
-        comment: `🤖 HIGH AI LIKELIHOOD (${analysis.likelihood_score}%): This text shows strong patterns of AI generation. Key indicators: ${analysis.observations.slice(0, 2).join('; ')}. Be especially cautious of any facts or claims.`,
+        comment: `🤖 HIGH AI LIKELIHOOD (${analysis.likelihood_score}%): This text shows strong patterns of AI generation. Key indicators: ${observations.slice(0, 2).join('; ')}. Be especially cautious of any facts or claims.`,
         timestamp: Date.now()
       });
     } else if (analysis.likelihood_score > 85) {
       // Only highlight specific suspicious segments for very high scores
-      analysis.highlights.slice(0, 2).forEach((highlight, index) => {
-        annotations.push({
-          id: `ai-highlight-${Date.now()}-${index}`,
-          start: highlight.start,
-          end: highlight.end,
-          text: highlight.text,
-          type: 'comment',
-          comment: `🤖 AI Pattern: ${highlight.reason}`,
-          timestamp: Date.now()
-        });
+      const highlights = Array.isArray(analysis.highlights) ? analysis.highlights : [];
+      highlights.slice(0, 2).forEach((highlight, index) => {
+        if (highlight && typeof highlight.start === 'number' && typeof highlight.end === 'number') {
+          annotations.push({
+            id: `ai-highlight-${Date.now()}-${index}`,
+            start: highlight.start,
+            end: highlight.end,
+            text: highlight.text || '',
+            type: 'comment',
+            comment: `🤖 AI Pattern: ${highlight.reason || 'Suspicious pattern detected'}`,
+            timestamp: Date.now()
+          });
+        }
       });
     }
 
@@ -283,8 +293,17 @@ export class SmartAutoAnnotationService {
   private createSmartComplexityAnnotations(_text: string, complexity: TextComplexityResult): Annotation[] {
     const annotations: Annotation[] = [];
     
+    // Ensure complexity has the expected structure
+    if (!complexity || !Array.isArray(complexity.complexWords) || !Array.isArray(complexity.longSentences)) {
+      console.warn('Invalid complexity analysis result:', complexity);
+      return annotations;
+    }
+    
     // Only annotate truly complex words (not common business terms)
     const filteredWords = complexity.complexWords.filter(word => 
+      word && 
+      word.word && 
+      typeof word.word === 'string' &&
       !this.isGenericContent(word.word.toLowerCase()) &&
       word.word.length > 8 &&
       !['business', 'important', 'information', 'organization'].includes(word.word.toLowerCase())
@@ -304,6 +323,9 @@ export class SmartAutoAnnotationService {
 
     // Only flag truly problematic long sentences (over 30 words)
     const problematicSentences = complexity.longSentences.filter(sentence => 
+      sentence && 
+      sentence.sentence && 
+      typeof sentence.wordCount === 'number' &&
       sentence.wordCount > 30
     );
     
@@ -325,8 +347,17 @@ export class SmartAutoAnnotationService {
   private createSmartFactualAnnotations(_text: string, factual: FactualClaimsResult): Annotation[] {
     const annotations: Annotation[] = [];
     
+    // Ensure factual has the expected structure
+    if (!factual || !Array.isArray(factual.claims)) {
+      console.warn('Invalid factual analysis result:', factual);
+      return annotations;
+    }
+    
     // Filter out generic claims, keep only specific factual data
     const meaningfulClaims = factual.claims.filter(claim => 
+      claim &&
+      claim.text &&
+      typeof claim.text === 'string' &&
       !this.isGenericContent(claim.text) &&
       (claim.type === 'statistic' || claim.type === 'date' || claim.confidence === 'high')
     );
@@ -338,11 +369,11 @@ export class SmartAutoAnnotationService {
       
       annotations.push({
         id: `fact-claim-${Date.now()}-${index}`,
-        start: claim.start,
-        end: claim.end,
+        start: claim.start || 0,
+        end: claim.end || claim.text.length,
         text: claim.text,
         type: 'comment',
-        comment: `${icon} Verify This ${claim.type}: Consider checking this information from official sources if it's important for your decision-making.`,
+        comment: `${icon} Verify This ${claim.type || 'claim'}: Consider checking this information from official sources if it's important for your decision-making.`,
         timestamp: Date.now()
       });
     });
