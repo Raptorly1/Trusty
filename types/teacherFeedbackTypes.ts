@@ -61,7 +61,6 @@ export interface TeacherFeedbackState {
     end: number;
     text: string;
   } | null;
-  showAIScore: boolean;
   activeAnnotationId: string | null;
 }
 
