@@ -76,12 +76,12 @@ const FactChecker: React.FC<FactCheckerProps> = ({ onBack }) => {
                 <div className="bg-white dark:bg-gray-800/50 p-6 rounded-lg">
                     <InfoIcon className="mx-auto h-8 w-8 text-blue-500 mb-2" />
                     <h3 className="text-lg font-semibold mb-1">How It Works</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Paste your text, highlight a statement, and let our AI provide a fact-check with credible sources.</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Paste your text, highlight a statement, and let us provide a fact-check with credible sources.</p>
                 </div>
                 <div className="bg-white dark:bg-gray-800/50 p-6 rounded-lg">
                     <ZapIcon className="mx-auto h-8 w-8 text-blue-500 mb-2" />
-                    <h3 className="text-lg font-semibold mb-1">Powered by AI</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Utilizes Google's Gemini model to analyze text and assess the credibility of various web sources.</p>
+                    <h3 className="text-lg font-semibold mb-1">Powered by Facts</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Utilizes various searching algorithms to analyze text and assess the credibility of various web sources.</p>
                 </div>
                 <div className="bg-white dark:bg-gray-800/50 p-6 rounded-lg">
                     <LightbulbIcon className="mx-auto h-8 w-8 text-blue-500 mb-2" />

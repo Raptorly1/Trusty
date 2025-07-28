@@ -17,37 +17,36 @@ ${context}
 ${statement}
 """
 
-Please perform the following steps and return your analysis *only* in the specified JSON format.
-1.  **Analyze Factuality**: Assess the statement's truthfulness based on reliable information.
-2.  **Summarize Findings**: Provide a concise, neutral summary of your analysis.
-3.  **Find Sources**: Identify at least 3-5 relevant and diverse sources to support your findings.
-4.  **Rate Credibility**: For each source, assign a credibility rating and explain your reasoning. The rating scale is:
-    - **Very High**: Peer-reviewed scientific journals, official government reports, direct data from established research institutions.
-    - **High**: Reputable international news organizations (e.g., Reuters, Associated Press), major national newspapers with a history of journalistic integrity, academic books from reputable publishers.
-    - **Medium**: Well-regarded encyclopedias (e.g., Wikipedia), established non-partisan organizations, major news magazines.
-    - **Low**: Opinion blogs, advocacy websites, publications with a known strong political slant.
-    - **Very Low**: Unsubstantiated social media posts, forums, personal websites with no clear expertise.
+Please perform the following steps and return your analysis in the exact JSON format specified below.
 
-Your final output must be a single JSON object matching this exact format:
+1. **Analyze Factuality**: Assess the statement's truthfulness based on reliable information.
+2. **Summarize Findings**: Provide a concise, neutral summary of your analysis.
+3. **Find Sources**: Identify at least 3-5 relevant and diverse sources to support your findings.
+4. **Rate Credibility**: For each source, assign a credibility rating using this scale:
+   - **Very High**: Peer-reviewed scientific journals, official government reports, direct data from established research institutions
+   - **High**: Reputable international news organizations (Reuters, Associated Press), major national newspapers with journalistic integrity, academic books from reputable publishers
+   - **Medium**: Well-regarded encyclopedias (Wikipedia), established non-partisan organizations, major news magazines
+   - **Low**: Opinion blogs, advocacy websites, publications with strong political slant
+   - **Very Low**: Unsubstantiated social media posts, forums, personal websites with no clear expertise
+
+Return ONLY a JSON object in this exact format (no markdown, no extra text):
 
 {
-  "statement": "The exact statement being verified",
-  "factuality": "One of: True, Likely True, Misleading, False, Likely False, Unverifiable",
-  "summary": "Concise summary of findings",
+  "statement": "${statement}",
+  "factuality": "True|Likely True|Misleading|False|Likely False|Unverifiable",
+  "summary": "Your detailed analysis summary here",
   "sources": [
     {
       "title": "Source title",
       "url": "https://example.com",
-      "summary": "Brief summary of what this source says",
+      "summary": "Brief summary of what this source says about the statement",
       "credibility": {
-        "rating": "One of: Very High, High, Medium, Low, Very Low",
-        "explanation": "Why this source has this credibility rating"
+        "rating": "Very High|High|Medium|Low|Very Low",
+        "explanation": "Explanation of why this source has this credibility rating"
       }
     }
   ]
 }
-
-Return only the JSON object, with no extra text before or after.
 `;
 
     try {
@@ -57,7 +56,8 @@ Return only the JSON object, with no extra text before or after.
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ 
-                prompt
+                prompt,
+                structured: true
             }),
         });
 
@@ -67,45 +67,53 @@ Return only the JSON object, with no extra text before or after.
 
         const result = await response.json();
         
-        // The response should be a fact-check result, but let's check its format
+        // Check for error in response
         if (result.error) {
-            throw new Error(result.error);
+            console.error("API error:", result.error);
+            throw new Error(result.error.message || result.error);
         }
 
-        // If it's the standard AI detection format, we need to parse it differently
-        if (result.likelihood_score !== undefined) {
-            // This means we got an AI detection response instead of a fact-check
-            // Let's return a default fact-check response
-            return {
-                statement: statement,
-                factuality: 'Unverifiable',
-                summary: 'Unable to fact-check this statement at the moment. The service returned an unexpected response format.',
-                sources: []
-            };
-        }
-
-        // If we got a direct fact-check result
+        // Handle the actual response format from our API
         if (result.statement && result.factuality && result.summary && Array.isArray(result.sources)) {
-            return result as FactCheckResult;
+            // Transform the sources to match our expected format
+            const transformedSources = result.sources.map((source: any) => ({
+                title: source.title || source.name || 'Untitled Source',
+                url: source.url || '',
+                summary: source.summary || 'No summary available',
+                credibility: {
+                    rating: source.credibility?.rating || 'Medium',
+                    explanation: source.credibility?.explanation || source.credibility?.reason || 'Source credibility not evaluated'
+                }
+            }));
+
+            return {
+                statement: result.statement,
+                factuality: result.factuality,
+                summary: result.summary,
+                sources: transformedSources
+            } as FactCheckResult;
         }
 
-        // Try to parse from raw text if it's a string response
+        // Fallback: try to parse as JSON string if needed
         if (typeof result === 'string') {
-            const jsonRegex = /\{[\s\S]*\}/;
-            const jsonMatch = jsonRegex.exec(result);
-            if (jsonMatch) {
-                const parsed = JSON.parse(jsonMatch[0]);
+            try {
+                const parsed = JSON.parse(result);
                 if (parsed.statement && parsed.factuality && parsed.summary && Array.isArray(parsed.sources)) {
                     return parsed as FactCheckResult;
                 }
+            } catch (parseError) {
+                console.error("Failed to parse result as JSON:", parseError);
             }
         }
 
-        // Fallback response
+        // Log unexpected response format for debugging
+        console.error("Unexpected response format:", result);
+        
+        // Return fallback response
         return {
             statement: statement,
             factuality: 'Unverifiable',
-            summary: 'Unable to properly parse the fact-check response from the AI service.',
+            summary: 'The AI service returned an unexpected response format. Please try again.',
             sources: []
         };
 
