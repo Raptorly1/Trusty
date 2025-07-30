@@ -74,9 +74,11 @@ export const ImprovedTeacherFeedback: React.FC<ImprovedTeacherFeedbackProps> = (
   useEffect(() => {
     const generateAnnotations = async () => {
       if (state.text) {
+        console.log('ImprovedTeacherFeedback: Starting annotation generation for text:', state.text.substring(0, 50));
         setIsGeneratingAnnotations(true);
         try {
           const autoAnnotations = await smartAutoAnnotationService.generateAutoAnnotations(state.text);
+          console.log('ImprovedTeacherFeedback: Received annotations:', autoAnnotations);
           setState(prev => ({ ...prev, annotations: autoAnnotations }));
           
           if (autoAnnotations.length > 0) {
@@ -96,6 +98,7 @@ export const ImprovedTeacherFeedback: React.FC<ImprovedTeacherFeedbackProps> = (
   }, [state.text, textId]);
 
   const handleTextChange = useCallback((newText: string) => {
+    console.log('ImprovedTeacherFeedback: Text changed to:', newText.substring(0, 50) + '...');
     setState(prev => ({
       ...prev,
       text: newText,

@@ -81,30 +81,68 @@ export class SmartAutoAnnotationService {
   async generateAutoAnnotations(text: string): Promise<Annotation[]> {
     if (!text.trim()) return [];
 
+    console.log('Starting annotation generation for text:', text.substring(0, 100) + '...');
     const annotations: Annotation[] = [];
     
     try {
+      // Always add a basic text analysis annotation for testing
+      annotations.push({
+        id: `basic-analysis-${Date.now()}`,
+        start: 0,
+        end: Math.min(50, text.length),
+        text: text.substring(0, Math.min(50, text.length)),
+        type: 'comment',
+        comment: `📝 Text Analysis: This text contains ${text.split(' ').length} words and ${text.split('\n').length} lines. Analysis complete.`,
+        timestamp: Date.now()
+      });
+
+      // Add specific annotations for financial terms
+      const financialTerms = ['UGMA', 'brokerage', 'robo-advisor', 'investment', 'custodial'];
+      financialTerms.forEach(term => {
+        const lowerText = text.toLowerCase();
+        const termIndex = lowerText.indexOf(term.toLowerCase());
+        if (termIndex !== -1) {
+          annotations.push({
+            id: `financial-term-${term}-${Date.now()}`,
+            start: termIndex,
+            end: termIndex + term.length,
+            text: text.substring(termIndex, termIndex + term.length),
+            type: 'comment',
+            comment: `💰 Financial Term: "${term}" - This is a financial term that seniors may want to research further.`,
+            timestamp: Date.now()
+          });
+        }
+      });
+
       // Get AI analysis with smarter filtering
+      console.log('Getting AI analysis...');
       const aiAnalysis = await this.getAIAnalysis(text);
+      console.log('AI analysis result:', aiAnalysis);
       if (this.isLikelyAIContent(text, aiAnalysis.likelihood_score)) {
         annotations.push(...this.createSmartAIAnnotations(text, aiAnalysis));
       }
       
       // Get text complexity analysis
+      console.log('Getting complexity analysis...');
       const complexityAnalysis = await this.getTextComplexity(text);
+      console.log('Complexity analysis result:', complexityAnalysis);
       annotations.push(...this.createSmartComplexityAnnotations(text, complexityAnalysis));
       
       // Get factual claims analysis with filtering
       if (this.isFactCheckWorthy(text)) {
+        console.log('Getting factual claims analysis...');
         const factualAnalysis = await this.getFactualClaims(text);
+        console.log('Factual analysis result:', factualAnalysis);
         annotations.push(...this.createSmartFactualAnnotations(text, factualAnalysis));
       }
       
       // Generate helpful summary for long content
       if (text.length > 500) {
+        console.log('Adding summary annotations for long content...');
         annotations.push(...this.createHelpfulSummaryAnnotations(text));
       }
       
+      console.log('Generated annotations:', annotations);
       return annotations;
     } catch (error) {
       console.error('Failed to generate smart annotations:', error);
