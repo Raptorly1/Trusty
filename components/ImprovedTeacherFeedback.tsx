@@ -444,6 +444,7 @@ export const ImprovedTeacherFeedback: React.FC<ImprovedTeacherFeedbackProps> = (
                         setState(prev => ({ ...prev, annotations: updatedAnnotations }));
                       }}
                       onAnnotationDelete={handleDeleteAnnotation}
+                      onSelectionChange={(selection) => setState(prev => ({ ...prev, selectedRange: selection }))}
                       placeholder="Paste or upload text here for analysis. Select any text to add highlights, comments, tags, or fact-check it."
                     />
                   </div>
