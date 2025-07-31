@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { BookOpen, Feather, ZapIcon, ChevronLeft, ChevronRight, Filter, EyeIcon, EyeSlashIcon } from './Icons';
+import { BookOpen, Feather, ZapIcon, ChevronLeft, ChevronRight, Filter, EyeIcon, EyeSlashIcon, CheckCircle, AlertTriangle } from './Icons';
 import { AnnotatedTextEditor } from './ImprovedAnnotatedTextEditor';
 import { ResultsDisplay } from './ResultsDisplay';
 import { FileUpload } from './FileUpload';
@@ -248,161 +248,103 @@ export const ImprovedTeacherFeedback: React.FC<ImprovedTeacherFeedbackProps> = (
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900 font-sans">
-      {/* Header with improved action buttons */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-30">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-inter antialiased">
+      {/* Professional Header */}
+      <header className="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            {/* Brand Section */}
+            <div className="flex items-center gap-6">
               <button
                 onClick={onBack}
-                className="flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                className="flex items-center gap-2 px-3 py-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-all duration-200"
               >
                 <ChevronLeft className="h-4 w-4" />
-                Back
+                <span className="font-medium">Back</span>
               </button>
               
               <div className="flex items-center gap-3">
-                <Feather className="h-8 w-8 text-blue-600" />
+                <div className="p-2 bg-blue-50 rounded-lg">
+                  <Feather className="h-6 w-6 text-blue-600" />
+                </div>
                 <div>
-                  <h1 className="text-2xl font-bold text-gray-900">Trusty's Text Analysis</h1>
-                  <p className="text-gray-600 text-sm">
-                    Analyze text for clarity, comprehension, and potential issues for seniors
-                  </p>
+                  <h1 className="text-xl font-bold text-slate-900">Text Analysis Studio</h1>
+                  <p className="text-sm text-slate-600">Professional document analysis and fact-checking</p>
                 </div>
               </div>
             </div>
 
-            {/* Primary Actions */}
-            <div className="flex items-center gap-3">
-              {/* Annotation Navigation */}
+            {/* Action Controls */}
+            <div className="flex items-center gap-4">
+              {/* Navigation Controls */}
               {filteredAnnotations.length > 0 && (
-                <div className="flex items-center gap-2 text-sm text-gray-600 bg-gray-100 rounded-lg px-3 py-2">
-                  <span>{currentAnnotationIndex + 1} of {filteredAnnotations.length}</span>
+                <div className="flex items-center gap-2 bg-slate-100 rounded-lg px-3 py-2">
+                  <span className="text-sm font-medium text-slate-700">
+                    {currentAnnotationIndex + 1} of {filteredAnnotations.length}
+                  </span>
                   <div className="flex gap-1">
                     <button
                       onClick={() => navigateToAnnotation('prev')}
-                      className="p-1 hover:bg-gray-200 rounded"
+                      className="p-1.5 hover:bg-slate-200 rounded-md transition-colors"
                       disabled={filteredAnnotations.length <= 1}
                     >
-                      <ChevronLeft className="h-3 w-3" />
+                      <ChevronLeft className="h-3.5 w-3.5" />
                     </button>
                     <button
                       onClick={() => navigateToAnnotation('next')}
-                      className="p-1 hover:bg-gray-200 rounded"
+                      className="p-1.5 hover:bg-slate-200 rounded-md transition-colors"
                       disabled={filteredAnnotations.length <= 1}
                     >
-                      <ChevronRight className="h-3 w-3" />
+                      <ChevronRight className="h-3.5 w-3.5" />
                     </button>
                   </div>
                 </div>
               )}
 
-              {/* Filter Dropdown */}
+              {/* Filter Controls */}
               {state.annotations.length > 0 && (
-                <div className="relative">
-                  <select
-                    value={annotationFilter}
-                    onChange={(e) => setAnnotationFilter(e.target.value as AnnotationFilter)}
-                    className="appearance-none bg-white border border-gray-300 rounded-lg px-3 py-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="all">All Highlights</option>
-                    <option value="ai-warning">🔴 AI-Likely</option>
-                    <option value="complexity">🟡 Complex Terms</option>
-                    <option value="factual">🔵 Fact-Check</option>
-                    <option value="general">⚪ General</option>
-                  </select>
-                </div>
+                <select
+                  value={annotationFilter}
+                  onChange={(e) => setAnnotationFilter(e.target.value as AnnotationFilter)}
+                  className="px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="all">All Annotations</option>
+                  <option value="ai-warning">AI Detection</option>
+                  <option value="complexity">Complexity</option>
+                  <option value="factual">Fact-Check</option>
+                  <option value="general">General</option>
+                </select>
               )}
 
-              {/* Clear Actions */}
-              <div className="flex gap-2">
+              {/* Primary Actions */}
+              <div className="flex items-center gap-2">
                 <button
-                  onClick={handleClearAllAnnotations}
-                  disabled={state.annotations.length === 0}
-                  className="px-3 py-2 text-gray-600 hover:text-gray-800 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                  onClick={handleRegenerateAnnotations}
+                  disabled={!state.text.trim() || isGeneratingAnnotations}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 transition-colors"
                 >
-                  Clear Annotations
+                  {isGeneratingAnnotations && (
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                  )}
+                  {isGeneratingAnnotations ? 'Analyzing...' : 'Regenerate'}
                 </button>
+
                 <button
-                  onClick={handleClearText}
-                  disabled={!state.text}
-                  className="px-3 py-2 text-gray-600 hover:text-gray-800 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                  onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                  className="p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-all"
+                  title={sidebarCollapsed ? 'Show sidebar' : 'Hide sidebar'}
                 >
-                  Clear All
+                  {sidebarCollapsed ? <EyeIcon className="h-5 w-5" /> : <EyeSlashIcon className="h-5 w-5" />}
                 </button>
               </div>
-
-              {/* Primary Regenerate Button */}
-              <button
-                onClick={handleRegenerateAnnotations}
-                disabled={!state.text.trim() || isGeneratingAnnotations}
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-              >
-                {isGeneratingAnnotations && (
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                )}
-                {isGeneratingAnnotations ? 'Analyzing...' : 'Regenerate Analysis'}
-              </button>
-
-              {/* Sidebar Toggle */}
-              <button
-                onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-                className="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg"
-                title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-              >
-                {sidebarCollapsed ? <EyeIcon className="h-5 w-5" /> : <EyeSlashIcon className="h-5 w-5" />}
-              </button>
             </div>
           </div>
-
-          {/* Status Summary */}
-          {state.text && (
-            <div className="mt-4 flex items-center gap-6 text-sm">
-              <div className="flex items-center gap-2">
-                <span className="text-gray-600">Annotations:</span>
-                <span className="font-semibold text-blue-600">{state.annotations.length}</span>
-              </div>
-              {state.aiDetection && (
-                <div className="flex items-center gap-2">
-                  <ZapIcon className="h-4 w-4 text-yellow-500" />
-                  <span className="text-gray-600">AI Likelihood:</span>
-                  <span className="font-semibold text-yellow-600">{state.aiDetection.likelihood_score}%</span>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Annotation Legend */}
-          {state.annotations.length > 0 && (
-            <div className="mt-3 flex items-center gap-4 text-xs">
-              <span className="text-gray-500">Legend:</span>
-              <div className="flex gap-3">
-                <div className="flex items-center gap-1" title="AI-generated content detected">
-                  <div className="w-3 h-3 bg-red-400 rounded-full"></div>
-                  <span>AI-Likely</span>
-                </div>
-                <div className="flex items-center gap-1" title="Complex terms that need clarification">
-                  <div className="w-3 h-3 bg-amber-400 rounded-full"></div>
-                  <span>Complex</span>
-                </div>
-                <div className="flex items-center gap-1" title="Facts that should be verified">
-                  <div className="w-3 h-3 bg-blue-400 rounded-full"></div>
-                  <span>Fact-Check</span>
-                </div>
-                <div className="flex items-center gap-1" title="General notes and comments">
-                  <div className="w-3 h-3 bg-gray-400 rounded-full"></div>
-                  <span>General</span>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
-      </div>
+      </header>
 
       {/* Tab Navigation */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="container mx-auto px-6">
+      <div className="bg-white border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <nav className="flex space-x-8" aria-label="Tabs">
             {tabs.map((tab) => {
               const Icon = tab.icon;
@@ -413,9 +355,9 @@ export const ImprovedTeacherFeedback: React.FC<ImprovedTeacherFeedbackProps> = (
                   onClick={() => setActiveTab(tab.id)}
                   className={`${
                     isActive
-                      ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                  } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2`}
+                      ? 'border-blue-500 text-blue-600 bg-blue-50/50'
+                      : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+                  } whitespace-nowrap py-4 px-3 border-b-2 font-medium text-sm flex items-center gap-2 transition-all duration-200 rounded-t-lg`}
                 >
                   <Icon className="h-4 w-4" />
                   {tab.label}
@@ -426,16 +368,24 @@ export const ImprovedTeacherFeedback: React.FC<ImprovedTeacherFeedbackProps> = (
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="container mx-auto px-6 py-6">
-        <div className={`grid gap-6 ${sidebarCollapsed ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-3'}`}>
-          {/* Main Content Area */}
+      {/* Main Content Area */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className={`grid gap-8 ${sidebarCollapsed ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-3'}`}>
+          
+          {/* Primary Content */}
           <div className={`${sidebarCollapsed ? 'col-span-1' : 'lg:col-span-2'} space-y-6`}>
             {activeTab === 'text-analysis' && (
               <>
-                {/* File Upload */}
+                {/* File Upload Section */}
                 {!state.text && (
-                  <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+                  <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+                    <div className="text-center mb-6">
+                      <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-2xl mb-4">
+                        <BookOpen className="h-8 w-8 text-blue-600" />
+                      </div>
+                      <h3 className="text-xl font-semibold text-slate-900 mb-2">Upload Document</h3>
+                      <p className="text-slate-600">Upload a file or paste text to begin analysis</p>
+                    </div>
                     <FileUpload
                       onTextLoaded={handleTextChange}
                       disabled={isLoadingAI || isFactChecking}
@@ -444,26 +394,34 @@ export const ImprovedTeacherFeedback: React.FC<ImprovedTeacherFeedbackProps> = (
                 )}
                 
                 {/* Text Editor */}
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                  <div className="border-b border-gray-200 px-6 py-4">
+                <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                  <div className="border-b border-slate-200 px-6 py-4 bg-slate-50/50">
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <BookOpen className="h-5 w-5 text-blue-500" />
-                        <h2 className="text-lg font-semibold text-gray-900">Text Analysis</h2>
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-blue-100 rounded-lg">
+                          <BookOpen className="h-5 w-5 text-blue-600" />
+                        </div>
+                        <div>
+                          <h2 className="text-lg font-semibold text-slate-900">Document Editor</h2>
+                          <p className="text-sm text-slate-600">Select text to add annotations or fact-check</p>
+                        </div>
                       </div>
                       {state.selectedRange && (
                         <button
                           onClick={handleFactCheck}
                           disabled={isFactChecking}
-                          className="px-4 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 disabled:opacity-50 flex items-center gap-2 font-medium"
+                          className="px-4 py-2 bg-emerald-600 text-white text-sm rounded-xl hover:bg-emerald-700 disabled:opacity-50 flex items-center gap-2 font-medium shadow-sm transition-all duration-200"
                         >
                           {isFactChecking ? (
                             <>
-                              <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
+                              <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
                               Checking...
                             </>
                           ) : (
-                            'Fact-Check Selection'
+                            <>
+                              <Filter className="h-4 w-4" />
+                              Fact-Check Selection
+                            </>
                           )}
                         </button>
                       )}
@@ -494,7 +452,16 @@ export const ImprovedTeacherFeedback: React.FC<ImprovedTeacherFeedbackProps> = (
             )}
 
             {activeTab === 'smart-analysis' && (
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="p-2 bg-yellow-100 rounded-lg">
+                    <ZapIcon className="h-5 w-5 text-yellow-600" />
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-semibold text-slate-900">Smart Analysis</h2>
+                    <p className="text-sm text-slate-600">AI-powered insights and document metrics</p>
+                  </div>
+                </div>
                 <SmartAnalysisPanel
                   text={state.text}
                   annotations={state.annotations}
@@ -504,75 +471,125 @@ export const ImprovedTeacherFeedback: React.FC<ImprovedTeacherFeedbackProps> = (
             )}
 
             {activeTab === 'fact-check' && (
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h2 className="text-lg font-semibold mb-4">Fact-Check Results</h2>
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="p-2 bg-emerald-100 rounded-lg">
+                    <Filter className="h-5 w-5 text-emerald-600" />
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-semibold text-slate-900">Fact-Check Results</h2>
+                    <p className="text-sm text-slate-600">Verification and source analysis</p>
+                  </div>
+                </div>
                 {factCheckError && (
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
-                    <p className="text-red-800 font-semibold">Fact-Check Error</p>
-                    <p className="text-red-700">{factCheckError}</p>
+                  <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
+                    <div className="flex items-center gap-2">
+                      <AlertTriangle className="h-5 w-5 text-red-600" />
+                      <p className="text-red-800 font-semibold">Fact-Check Error</p>
+                    </div>
+                    <p className="text-red-700 mt-1">{factCheckError}</p>
                   </div>
                 )}
                 {factCheckResult ? (
                   <ResultsDisplay result={factCheckResult} />
                 ) : (
-                  <div className="text-center py-8 text-gray-500">
-                    <p>Select text in the editor and click "Fact-Check Selection" to see results here.</p>
+                  <div className="text-center py-12">
+                    <div className="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                      <Filter className="h-8 w-8 text-slate-400" />
+                    </div>
+                    <h3 className="text-lg font-medium text-slate-900 mb-2">No Fact-Check Results</h3>
+                    <p className="text-slate-600">Select text in the editor and click "Fact-Check Selection" to see results here.</p>
                   </div>
                 )}
               </div>
             )}
 
             {activeTab === 'sources' && (
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h2 className="text-lg font-semibold mb-4">Sources & References</h2>
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="p-2 bg-purple-100 rounded-lg">
+                    <Feather className="h-5 w-5 text-purple-600" />
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-semibold text-slate-900">Sources & References</h2>
+                    <p className="text-sm text-slate-600">Credibility assessment and source verification</p>
+                  </div>
+                </div>
                 {factCheckResult?.sources && factCheckResult.sources.length > 0 ? (
                   <div className="space-y-4">
                     {factCheckResult.sources.map((source) => (
-                      <div key={source.url} className="border border-gray-200 rounded-lg p-4">
-                        <h3 className="font-medium text-gray-900 mb-2">{source.title}</h3>
-                        <p className="text-gray-600 text-sm mb-2">{source.summary}</p>
+                      <div key={source.url} className="border border-slate-200 rounded-xl p-6 hover:shadow-md transition-shadow">
+                        <h3 className="font-semibold text-slate-900 mb-2">{source.title}</h3>
+                        <p className="text-slate-600 text-sm mb-4">{source.summary}</p>
                         <div className="flex items-center justify-between">
                           <a
                             href={source.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-blue-600 hover:text-blue-800 text-sm"
+                            className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors"
                           >
-                            View Source →
+                            View Source
+                            <ChevronRight className="h-4 w-4" />
                           </a>
-                          <span className={`px-2 py-1 rounded text-xs font-medium ${
+                          <span className={`px-3 py-1 rounded-full text-xs font-medium ${
                             (() => {
                               switch (source.credibility.rating) {
-                                case 'Very High': return 'bg-green-100 text-green-700';
+                                case 'Very High': return 'bg-emerald-100 text-emerald-700';
                                 case 'High': return 'bg-blue-100 text-blue-700';
                                 case 'Medium': return 'bg-yellow-100 text-yellow-700';
                                 default: return 'bg-red-100 text-red-700';
                               }
                             })()
                           }`}>
-                            {source.credibility.rating}
+                            {source.credibility.rating} Credibility
                           </span>
                         </div>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <div className="text-center py-8 text-gray-500">
-                    <p>No sources available. Perform a fact-check to see source references.</p>
+                  <div className="text-center py-12">
+                    <div className="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                      <Feather className="h-8 w-8 text-slate-400" />
+                    </div>
+                    <h3 className="text-lg font-medium text-slate-900 mb-2">No Sources Available</h3>
+                    <p className="text-slate-600">Perform a fact-check to see source references and credibility ratings.</p>
                   </div>
                 )}
               </div>
             )}
           </div>
 
-          {/* Sidebar */}
+          {/* Professional Sidebar */}
           {!sidebarCollapsed && (
             <div className="space-y-6">
+              
+              {/* Quick Actions Panel */}
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                <h3 className="text-lg font-semibold text-slate-900 mb-4">Quick Actions</h3>
+                <div className="space-y-3">
+                  <button
+                    onClick={handleClearAllAnnotations}
+                    disabled={state.annotations.length === 0}
+                    className="w-full px-4 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 text-sm disabled:opacity-50 disabled:cursor-not-allowed rounded-lg border border-slate-200 transition-all"
+                  >
+                    Clear Annotations
+                  </button>
+                  <button
+                    onClick={handleClearText}
+                    disabled={!state.text}
+                    className="w-full px-4 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 text-sm disabled:opacity-50 disabled:cursor-not-allowed rounded-lg border border-slate-200 transition-all"
+                  >
+                    Clear All Text
+                  </button>
+                </div>
+              </div>
+
               {/* Overview Card */}
               {!state.text ? (
                 <CardSkeleton hasHeader={true} hasStats={true} />
               ) : (
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
                   <OverviewCard
                     text={state.text}
                     aiLikelihood={state.aiDetection?.likelihood_score || null}
@@ -601,12 +618,17 @@ export const ImprovedTeacherFeedback: React.FC<ImprovedTeacherFeedbackProps> = (
                 </div>
               )}
 
-              {/* Annotations Sidebar */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200">
-                <div className="border-b border-gray-200 px-6 py-4">
-                  <h3 className="text-lg font-semibold">
-                    Annotations ({filteredAnnotations.length})
-                  </h3>
+              {/* Annotations Panel */}
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-200">
+                <div className="border-b border-slate-200 px-6 py-4 bg-slate-50/50">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold text-slate-900">
+                      Annotations
+                    </h3>
+                    <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">
+                      {filteredAnnotations.length}
+                    </span>
+                  </div>
                 </div>
                 <div className="p-6">
                   {isGeneratingAnnotations ? (
@@ -619,34 +641,83 @@ export const ImprovedTeacherFeedback: React.FC<ImprovedTeacherFeedbackProps> = (
                             <button
                               key={annotation.id}
                               onClick={() => handleAnnotationClick(annotation)}
-                              className={`w-full p-3 rounded-lg border cursor-pointer transition-all text-left ${
+                              className={`w-full p-4 rounded-xl border cursor-pointer transition-all text-left hover:shadow-sm ${
                                 annotation.id === state.activeAnnotationId
-                                  ? 'ring-2 ring-blue-500 ' + getAnnotationColorClass(annotation.comment || '')
-                                  : 'hover:shadow-sm ' + getAnnotationColorClass(annotation.comment || '')
+                                  ? 'ring-2 ring-blue-500 border-blue-200 bg-blue-50'
+                                  : 'border-slate-200 hover:border-slate-300 ' + getAnnotationColorClass(annotation.comment || '')
                               }`}
                             >
-                              <div className="flex items-start justify-between gap-2">
-                                <div className="flex-1">
-                                  <p className="text-sm font-medium truncate">{annotation.text}</p>
-                                  <p className="text-xs mt-1 line-clamp-2">{annotation.comment}</p>
+                              <div className="flex items-start justify-between gap-3">
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm font-medium text-slate-900 truncate mb-1">
+                                    {annotation.text}
+                                  </p>
+                                  <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
+                                    {annotation.comment}
+                                  </p>
                                 </div>
-                                <span className="text-xs text-gray-500 flex-shrink-0">
-                                  {index + 1}
-                                </span>
+                                <div className="flex-shrink-0 flex flex-col items-center">
+                                  <span className="text-xs text-slate-500 font-medium">
+                                    #{index + 1}
+                                  </span>
+                                  {annotation.id === state.activeAnnotationId && (
+                                    <CheckCircle className="h-4 w-4 text-blue-600 mt-1" />
+                                  )}
+                                </div>
                               </div>
                             </button>
                           ))}
                         </div>
                       ) : (
-                        <div className="text-center py-8 text-gray-500">
-                          <p className="text-sm">No annotations yet</p>
-                          <p className="text-xs mt-1">Add text to see analysis</p>
+                        <div className="text-center py-8">
+                          <div className="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center mx-auto mb-3">
+                            <BookOpen className="h-6 w-6 text-slate-400" />
+                          </div>
+                          <h4 className="text-sm font-medium text-slate-900 mb-1">No annotations yet</h4>
+                          <p className="text-xs text-slate-600">Add text to see analysis</p>
                         </div>
                       )}
                     </>
                   )}
                 </div>
               </div>
+
+              {/* Analysis Legend */}
+              {state.annotations.length > 0 && (
+                <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                  <h3 className="text-lg font-semibold text-slate-900 mb-4">Analysis Types</h3>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-4 h-4 bg-red-400 rounded-full"></div>
+                      <div>
+                        <p className="text-sm font-medium text-slate-900">AI Detection</p>
+                        <p className="text-xs text-slate-600">Content likely generated by AI</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="w-4 h-4 bg-amber-400 rounded-full"></div>
+                      <div>
+                        <p className="text-sm font-medium text-slate-900">Complexity</p>
+                        <p className="text-xs text-slate-600">Terms needing clarification</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="w-4 h-4 bg-blue-400 rounded-full"></div>
+                      <div>
+                        <p className="text-sm font-medium text-slate-900">Fact-Check</p>
+                        <p className="text-xs text-slate-600">Claims requiring verification</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="w-4 h-4 bg-slate-400 rounded-full"></div>
+                      <div>
+                        <p className="text-sm font-medium text-slate-900">General</p>
+                        <p className="text-xs text-slate-600">Notes and comments</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
