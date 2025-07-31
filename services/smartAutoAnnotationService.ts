@@ -59,7 +59,8 @@ export class SmartAutoAnnotationService {
 
   // Check if text actually seems AI-generated (more sophisticated filtering)
   private isLikelyAIContent(text: string, score: number): boolean {
-    if (score < 50) return false;
+    // Allow more annotations to be generated - lower threshold for production debugging
+    if (score < 10) return false;
     
     // Additional checks for AI patterns
     const aiPatterns = [
@@ -73,9 +74,9 @@ export class SmartAutoAnnotationService {
     ];
     
     const hasAIPatterns = aiPatterns.some(pattern => pattern.test(text));
-    const isVeryHighScore = score > 80;
+    const isModerateScore = score > 30; // Lower threshold for better debugging
     
-    return hasAIPatterns || isVeryHighScore;
+    return hasAIPatterns || isModerateScore;
   }
 
   async generateAutoAnnotations(text: string): Promise<Annotation[]> {
@@ -114,33 +115,31 @@ export class SmartAutoAnnotationService {
         }
       });
 
-      // Get AI analysis with smarter filtering
+      // Get AI analysis with smarter filtering - ALWAYS INCLUDE FOR DEBUGGING
       console.log('Getting AI analysis...');
       const aiAnalysis = await this.getAIAnalysis(text);
       console.log('AI analysis result:', aiAnalysis);
-      if (this.isLikelyAIContent(text, aiAnalysis.likelihood_score)) {
+      
+      // Create AI annotations regardless of score for better analysis visibility
+      if (aiAnalysis.likelihood_score > 0) {
         annotations.push(...this.createSmartAIAnnotations(text, aiAnalysis));
       }
-      
-      // Get text complexity analysis
+
+      // Get text complexity analysis - ALWAYS INCLUDE
       console.log('Getting complexity analysis...');
       const complexityAnalysis = await this.getTextComplexity(text);
       console.log('Complexity analysis result:', complexityAnalysis);
       annotations.push(...this.createSmartComplexityAnnotations(text, complexityAnalysis));
       
-      // Get factual claims analysis with filtering
-      if (this.isFactCheckWorthy(text)) {
-        console.log('Getting factual claims analysis...');
-        const factualAnalysis = await this.getFactualClaims(text);
-        console.log('Factual analysis result:', factualAnalysis);
-        annotations.push(...this.createSmartFactualAnnotations(text, factualAnalysis));
-      }
+      // Get factual claims analysis with BROADER filtering for more annotations
+      console.log('Getting factual claims analysis...');
+      const factualAnalysis = await this.getFactualClaims(text);
+      console.log('Factual analysis result:', factualAnalysis);
+      annotations.push(...this.createSmartFactualAnnotations(text, factualAnalysis));
       
-      // Generate helpful summary for long content
-      if (text.length > 500) {
-        console.log('Adding summary annotations for long content...');
-        annotations.push(...this.createHelpfulSummaryAnnotations(text));
-      }
+      // Generate helpful summary for ANY content (removed length filter)
+      console.log('Adding summary annotations...');
+      annotations.push(...this.createHelpfulSummaryAnnotations(text));
       
       console.log('Generated annotations:', annotations);
       return annotations;
@@ -148,9 +147,7 @@ export class SmartAutoAnnotationService {
       console.error('Failed to generate smart annotations:', error);
       return [];
     }
-  }
-
-  private async getAIAnalysis(text: string): Promise<AIAnalysisResult> {
+  }  private async getAIAnalysis(text: string): Promise<AIAnalysisResult> {
     try {
       const response = await fetch(this.getProxyURL(), {
         method: 'POST',
@@ -269,10 +266,11 @@ export class SmartAutoAnnotationService {
       return annotations;
     }
     
-    // Only create annotation for high-confidence AI detection
-    if (analysis.likelihood_score > 70) {
-      const endPos = Math.min(150, text.length);
-      const observations = Array.isArray(analysis.observations) ? analysis.observations : [];
+    // Create annotation for ANY AI detection score for better debugging visibility
+    const endPos = Math.min(150, text.length);
+    const observations = Array.isArray(analysis.observations) ? analysis.observations : [];
+    
+    if (analysis.likelihood_score > 50) {
       annotations.push({
         id: `ai-warning-${Date.now()}`,
         start: 0,
@@ -282,10 +280,23 @@ export class SmartAutoAnnotationService {
         comment: `🤖 HIGH AI LIKELIHOOD (${analysis.likelihood_score}%): This text shows strong patterns of AI generation. Key indicators: ${observations.slice(0, 2).join('; ')}. Be especially cautious of any facts or claims.`,
         timestamp: Date.now()
       });
-    } else if (analysis.likelihood_score > 85) {
-      // Only highlight specific suspicious segments for very high scores
-      const highlights = Array.isArray(analysis.highlights) ? analysis.highlights : [];
-      highlights.slice(0, 2).forEach((highlight, index) => {
+    } else if (analysis.likelihood_score > 0) {
+      // Show analysis even for low scores to help with debugging
+      annotations.push({
+        id: `ai-analysis-${Date.now()}`,
+        start: 0,
+        end: endPos,
+        text: text.substring(0, endPos),
+        type: 'comment',
+        comment: `🔍 AI Analysis (${analysis.likelihood_score}%): ${observations.length > 0 ? observations.slice(0, 3).join('; ') : 'Analysis completed with human-like characteristics detected.'}`,
+        timestamp: Date.now()
+      });
+    }
+    
+    // Add specific highlights for any detected patterns
+    if (analysis.highlights && Array.isArray(analysis.highlights)) {
+      const highlights = analysis.highlights;
+      highlights.slice(0, 3).forEach((highlight, index) => {
         if (highlight && typeof highlight.start === 'number' && typeof highlight.end === 'number') {
           annotations.push({
             id: `ai-highlight-${Date.now()}-${index}`,
@@ -402,7 +413,8 @@ export class SmartAutoAnnotationService {
     const annotations: Annotation[] = [];
     const sentences = text.split(/[.!?]+/).filter(s => s.trim());
     
-    if (sentences.length > 10) {
+    // Add helpful information for any text content
+    if (sentences.length >= 3) {
       // Add a helpful summary at the beginning
       const firstSentence = sentences[0].trim();
       annotations.push({
@@ -411,7 +423,21 @@ export class SmartAutoAnnotationService {
         end: firstSentence.length + 1,
         text: firstSentence,
         type: 'comment',
-        comment: `📖 Long Article: This text has ${sentences.length} sentences. Take your time reading it. The main topic appears to be about ${this.extractMainTopic(text)}.`,
+        comment: `📖 Text Overview: This content has ${sentences.length} sentences about ${this.extractMainTopic(text)}. ${sentences.length > 10 ? 'Take your time reading this longer text.' : 'This is a manageable length for reading.'}`,
+        timestamp: Date.now()
+      });
+    }
+    
+    // Add reading tips for any substantial content
+    if (text.length > 200) {
+      const midPoint = Math.floor(text.length / 2);
+      annotations.push({
+        id: `reading-tip-${Date.now()}`,
+        start: midPoint,
+        end: Math.min(midPoint + 50, text.length),
+        text: text.substring(midPoint, Math.min(midPoint + 50, text.length)),
+        type: 'comment',
+        comment: `💡 Reading Tip: This section contains key information. If any terms seem unclear, take time to look them up or ask for clarification.`,
         timestamp: Date.now()
       });
     }
