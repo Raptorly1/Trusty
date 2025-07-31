@@ -1,7 +1,11 @@
 import { FactCheckResult } from '../types/factCheckTypes';
 
-// Use the same proxy URL structure as the main service
-const GEMINI_PROXY_URL = import.meta.env.VITE_GEMINI_PROXY_URL || 'http://localhost:5001/api/gemini';
+// Use dynamic proxy URL based on environment - same pattern as other services
+const getProxyURL = (): string => {
+    return window.location.hostname === 'localhost' 
+        ? 'http://localhost:5001/api/gemini'
+        : 'https://trusty-ldqx.onrender.com/api/gemini';
+};
 
 export const getFactCheck = async (context: string, statement: string): Promise<FactCheckResult> => {
     const prompt = `
@@ -50,7 +54,7 @@ Return ONLY a JSON object in this exact format (no markdown, no extra text):
 `;
 
     try {
-        const response = await fetch(GEMINI_PROXY_URL, {
+        const response = await fetch(getProxyURL(), {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
