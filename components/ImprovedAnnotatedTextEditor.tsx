@@ -11,6 +11,7 @@ interface AnnotatedTextEditorProps {
   onAnnotationSelect?: (id: string | null) => void;
   onAnnotationEdit?: (id: string, text: string, comment: string) => void;
   onAnnotationDelete?: (id: string) => void;
+  onSelectionChange?: (selection: { start: number; end: number; text: string } | null) => void;
   disabled?: boolean;
   placeholder?: string;
 }
@@ -94,6 +95,7 @@ export const AnnotatedTextEditor: React.FC<AnnotatedTextEditorProps> = ({
   onAnnotationSelect,
   onAnnotationEdit,
   onAnnotationDelete,
+  onSelectionChange,
   disabled = false,
   placeholder = "Paste or type your text here..."
 }) => {
@@ -139,6 +141,22 @@ export const AnnotatedTextEditor: React.FC<AnnotatedTextEditorProps> = ({
   const handleTextChangeInternal = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
     onTextChange(e.target.value);
   }, [onTextChange]);
+
+  // Handle text selection changes for fact-checking
+  const handleSelectionChange = useCallback(() => {
+    const textarea = textareaRef.current;
+    if (!textarea || !onSelectionChange) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    
+    if (start !== end) {
+      const selectedText = text.slice(start, end);
+      onSelectionChange({ start, end, text: selectedText });
+    } else {
+      onSelectionChange(null);
+    }
+  }, [text, onSelectionChange]);
 
   // Create highlighted text segments
   const createHighlightedText = () => {
@@ -256,6 +274,9 @@ export const AnnotatedTextEditor: React.FC<AnnotatedTextEditorProps> = ({
           ref={textareaRef}
           value={text}
           onChange={handleTextChangeInternal}
+          onSelect={handleSelectionChange}
+          onMouseUp={handleSelectionChange}
+          onKeyUp={handleSelectionChange}
           disabled={disabled}
           placeholder={placeholder}
           className="w-full h-64 p-4 resize-none border-none outline-none bg-transparent relative z-10 font-mono text-sm leading-relaxed"

@@ -266,10 +266,22 @@ export class SmartAutoAnnotationService {
       return annotations;
     }
     
-    // Create annotation for ANY AI detection score for better debugging visibility
+    // ALWAYS display AI likelihood score prominently regardless of score
     const endPos = Math.min(150, text.length);
     const observations = Array.isArray(analysis.observations) ? analysis.observations : [];
     
+    // Main AI likelihood annotation - ALWAYS SHOW
+    annotations.push({
+      id: `ai-likelihood-${Date.now()}`,
+      start: 0,
+      end: endPos,
+      text: text.substring(0, endPos),
+      type: 'comment',
+      comment: `📊 AI Detection Score: ${analysis.likelihood_score}% ${analysis.likelihood_score > 70 ? '(Very High - Likely AI)' : analysis.likelihood_score > 50 ? '(High - Possibly AI)' : analysis.likelihood_score > 25 ? '(Moderate - Some AI Patterns)' : '(Low - Appears Human)'}`,
+      timestamp: Date.now()
+    });
+    
+    // Additional analysis for higher scores
     if (analysis.likelihood_score > 50) {
       annotations.push({
         id: `ai-warning-${Date.now()}`,
