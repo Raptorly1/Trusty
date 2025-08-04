@@ -6,9 +6,10 @@ interface HomepageProps {
   onStartCourse: () => void;
   onGoToAIChecker: () => void;
   onGoToTeacherFeedback: () => void;
+  onGoToNextGenFeedback?: () => void;
 }
 
-const Homepage: React.FC<HomepageProps> = ({ onStartCourse, onGoToAIChecker, onGoToTeacherFeedback }) => {
+const Homepage: React.FC<HomepageProps> = ({ onStartCourse, onGoToAIChecker, onGoToTeacherFeedback, onGoToNextGenFeedback }) => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 p-4 sm:p-6 lg:p-8">
       <div className="w-full max-w-4xl mx-auto text-center">
@@ -89,6 +90,14 @@ const Homepage: React.FC<HomepageProps> = ({ onStartCourse, onGoToAIChecker, onG
           >
             Feedback Tool (includes AI Detection)
           </button>
+          {onGoToNextGenFeedback && (
+            <button
+              onClick={onGoToNextGenFeedback}
+              className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-purple-700 text-white font-bold text-lg py-3 px-8 rounded-full shadow-md hover:bg-purple-800 transition-all focus:outline-none focus:ring-4 focus:ring-purple-300"
+            >
+              Next-Gen Feedback (UI/UX Preview)
+            </button>
+          )}
         </div>
 
         {/* Curriculum Overview */}
