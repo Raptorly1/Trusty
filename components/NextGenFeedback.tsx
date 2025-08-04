@@ -35,7 +35,7 @@ const NextGenFeedback: React.FC = () => {
               setText={setText}
               annotations={annotations}
               setAnnotations={setAnnotations}
-              onFactCheck={(sel) => {
+              onFactCheck={(sel: string) => {
                 setSelectedText(sel);
                 setShowFactCheck(true);
               }}
@@ -46,7 +46,7 @@ const NextGenFeedback: React.FC = () => {
           <aside className="w-full md:w-96 mt-8 md:mt-0">
             <NextGenSidebar
               annotations={annotations}
-              onAnnotationClick={(id) => {
+              onAnnotationClick={(id: string) => {
                 // TODO: scroll to annotation in editor
               }}
               onClearAll={() => setAnnotations([])}
