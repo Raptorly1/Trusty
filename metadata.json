@@ -1,7 +1,0 @@
-{
-  "name": "Trusty Digital Guardian",
-  "description": "An educational platform and suite of tools designed to help users, especially seniors, navigate the digital world safely. Features include a digital safety course, AI text and image checkers, a content feedback tool, and a fact-checker.",
-  "requestFramePermissions": [
-    "microphone"
-  ]
-}
