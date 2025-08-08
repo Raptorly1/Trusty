@@ -251,10 +251,105 @@ const CoursePage: React.FC = () => {
                 const content = await loader();
                 return content;
             }));
-            // Merge markdown content with original courseModules
+            // Define new exercises for each module
+            const newExercises = [
+                // Module 1: Quiz - Safe/Unsafe actions
+                {
+                    type: ExerciseType.QUIZ,
+                    question: "Which of the following is a safe online habit?",
+                    options: [
+                        { text: "Clicking on links from unknown emails.", isCorrect: false },
+                        { text: "Using strong, unique passwords for each account.", isCorrect: true },
+                        { text: "Sharing your birthday on public forums.", isCorrect: false },
+                        { text: "Responding to urgent requests for money online.", isCorrect: false },
+                    ],
+                    correctFeedback: "Correct! Strong, unique passwords are a key part of online safety.",
+                    incorrectFeedback: "Not quite. The safest habit is using strong, unique passwords for each account."
+                },
+                // Module 2: Scam Identification
+                {
+                    type: ExerciseType.SCAM_IDENTIFICATION,
+                    instructions: "Tap the messages below that you think are scams.",
+                    items: [
+                        { content: "URGENT: Your bank account is locked. Click here to verify your details immediately: bit.ly/bank-fix", isScam: true, explanation: "This is a scam. Urgent language and suspicious links are red flags." },
+                        { content: "Hi, your library book is due next Friday. You can renew it online at our official website.", isScam: false, explanation: "This is likely safe. No urgent demands or suspicious links." },
+                        { content: "Congratulations! You won a FREE cruise! Provide your credit card for a small fee.", isScam: true, explanation: "Classic scam. Legitimate prizes don't require payment or credit card details." },
+                        { content: "Reminder: Your doctor's appointment is scheduled for next week.", isScam: false, explanation: "This is a normal reminder from a trusted source." },
+                    ]
+                },
+                // Module 3: Quiz - Fake news verification
+                {
+                    type: ExerciseType.QUIZ,
+                    question: "You see a shocking news story online. What's the BEST first step?",
+                    options: [
+                        { text: "Share it immediately so your friends are aware.", isCorrect: false },
+                        { text: "Check if respected news sources are reporting the same thing.", isCorrect: true },
+                        { text: "Believe it because it looks professionally written.", isCorrect: false },
+                        { text: "Comment to argue with people.", isCorrect: false },
+                    ],
+                    correctFeedback: "Excellent! Checking other reliable sources is the most important step.",
+                    incorrectFeedback: "Pause before sharing. Checking other sources helps prevent misinformation."
+                },
+                // Module 4: Scam Identification - Safe websites/links
+                {
+                    type: ExerciseType.SCAM_IDENTIFICATION,
+                    instructions: "Select which of these websites or links are safe to use.",
+                    items: [
+                        { content: "https://www.bankofamerica.com", isScam: false, explanation: "This is a legitimate bank website (look for https and correct spelling)." },
+                        { content: "http://amaz0n.com/win-prize", isScam: true, explanation: "Misspelled domain and prize offer are red flags." },
+                        { content: "https://www.irs.gov", isScam: false, explanation: "Official government site (https, correct spelling)." },
+                        { content: "http://face-book.net/login", isScam: true, explanation: "Fake domain and login prompt are signs of a scam." },
+                    ]
+                },
+                // Module 5: Password Checker
+                {
+                    type: ExerciseType.PASSWORD_CHECKER
+                },
+                // Module 6: Quiz - Spotting AI-generated fakes
+                {
+                    type: ExerciseType.QUIZ,
+                    question: "Which is a good way to spot AI-generated fake images?",
+                    options: [
+                        { text: "Look for too many fingers or distorted hands.", isCorrect: true },
+                        { text: "Trust any image that looks realistic.", isCorrect: false },
+                        { text: "Ignore blurry backgrounds.", isCorrect: false },
+                        { text: "Share images without checking sources.", isCorrect: false },
+                    ],
+                    correctFeedback: "Correct! AI images often have odd details like too many fingers.",
+                    incorrectFeedback: "Not quite. Odd details like too many fingers are a sign of AI fakes."
+                },
+                // Module 7: Quiz - Cyber hygiene habits
+                {
+                    type: ExerciseType.QUIZ,
+                    question: "What's the best cyber hygiene habit?",
+                    options: [
+                        { text: "Install updates regularly.", isCorrect: true },
+                        { text: "Download apps from pop-up ads.", isCorrect: false },
+                        { text: "Share passwords with friends.", isCorrect: false },
+                        { text: "Ignore privacy settings.", isCorrect: false },
+                    ],
+                    correctFeedback: "Correct! Regular updates keep your devices secure.",
+                    incorrectFeedback: "Nope. Installing updates is the best habit for security."
+                },
+                // Module 8: Quiz - Reporting scams
+                {
+                    type: ExerciseType.QUIZ,
+                    question: "If you think you've been scammed, what's the FIRST thing you should do?",
+                    options: [
+                        { text: "Report it to the FTC or local authorities.", isCorrect: true },
+                        { text: "Keep it secret and hope it goes away.", isCorrect: false },
+                        { text: "Send money to the scammer to fix it.", isCorrect: false },
+                        { text: "Delete all your accounts immediately.", isCorrect: false },
+                    ],
+                    correctFeedback: "Correct! Reporting helps stop scammers and protects others.",
+                    incorrectFeedback: "Not quite. Reporting is the most important first step."
+                }
+            ];
+            // Merge markdown content with new exercises
             const merged = originalCourseModules.map((mod, idx) => ({
                 ...mod,
                 content: loadedMarkdowns[idx] || '',
+                exercise: newExercises[idx]
             }));
             setCourseModules(merged);
         };
