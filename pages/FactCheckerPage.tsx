@@ -208,7 +208,6 @@ const FactCheckerPage: React.FC = () => {
                                                 <div className="flex justify-between items-start gap-4">
                                                     <div className="flex-grow">
                                                         <a href={source.url} target="_blank" rel="noopener noreferrer" className="link link-primary font-semibold text-lg" title={source.url}>{source.title}</a>
-                                                        <p className="text-sm text-base-content/70 truncate" title={source.url}>{source.url}</p>
                                                     </div>
                                                     <div className="flex-shrink-0">
                                                         <CredibilityBadge credibility={source.credibility} />
