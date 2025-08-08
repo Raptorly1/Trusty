@@ -1,15 +1,46 @@
-
-import { GoogleGenAI, Type } from "@google/genai";
+import { Type } from "@google/genai";
 import { AITextAnalysisResult, AnnotationType, FeedbackResult, AIImageAnalysisResult, SourceCredibility } from '../types';
-import { API_KEY } from '../config';
 
-if (!API_KEY) {
-  // In a real app, you'd want to handle this more gracefully.
-  // For this environment, we assume the key is present.
-  console.warn("VITE_API_KEY environment variable not set. Gemini API calls will fail.");
+const PROXY_URL = 'https://trusty-ldqx.onrender.com/api/gemini';
+
+/**
+ * A helper function to call the backend proxy which in turn calls the Gemini API.
+ * @param endpoint The Gemini SDK method to call (e.g., 'generateContent').
+ * @param params The parameters for the SDK method.
+ * @returns The response from the Gemini API, as returned by the proxy.
+ */
+async function callGeminiProxy(endpoint: string, params: any): Promise<any> {
+  try {
+    const response = await fetch(PROXY_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ endpoint, params }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      let errorMessage = `Proxy API call failed with status ${response.status}`;
+      try {
+        const errorJson = JSON.parse(errorText);
+        errorMessage = errorJson.message || errorJson.error || errorMessage;
+      } catch (e) {
+        if (errorText) {
+          errorMessage = `${errorMessage}: ${errorText}`;
+        }
+      }
+      throw new Error(errorMessage);
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error('Error calling Gemini proxy:', error);
+    // Re-throw the error to be caught by the calling function's try/catch block
+    throw error;
+  }
 }
 
-const ai = new GoogleGenAI({ apiKey: API_KEY! });
 
 const textAnalysisSchema = {
   type: Type.OBJECT,
@@ -54,7 +85,7 @@ ${text}
 
 Your response MUST be in JSON format and adhere to the provided schema. Highlight specific phrases, not just single words.`;
 
-  const response = await ai.models.generateContent({
+  const params = {
     model: 'gemini-2.5-flash',
     contents: prompt,
     config: {
@@ -62,8 +93,9 @@ Your response MUST be in JSON format and adhere to the provided schema. Highligh
       responseSchema: textAnalysisSchema,
       temperature: 0.2,
     }
-  });
-
+  };
+  
+  const response = await callGeminiProxy('generateContent', params);
   const jsonResponse = JSON.parse(response.text);
   return jsonResponse as AITextAnalysisResult;
 };
@@ -102,8 +134,8 @@ ${text}
 ---
 
 Your response MUST be in JSON format and adhere to the provided schema. Ensure snippets are precise.`;
-
-    const response = await ai.models.generateContent({
+    
+    const params = {
         model: 'gemini-2.5-flash',
         contents: prompt,
         config: {
@@ -111,22 +143,24 @@ Your response MUST be in JSON format and adhere to the provided schema. Ensure s
             responseSchema: feedbackSchema,
             temperature: 0.5,
         }
-    });
-
+    };
+    
+    const response = await callGeminiProxy('generateContent', params);
     const jsonResponse = JSON.parse(response.text);
     return jsonResponse as FeedbackResult;
 };
 
 
 export const factCheckClaim = async (claim: string): Promise<{ summary: string, sources: any[] }> => {
-    const response = await ai.models.generateContent({
+    const params = {
         model: "gemini-2.5-flash",
         contents: `Fact-check the following claim and provide a summary of your findings. Use Google Search to find relevant sources. Claim: "${claim}"`,
         config: {
             tools: [{ googleSearch: {} }],
         },
-    });
-
+    };
+    
+    const response = await callGeminiProxy('generateContent', params);
     const summary = response.text;
     const sources = response.candidates?.[0]?.groundingMetadata?.groundingChunks ?? [];
     return { summary, sources };
@@ -160,7 +194,6 @@ export const processFactCheckResults = async (
   summary: string, 
   sources: { uri: string; title: string }[]
 ): Promise<{ annotatedSummary: string, sources: SourceCredibility[] }> => {
-
   const sourceList = sources
     .map((s, i) => `[${i + 1}] ${s.title || 'Untitled'}\nURL: ${s.uri}`)
     .join('\n\n');
@@ -184,7 +217,7 @@ export const processFactCheckResults = async (
     ---
   `;
 
-  const response = await ai.models.generateContent({
+  const params = {
     model: "gemini-2.5-flash",
     contents: prompt,
     config: {
@@ -192,8 +225,9 @@ export const processFactCheckResults = async (
       responseSchema: factCheckProcessorSchema,
       temperature: 0.2,
     }
-  });
+  };
   
+  const response = await callGeminiProxy('generateContent', params);
   const jsonResponse = JSON.parse(response.text);
   
   return {
@@ -201,7 +235,6 @@ export const processFactCheckResults = async (
     sources: jsonResponse.sourceDetails,
   };
 };
-
 
 export const analyzeImageForAI = async (base64Image: string, mimeType: string): Promise<AIImageAnalysisResult> => {
     const imagePart = { inlineData: { data: base64Image, mimeType } };
@@ -234,22 +267,20 @@ export const analyzeImageForAI = async (base64Image: string, mimeType: string): 
 
     const prompt = "Analyze this image for signs of AI generation. Look for common artifacts like strange hands, distorted text, unnatural textures, or logical inconsistencies. Provide a likelihood score and identify specific regions of anomalies with bounding boxes (normalized 0-1 values). Respond in JSON format according to the schema.";
 
-    const response = await ai.models.generateContent({
+    const params = {
         model: 'gemini-2.5-flash',
         contents: { parts: [imagePart, { text: prompt }] },
         config: {
             responseMimeType: 'application/json',
             responseSchema: imageAnalysisSchema
         }
-    });
-
+    };
+    
+    const response = await callGeminiProxy('generateContent', params);
     return JSON.parse(response.text) as AIImageAnalysisResult;
 };
 
 export const generateAudioSummary = async (text: string): Promise<string> => {
-  // This is a mock since Gemini doesn't have a direct text-to-speech model via this SDK yet.
-  // In a real application, you would call a text-to-speech API (like Google's TTS).
-  // For now, we'll use Gemini to create a script for the browser's speech synthesis.
   const prompt = `You are a helpful assistant. Summarize the following text into a short, spoken-word-style script of no more than 3 sentences. The summary should be friendly and easy to understand.
 
 Text to summarize:
@@ -259,14 +290,11 @@ ${text}
 
 Spoken summary:`;
 
-  try {
-    const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: prompt
-    });
-    return response.text;
-  } catch (error) {
-    console.error("Error generating audio summary:", error);
-    return "I was unable to generate an audio summary for this content.";
-  }
+  const params = {
+      model: 'gemini-2.5-flash',
+      contents: prompt
+  };
+  
+  const response = await callGeminiProxy('generateContent', params);
+  return response.text;
 };
