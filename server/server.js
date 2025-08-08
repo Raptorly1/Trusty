@@ -120,7 +120,7 @@ app.post('/api/gemini', async (req, res) => {
     }
 
     // Extract the response text and other relevant data
-    const response = await result.response;
+    const response = result.response;
     const text = response.text();
     
     // Include grounding metadata if available (for fact-checking with search)
@@ -135,21 +135,21 @@ app.post('/api/gemini', async (req, res) => {
     console.error('Error calling Gemini API:', error);
     
     // Handle different types of errors
-    if (error.message && error.message.includes('API key')) {
+    if (error.message?.includes('API key')) {
       return res.status(401).json({ 
         error: 'Invalid API key',
         message: 'The provided API key is invalid or missing'
       });
     }
     
-    if (error.message && error.message.includes('quota')) {
+    if (error.message?.includes('quota')) {
       return res.status(429).json({ 
         error: 'Quota exceeded',
         message: 'API quota has been exceeded'
       });
     }
 
-    if (error.message && error.message.includes('safety')) {
+    if (error.message?.includes('safety')) {
       return res.status(400).json({ 
         error: 'Content blocked by safety filters',
         message: 'The content was blocked by safety filters'
