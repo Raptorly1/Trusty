@@ -63,7 +63,7 @@ const Footer: React.FC = () => {
         ))}
       </nav>
       <aside>
-        <p>Copyright © 2024 - All right reserved by Trusty Digital Guardian</p>
+        <p>All right reserved by Trusty</p>
         <p className="text-sm text-base-content/70">Empowering safe and confident digital navigation.</p>
       </aside>
     </footer>
