@@ -1,12 +1,12 @@
-import { GoogleGenAI, Type, GenerateContentResponse } from "@google/genai";
-import { AITextAnalysisResult, Annotation, AnnotationType, FeedbackResult, AIImageAnalysisResult, SourceCredibility } from '../types';
 
-const API_KEY = process.env.API_KEY;
+import { GoogleGenAI, Type } from "@google/genai";
+import { AITextAnalysisResult, AnnotationType, FeedbackResult, AIImageAnalysisResult, SourceCredibility } from '../types';
+import { API_KEY } from '../config';
 
 if (!API_KEY) {
   // In a real app, you'd want to handle this more gracefully.
   // For this environment, we assume the key is present.
-  console.warn("API_KEY environment variable not set. Gemini API calls will fail.");
+  console.warn("VITE_API_KEY environment variable not set. Gemini API calls will fail.");
 }
 
 const ai = new GoogleGenAI({ apiKey: API_KEY! });
