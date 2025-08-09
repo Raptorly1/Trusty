@@ -211,13 +211,11 @@ const factCheckProcessorSchema = {
             description: "One-sentence justification for the credibility rating."
           }
         },
-        required: ["url", "title", "credibility", "explanation"],
-        additionalProperties: false
+        required: ["url", "title", "credibility", "explanation"]
       }
     }
   },
-  required: ["annotatedSummary", "sourceDetails"],
-  additionalProperties: false
+  required: ["annotatedSummary", "sourceDetails"]
 };
 
 type Credibility =
