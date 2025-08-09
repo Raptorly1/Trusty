@@ -170,27 +170,56 @@ export const factCheckClaim = async (claim: string): Promise<{ summary: string, 
 
 const factCheckProcessorSchema = {
   type: Type.OBJECT,
+  description: "Schema for structured fact-checking output with annotated summary and detailed source analysis.",
   properties: {
     annotatedSummary: {
       type: Type.STRING,
-      description: "A detailed summary of the fact-check findings, with citations like [1], [2] embedded in the text to reference the sources."
+      description: "A detailed summary of the fact-check findings. Include inline citations like [1], [2] that correspond to sources listed in `sourceDetails`."
     },
     sourceDetails: {
       type: Type.ARRAY,
-      description: "An array of sources with their credibility analysis.",
+      description: "List of sources used in the fact-check, each with its credibility rating and a short explanation.",
+      minItems: 1,
       items: {
         type: Type.OBJECT,
         properties: {
-          url: { type: Type.STRING },
-          title: { type: Type.STRING },
-          credibility: { type: Type.STRING, enum: ['Very High', 'High', 'Medium High', 'Medium', 'Medium Low', 'Low', 'Very Low', 'Unknown'] },
-          explanation: { type: Type.STRING, description: "A concise, one-sentence explanation for the credibility rating." }
+          url: { 
+            type: Type.STRING, 
+            format: "uri",
+            description: "Direct link to the source." 
+          },
+          title: { 
+            type: Type.STRING,
+            description: "Title of the source as it appears on the page." 
+          },
+          credibility: { 
+            type: Type.STRING, 
+            enum: [
+              'Very High', 
+              'High', 
+              'Medium High', 
+              'Medium', 
+              'Medium Low', 
+              'Low', 
+              'Very Low', 
+              'Unknown'
+            ],
+            description: "Credibility rating for the source based on reliability, accuracy, relevance, and reputation."
+          },
+          explanation: { 
+            type: Type.STRING,
+            description: "One-sentence justification for the credibility rating."
+          }
         },
         required: ["url", "title", "credibility", "explanation"],
+        additionalProperties: false
       }
     }
-  }
+  },
+  required: ["annotatedSummary", "sourceDetails"],
+  additionalProperties: false
 };
+
 
 export const processFactCheckResults = async (
   summary: string, 
