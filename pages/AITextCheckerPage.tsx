@@ -24,7 +24,8 @@ const HighlightedText: React.FC<{ text: string, highlights: AIHighlight[], color
 
         // Add text before the highlight
         if (startIndex > lastIndex) {
-            parts.push(<span key={`text-${i}`}>{text.substring(lastIndex, startIndex)}</span>);
+            const partText = text.substring(lastIndex, startIndex);
+            parts.push(<span key={`text-${startIndex}-${partText}`}>{partText}</span>);
         }
 
         // Add the highlighted text
@@ -89,7 +90,9 @@ const ResultsDisplay: React.FC<{ result: AITextAnalysisResult, originalText: str
                     <div className="card-body">
                         <h3 className="card-title text-2xl"><Bot className="mr-2"/>Points Towards AI</h3>
                         <ul className="list-disc list-inside space-y-2">
-                            {result.forAI.map((h, i) => <li key={i}><strong>"{h.snippet}"</strong> - {h.reason}</li>)}
+                            {result.forAI.map((h) => (
+                                <li key={h.snippet}><strong>"{h.snippet}"</strong> - {h.reason}</li>
+                            ))}
                         </ul>
                     </div>
                 </div>
@@ -97,7 +100,9 @@ const ResultsDisplay: React.FC<{ result: AITextAnalysisResult, originalText: str
                     <div className="card-body">
                         <h3 className="card-title text-2xl"><Users className="mr-2"/>Points Towards Human</h3>
                          <ul className="list-disc list-inside space-y-2">
-                            {result.againstAI.map((h, i) => <li key={i}><strong>"{h.snippet}"</strong> - {h.reason}</li>)}
+                            {result.againstAI.map((h) => (
+                                <li key={h.snippet}><strong>"{h.snippet}"</strong> - {h.reason}</li>
+                            ))}
                         </ul>
                     </div>
                 </div>

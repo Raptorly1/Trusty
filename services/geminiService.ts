@@ -26,6 +26,7 @@ async function callGeminiProxy(endpoint: string, params: any): Promise<any> {
         const errorJson = JSON.parse(errorText);
         errorMessage = errorJson.message || errorJson.error || errorMessage;
       } catch (e) {
+        console.error('Error parsing error response:', e);
         if (errorText) {
           errorMessage = `${errorMessage}: ${errorText}`;
         }

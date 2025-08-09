@@ -33,7 +33,7 @@ const RenderedSummary: React.FC<{ summary: string; sources: SourceCredibility[] 
     return (
         <p className="whitespace-pre-wrap">
             {parts.filter(Boolean).map((part, i) => {
-                const match = part.match(/\[(\d+)\]/);
+                const match = RegExp(/\[(\d+)\]/).exec(part);
                 if (match) {
                     const sourceIndex = parseInt(match[1], 10) - 1;
                     if (sources[sourceIndex]) {
@@ -222,7 +222,7 @@ const FactCheckerPage: React.FC = () => {
                                                 id="credibility-sort"
                                                 className="select select-bordered"
                                                 value={sortOrder}
-                                                onChange={(e) => setSortOrder(e.target.value)}
+                                                onChange={(e) => setSortOrder(e.target.value as 'default' | 'high-to-low' | 'low-to-high')}
                                                 aria-label="Sort sources by credibility"
                                             >
                                                 <option value="default">Default Order</option>
