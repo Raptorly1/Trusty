@@ -26,9 +26,9 @@ const FeatureCard: React.FC<{ icon: React.ReactNode, title: string, description:
 
 const HomePage: React.FC = () => {
   return (
-    <div className="space-y-24">
-      {/* Hero & Clara's Story */}
-      <section className="hero min-h-[60vh] bg-base-200 rounded-box flex flex-col justify-center items-center py-12">
+    <div className="space-y-16 relative">
+  {/* Hero & Clara's Story */}
+  <section className="hero min-h-[60vh] bg-base-200 rounded-box flex flex-col justify-center items-center py-8">
         <div className="max-w-3xl w-full text-center space-y-10">
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
@@ -66,8 +66,8 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* Why Trusty Matters */}
-      <section className="max-w-4xl mx-auto text-center py-16">
+  {/* Why Trusty Matters */}
+  <section className="max-w-4xl mx-auto text-center py-12 bg-base-100 rounded-xl">
         <h2 className="text-5xl font-bold mb-12">Why Trusty Matters</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           <div className="bg-base-100 rounded-xl shadow p-6 text-xl border border-base-300 transition hover:scale-105 hover:border-primary cursor-pointer flex flex-col items-center gap-2">
@@ -89,8 +89,8 @@ const HomePage: React.FC = () => {
         <p className="text-2xl text-base-content/80 max-w-2xl mx-auto">But don’t worry! You don’t need to be a tech expert. Trusty will guide you, one simple step at a time. Trusty is always here for you.</p>
       </section>
 
-      {/* What You'll Learn */}
-      <section className="max-w-4xl mx-auto py-16">
+  {/* What You'll Learn */}
+  <section className="max-w-4xl mx-auto py-12 bg-base-200 rounded-xl">
         <h2 className="text-5xl font-bold text-center mb-10">What You’ll Learn</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-2xl mx-auto">
           <div className="flex items-start gap-4">
@@ -125,8 +125,8 @@ const HomePage: React.FC = () => {
         <p className="text-xl text-center text-base-content/70 mt-10">All explained in a calm, friendly way, with big text, short lessons, and helpful examples!</p>
       </section>
 
-      {/* Curriculum Overview */}
-      <section className="max-w-4xl mx-auto py-16">
+  {/* Curriculum Overview */}
+  <section className="max-w-4xl mx-auto py-12 bg-base-100 rounded-xl">
         <h2 className="text-5xl font-bold text-center mb-12">TRUSTY Digital Safety Course</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {[
@@ -181,8 +181,8 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* Free Tools You Can Try Right Now */}
-      <section className="max-w-4xl mx-auto py-16">
+  {/* Free Tools You Can Try Right Now */}
+  <section className="max-w-4xl mx-auto py-12 bg-base-200 rounded-xl">
         <h2 className="text-4xl font-bold text-center mb-10 text-primary">Free Tools You Can Try Right Now</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <FeatureCard 
@@ -211,6 +211,22 @@ const HomePage: React.FC = () => {
           />
         </div>
       </section>
+      {/* Floating Sticky CTA Button */}
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="fixed bottom-4 right-4 left-4 md:left-auto md:right-8 z-50 flex justify-center md:justify-end pointer-events-none"
+      >
+        <NavLink
+          to="/course"
+          className="btn btn-accent btn-lg text-lg shadow-lg pointer-events-auto flex items-center gap-2"
+          aria-label="Start Free Course"
+        >
+          <BookOpen className="h-6 w-6" />
+          Start Free Course
+        </NavLink>
+      </motion.div>
     </div>
   );
 };
