@@ -1,10 +1,9 @@
-
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { finalQuizQuestions } from '../constants/courseData';
 import ReactMarkdown from 'react-markdown';
-import { CourseModule, ExerciseType, QuizOption, ScamItem } from '../types';
-import { CheckCircle, XCircle, Star, ArrowRight, RotateCcw } from 'lucide-react';
+import { CourseModule, ExerciseType, ScamItem } from '../types';
+import { CheckCircle, Star, ArrowRight, RotateCcw } from 'lucide-react';
 
 const PasswordChecker: React.FC = () => {
     const [password, setPassword] = useState('');
@@ -155,14 +154,18 @@ const SingleQuizExercise: React.FC<{ module: CourseModule, onComplete: () => voi
 
 // Checklist activity component
 const ChecklistExercise: React.FC<{ module: CourseModule }> = ({ module }) => {
-    const isChecklist = module.exercise.type === ExerciseType.CHECKLIST;
-    const instructions = isChecklist ? (module.exercise as any).instructions : '';
-    const items = isChecklist ? (module.exercise as any).items : [];
+    // Always call useState, even if not used
+    const items = (module.exercise.type === ExerciseType.CHECKLIST)
+        ? (module.exercise as import('../types').ChecklistExerciseData).items
+        : [];
+    const instructions = (module.exercise.type === ExerciseType.CHECKLIST)
+        ? (module.exercise as import('../types').ChecklistExerciseData).instructions
+        : '';
     const [checked, setChecked] = useState<boolean[]>(Array(items.length).fill(false));
-    if (!isChecklist) return null;
     const handleToggle = (idx: number) => {
         setChecked(prev => prev.map((v, i) => i === idx ? !v : v));
     };
+    if (module.exercise.type !== ExerciseType.CHECKLIST) return null;
     return (
         <div className="space-y-4">
             <h3 className="text-2xl font-semibold mb-2">{instructions}</h3>
@@ -177,7 +180,7 @@ const ChecklistExercise: React.FC<{ module: CourseModule }> = ({ module }) => {
             <div className="alert alert-info mt-4">This activity is just for you. No need to submit!</div>
         </div>
     );
-};
+}
 
 const ScamIdentificationExercise: React.FC<{ module: CourseModule, onComplete: () => void }> = ({ module, onComplete }) => {
     const [selections, setSelections] = useState<Record<number, boolean>>({});
@@ -254,14 +257,14 @@ const FinalQuiz: React.FC<{ onComplete: (score: number) => void }> = ({ onComple
                 <h2 className="card-title text-4xl">Final Quiz!</h2>
                 <p className="text-xl">Let's see what you've learned.</p>
                 <div className="space-y-8 mt-4">
-                    {finalQuizQuestions.map((q, qIndex) => (
-                        <div key={qIndex}>
+                    {finalQuizQuestions.map((q) => (
+                        <div key={q.question}>
                             <h3 className="text-2xl font-semibold">{q.question}</h3>
                             <div className="form-control space-y-2 mt-2">
                                 {q.options.map(option => (
                                     <label key={option} className="label cursor-pointer text-lg">
                                         <span className="label-text text-lg">{option}</span>
-                                        <input type="radio" name={`q-${qIndex}`} className="radio radio-primary" value={option} onChange={() => handleSelect(qIndex, option)} />
+                                        <input type="radio" name={`q-${q.question}`} className="radio radio-primary" value={option} onChange={() => handleSelect(finalQuizQuestions.indexOf(q), option)} />
                                     </label>
                                 ))}
                             </div>
@@ -310,14 +313,14 @@ const CoursePage: React.FC = () => {
     const handleNext = () => {
         if (!isExerciseMode) {
             setIsExerciseMode(true);
-        } else {
-            if (currentModuleIndex < courseModules.length - 1) {
-                setCurrentModuleIndex(prev => prev + 1);
-                setIsExerciseMode(false);
-            } else {
-                setIsQuizMode(true);
-            }
+            return;
         }
+        if (currentModuleIndex < courseModules.length - 1) {
+            setCurrentModuleIndex(prev => prev + 1);
+            setIsExerciseMode(false);
+            return;
+        }
+        setIsQuizMode(true);
     }
 
     const handleQuizComplete = (score: number) => {
