@@ -381,14 +381,43 @@ export const analyzeImageForAI = async (base64Image: string, mimeType: string): 
         }
     };
 
-    const prompt = "Analyze this image for signs of AI generation. Look for common artifacts like strange hands, distorted text, unnatural textures, or logical inconsistencies. Provide a likelihood score and identify specific regions of anomalies with bounding boxes (normalized 0-1 values). Respond in JSON format according to the schema.";
+    const prompt = `
+You are an image-forensics assistant. Return a SINGLE JSON object only (no prose) that follows the provided schema.
+
+GOAL
+- Assess whether an image is likely AI-generated.
+- Provide a calibrated likelihood score (0–100).
+- If you spot artifacts, list localized anomalies with short reasons and tight, normalized boxes.
+
+STRONG RULES
+- Do NOT guess: if evidence is weak or ambiguous, lower the score and explain uncertainty.
+- Boxes must be normalized floats in [0,1] for x, y, width, height relative to the whole image.
+- Only include anomalies if you can point to a concrete visual cue (e.g., extra finger joints, warped typography, repeating texture tiling, nonsensical reflections, lighting inconsistencies).
+- Prefer localized, few high-quality boxes over many vague ones. No overlapping duplicates for the same issue.
+- If you cannot confidently localize an artifact, omit the box and lower the overall likelihood.
+- Do not use external knowledge about the subject or camera; base judgments on visible, image-internal evidence only.
+- If no anomalies are found, return an empty array and a conservative likelihood.
+
+CALIBRATION HEURISTICS (guidance, not output):
+- 0–20: No clear artifacts; natural noise/optics consistent.
+- 21–40: Mild peculiarities that can be photographic artifacts or compression.
+- 41–60: Multiple subtle cues (texture repetition, minor hand/depth oddities).
+- 61–80: Clear AI hallmarks (hands/teeth/text/ear geometry issues; mismatched shadows).
+- 81–100: Strong, repeated AI signatures across regions (incoherent text, anatomy failures, impossible geometry).
+
+OUTPUT
+- Follow the schema exactly. Use concise, specific "reason" strings (≤120 chars).
+- Keep numbers to reasonable precision (≤3 decimals).
+`;
+
 
     const params = {
         model: 'gemini-2.5-flash',
         contents: { parts: [imagePart, { text: prompt }] },
         config: {
             responseMimeType: 'application/json',
-            responseSchema: imageAnalysisSchema
+            responseSchema: imageAnalysisSchema,
+            temperature: 0.0,
         }
     };
     
