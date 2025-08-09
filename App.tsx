@@ -35,7 +35,7 @@ const Header: React.FC = () => {
               ))}
             </ul>
           </div>
-          <NavLink to="/" className="btn btn-ghost text-2xl font-bold text-primary normal-case">
+          <NavLink to="/" className="inline-flex items-center gap-2 px-4 py-2 text-2xl font-bold text-primary normal-case rounded-full border border-transparent hover:border-primary hover:bg-primary/10 focus:border-primary focus:bg-primary/20 transition">
             <Shield className="h-7 w-7" /> Trusty
           </NavLink>
         </div>
