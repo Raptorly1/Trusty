@@ -1,8 +1,8 @@
+import { BookOpen, ArrowRight } from 'lucide-react';
 
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Shield, BookOpen, Search, FileText, ImageIcon, CheckSquare } from 'lucide-react';
 
 const FeatureCard: React.FC<{ icon: React.ReactNode, title: string, description: string, link: string }> = ({ icon, title, description, link }) => (
   <motion.div
@@ -27,92 +27,140 @@ const FeatureCard: React.FC<{ icon: React.ReactNode, title: string, description:
 const HomePage: React.FC = () => {
   return (
     <div className="space-y-24">
-      {/* Hero Section */}
-      <section className="hero min-h-[60vh] bg-base-200 rounded-box">
-        <div className="hero-content text-center">
-          <div className="max-w-3xl">
-            <motion.h1 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="text-7xl font-bold text-primary">
-              Navigate the Digital World with Confidence
-            </motion.h1>
-            <motion.p 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="py-6 text-2xl text-base-content/80">
-              Trusty provides easy-to-use tools and simple lessons to help you stay safe and smart online. No jargon, just clear, friendly guidance.
-            </motion.p>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}>
-              <NavLink to="/course" className="btn btn-primary btn-lg text-xl">
-                <BookOpen className="mr-2" /> Start Your Free Course
-              </NavLink>
-            </motion.div>
+      {/* Hero & Clara's Story */}
+      <section className="hero min-h-[60vh] bg-base-200 rounded-box flex flex-col justify-center items-center">
+        <div className="max-w-3xl w-full text-center space-y-8">
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-6xl md:text-7xl font-bold text-primary mb-4">
+            Trusty: Your Guide to Digital Safety
+          </motion.h1>
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="text-2xl md:text-3xl text-base-content/80 mb-6">
+            One simple step at a time, Trusty helps you stay safe, confident, and in control online.
+          </motion.p>
+          <div className="bg-base-100 rounded-xl shadow p-6 text-left text-xl md:text-2xl mx-auto max-w-2xl border border-base-300">
+            <p className="mb-4 font-semibold text-primary">Story from Clara, 72</p>
+            <p className="mb-2">“One morning, I got an email that looked like it came from my bank. It asked me to click a link and update my information.</p>
+            <p className="mb-2">It looked real, but something felt a little off. So I showed it to my son, Mason. He told me it was a scam, and I’m glad I didn’t click it.</p>
+            <p className="mb-2">That’s when I realized: the internet is helpful, but it’s also important to be careful. I wanted to learn more, and that’s how I found Trusty.”</p>
+            <p className="mt-4 italic text-base-content/70">“I feel more confident now. And I know Trusty will always be by my side.”<br/>— Clara, Trusty user</p>
+          </div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}>
+            <NavLink to="/course" className="btn btn-primary btn-lg text-xl mt-8">
+              <BookOpen className="mr-2" /> Start Your Free Course
+            </NavLink>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Why Trusty Matters */}
+      <section className="max-w-4xl mx-auto text-center py-12">
+        <h2 className="text-5xl font-bold mb-8">Why Trusty Matters</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+          <div className="bg-base-100 rounded-xl shadow p-6 text-xl border border-base-300">
+            <p className="font-bold text-primary text-3xl mb-2">1 in 4</p>
+            <p>older adults gets targeted by an online scam every year</p>
+          </div>
+          <div className="bg-base-100 rounded-xl shadow p-6 text-xl border border-base-300">
+            <p className="font-bold text-primary text-3xl mb-2">$3 Billion+</p>
+            <p>seniors lost to fraud in 2023</p>
+          </div>
+          <div className="bg-base-100 rounded-xl shadow p-6 text-xl border border-base-300">
+            <p className="font-bold text-primary text-3xl mb-2">It's Getting Harder</p>
+            <p>With AI, fake websites, and scam calls, it’s harder to tell what’s real</p>
+          </div>
+        </div>
+        <p className="text-2xl text-base-content/80 max-w-2xl mx-auto">But don’t worry! You don’t need to be a tech expert. Trusty will guide you, one simple step at a time. Trusty is always here for you.</p>
+      </section>
+
+      {/* What You'll Learn */}
+      <section className="max-w-4xl mx-auto py-12">
+        <h2 className="text-5xl font-bold text-center mb-8">What You’ll Learn</h2>
+        <ul className="list-disc list-inside text-2xl text-left max-w-2xl mx-auto space-y-4">
+          <li>How to recognize online scams</li>
+          <li>How to spot fake news and photos</li>
+          <li>How to browse the internet safely</li>
+          <li>Where to go for help if something seems suspicious</li>
+        </ul>
+        <p className="text-xl text-center text-base-content/70 mt-8">All explained in a calm, friendly way, with big text, short lessons, and helpful examples!</p>
+      </section>
+
+      {/* Curriculum Overview */}
+      <section className="max-w-4xl mx-auto py-12">
+        <h2 className="text-5xl font-bold text-center mb-8">TRUSTY Digital Safety Course</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="bg-base-100 rounded-xl shadow p-6 border border-base-300">
+            <h3 className="text-2xl font-bold mb-2">Module 1: The Basics</h3>
+            <p className="text-lg">What is Online Safety?</p>
+          </div>
+          <div className="bg-base-100 rounded-xl shadow p-6 border border-base-300">
+            <h3 className="text-2xl font-bold mb-2">Module 2: Common Scams Explained</h3>
+            <p className="text-lg">Internet Scams & How to Spot Them</p>
+          </div>
+          <div className="bg-base-100 rounded-xl shadow p-6 border border-base-300">
+            <h3 className="text-2xl font-bold mb-2">Module 3: Spotting Fake News & Deepfakes</h3>
+            <p className="text-lg">How to tell real from fake online</p>
+          </div>
+          <div className="bg-base-100 rounded-xl shadow p-6 border border-base-300">
+            <h3 className="text-2xl font-bold mb-2">Module 4: Safe Browsing & Websites</h3>
+            <p className="text-lg">How to know if a website can be trusted</p>
+          </div>
+          <div className="bg-base-100 rounded-xl shadow p-6 border border-base-300">
+            <h3 className="text-2xl font-bold mb-2">Module 5: Passwords & Privacy</h3>
+            <p className="text-lg">Protecting your digital life</p>
+          </div>
+          <div className="bg-base-100 rounded-xl shadow p-6 border border-base-300">
+            <h3 className="text-2xl font-bold mb-2">Module 6: AI & Misinformation</h3>
+            <p className="text-lg">Staying smart in an AI-powered world</p>
+          </div>
+          <div className="bg-base-100 rounded-xl shadow p-6 border border-base-300">
+            <h3 className="text-2xl font-bold mb-2">Module 7: Cyber Hygiene Habits</h3>
+            <p className="text-lg">Keeping your digital life clean and healthy</p>
+          </div>
+          <div className="bg-base-100 rounded-xl shadow p-6 border border-base-300">
+            <h3 className="text-2xl font-bold mb-2">Module 8: Reporting & Getting Help</h3>
+            <p className="text-lg">What to do when something goes wrong</p>
+          </div>
+          <div className="bg-base-100 rounded-xl shadow p-6 border border-primary">
+            <h3 className="text-2xl font-bold mb-2 text-primary">Final Quiz & Certificate</h3>
+            <p className="text-lg">Review what you’ve learned and earn your Trusty certificate!</p>
           </div>
         </div>
       </section>
 
-      {/* Testimonial Section */}
-      <section className="text-center max-w-4xl mx-auto">
-        <h2 className="text-5xl font-bold mb-8">A Word From a Friend</h2>
-        <div className="chat chat-start">
-          <div className="chat-image avatar">
-            <div className="w-24 rounded-full">
-              <img alt="Grandmother testimonial" src="https://picsum.photos/id/1027/200/200" />
-            </div>
-          </div>
-          <div className="chat-bubble text-left text-xl">
-            "I used to be so nervous about using my computer, especially with all the scams you hear about. Trusty's lessons were simple and made me feel so much more capable. Now I can email my grandkids without worrying!"
-            <div className="mt-2 font-bold">- Barbara D.</div>
-          </div>
+      {/* Module 1 Preview */}
+      <section className="max-w-3xl mx-auto py-12">
+        <h2 className="text-4xl font-bold mb-6 text-primary">Module 1: The Basics – What is Online Safety?</h2>
+        <div className="bg-base-100 rounded-xl shadow p-6 border border-base-300 text-xl space-y-4">
+          <p>Being safe online means protecting yourself when you use the internet, whether you're on a phone, tablet, or computer.</p>
+          <p>Just like you lock your front door at night or avoid talking to strangers in public, there are simple things you can do to stay safe when you’re online.</p>
+          <ul className="list-disc list-inside space-y-2">
+            <li>Avoid scams that try to trick you out of money or personal information</li>
+            <li>Keep your personal details private (like your name, birthday, or credit card number)</li>
+            <li>Feel confident and in control when reading news, emails, or using apps</li>
+          </ul>
+          <p className="mt-4">Unfortunately, the internet has some bad actors, people who pretend to be someone they’re not, create fake websites, send tricky emails, or share false news stories. Their goal? To confuse or trick you.</p>
+          <ul className="list-disc list-inside space-y-2">
+            <li>Losing money from fake offers or donations</li>
+            <li>Identity theft, where someone pretends to be you using your private details</li>
+            <li>Trust issues, where it becomes hard to know what’s real and what’s not</li>
+          </ul>
+          <p className="mt-4">But don’t worry, Trusty is here to guide you, step-by-step. Once you learn what to look out for and practice a few smart habits, staying safe online becomes much easier, and a lot less stressful!</p>
         </div>
-      </section>
-
-      {/* Tools Overview */}
-      <section>
-        <h2 className="text-5xl font-bold text-center mb-12">Your Digital Toolkit</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <FeatureCard 
-            icon={<FileText size={48} className="text-primary" />}
-            title="AI Text Checker"
-            description="Curious if an email or article was written by a computer? Paste it here to find out."
-            link="/text-checker"
-          />
-          <FeatureCard 
-            icon={<CheckSquare size={48} className="text-primary" />}
-            title="Feedback Tool"
-            description="Get friendly, helpful feedback on your own writing, just like a helpful teacher would give."
-            link="/feedback-tool"
-          />
-          <FeatureCard 
-            icon={<ImageIcon size={48} className="text-primary" />}
-            title="AI Image Checker"
-            description="See a strange picture online? Upload it to check for signs of AI-generation."
-            link="/image-checker"
-          />
-          <FeatureCard 
-            icon={<Search size={48} className="text-primary" />}
-            title="Fact-Checker"
-            description="Check the credibility of a claim or a news story with our simple fact-checking tool."
-            link="/fact-checker"
-          />
-          <FeatureCard 
-            icon={<BookOpen size={48} className="text-primary" />}
-            title="Digital Safety Course"
-            description="Our step-by-step course covers everything from spotting scams to creating strong passwords."
-            link="/course"
-          />
-           <FeatureCard 
-            icon={<Shield size={48} className="text-primary" />}
-            title="Why Trusty?"
-            description="Built on powerful technology, designed for clarity and peace of mind. Your privacy is always our priority."
-            link="/"
-          />
+        <div className="flex justify-center mt-8">
+          <NavLink to="/course" className="btn btn-primary btn-lg text-xl">
+            Start learning about the most common scams!
+            <ArrowRight className="ml-2" />
+          </NavLink>
         </div>
       </section>
     </div>
