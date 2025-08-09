@@ -1,4 +1,4 @@
-import { BookOpen, ArrowRight } from 'lucide-react';
+import { BookOpen } from 'lucide-react';
 
 import React from 'react';
 import { NavLink } from 'react-router-dom';
@@ -137,30 +137,44 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* Module 1 Preview */}
-      <section className="max-w-3xl mx-auto py-12">
-        <h2 className="text-4xl font-bold mb-6 text-primary">Module 1: The Basics – What is Online Safety?</h2>
-        <div className="bg-base-100 rounded-xl shadow p-6 border border-base-300 text-xl space-y-4">
-          <p>Being safe online means protecting yourself when you use the internet, whether you're on a phone, tablet, or computer.</p>
-          <p>Just like you lock your front door at night or avoid talking to strangers in public, there are simple things you can do to stay safe when you’re online.</p>
-          <ul className="list-disc list-inside space-y-2">
-            <li>Avoid scams that try to trick you out of money or personal information</li>
-            <li>Keep your personal details private (like your name, birthday, or credit card number)</li>
-            <li>Feel confident and in control when reading news, emails, or using apps</li>
-          </ul>
-          <p className="mt-4">Unfortunately, the internet has some bad actors, people who pretend to be someone they’re not, create fake websites, send tricky emails, or share false news stories. Their goal? To confuse or trick you.</p>
-          <ul className="list-disc list-inside space-y-2">
-            <li>Losing money from fake offers or donations</li>
-            <li>Identity theft, where someone pretends to be you using your private details</li>
-            <li>Trust issues, where it becomes hard to know what’s real and what’s not</li>
-          </ul>
-          <p className="mt-4">But don’t worry, Trusty is here to guide you, step-by-step. Once you learn what to look out for and practice a few smart habits, staying safe online becomes much easier, and a lot less stressful!</p>
-        </div>
-        <div className="flex justify-center mt-8">
+      {/* CTA and Tool Cards */}
+      <section className="max-w-4xl mx-auto py-12">
+        <div className="flex justify-center mb-12">
           <NavLink to="/course" className="btn btn-primary btn-lg text-xl">
-            Start learning about the most common scams!
-            <ArrowRight className="ml-2" />
+            <BookOpen className="mr-2" /> Start the Course
           </NavLink>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <FeatureCard 
+            icon={<BookOpen size={48} className="text-primary" />} 
+            title="Digital Safety Course" 
+            description="Step-by-step lessons to help you stay safe online." 
+            link="/course" 
+          />
+          <FeatureCard 
+            icon={<BookOpen size={48} className="text-primary" />} 
+            title="AI Text Checker" 
+            description="Paste an email or article to see if it was written by a computer." 
+            link="/text-checker" 
+          />
+          <FeatureCard 
+            icon={<BookOpen size={48} className="text-primary" />} 
+            title="Feedback Tool" 
+            description="Get friendly feedback on your own writing." 
+            link="/feedback-tool" 
+          />
+          <FeatureCard 
+            icon={<BookOpen size={48} className="text-primary" />} 
+            title="AI Image Checker" 
+            description="Upload a picture to check for signs of AI-generation." 
+            link="/image-checker" 
+          />
+          <FeatureCard 
+            icon={<BookOpen size={48} className="text-primary" />} 
+            title="Fact-Checker" 
+            description="Check the credibility of a claim or news story." 
+            link="/fact-checker" 
+          />
         </div>
       </section>
     </div>
