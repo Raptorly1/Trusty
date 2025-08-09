@@ -1,4 +1,4 @@
-import { BookOpen } from 'lucide-react';
+import { BookOpen, Shield, DollarSign, CheckCircle, User } from 'lucide-react';
 
 import React from 'react';
 import { NavLink } from 'react-router-dom';
@@ -28,8 +28,8 @@ const HomePage: React.FC = () => {
   return (
     <div className="space-y-24">
       {/* Hero & Clara's Story */}
-      <section className="hero min-h-[60vh] bg-base-200 rounded-box flex flex-col justify-center items-center">
-        <div className="max-w-3xl w-full text-center space-y-8">
+      <section className="hero min-h-[60vh] bg-base-200 rounded-box flex flex-col justify-center items-center py-12">
+        <div className="max-w-3xl w-full text-center space-y-10">
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -44,18 +44,22 @@ const HomePage: React.FC = () => {
             className="text-2xl md:text-3xl text-base-content/80 mb-6">
             One simple step at a time, Trusty helps you stay safe, confident, and in control online.
           </motion.p>
-          <div className="bg-base-100 rounded-xl shadow p-6 text-left text-xl md:text-2xl mx-auto max-w-2xl border border-base-300">
-            <p className="mb-4 font-semibold text-primary">Story from Clara, 72</p>
+          <div className="bg-base-100 rounded-xl shadow p-6 text-left text-xl md:text-2xl mx-auto max-w-2xl border border-base-300 flex flex-col gap-4">
+            <div className="flex items-center gap-3 mb-2">
+              <User className="h-10 w-10 text-primary" />
+              <span className="font-semibold text-primary">Story from Clara, 72</span>
+            </div>
             <p className="mb-2">“One morning, I got an email that looked like it came from my bank. It asked me to click a link and update my information.</p>
             <p className="mb-2">It looked real, but something felt a little off. So I showed it to my son, Mason. He told me it was a scam, and I’m glad I didn’t click it.</p>
             <p className="mb-2">That’s when I realized: the internet is helpful, but it’s also important to be careful. I wanted to learn more, and that’s how I found Trusty.”</p>
-            <p className="mt-4 italic text-base-content/70">“I feel more confident now. And I know Trusty will always be by my side.”<br/>— Clara, Trusty user</p>
+            <div className="my-4 text-3xl font-bold text-primary text-center">“I feel more confident now.”</div>
+            <p className="mt-2 italic text-base-content/70 text-center">And I know Trusty will always be by my side.<br/>— Clara, Trusty user</p>
           </div>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}>
-            <NavLink to="/course" className="btn btn-primary btn-lg text-xl mt-8">
+            <NavLink to="/course" className="btn btn-accent btn-lg text-xl mt-8 shadow-lg">
               <BookOpen className="mr-2" /> Start Your Free Course
             </NavLink>
           </motion.div>
@@ -63,18 +67,21 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* Why Trusty Matters */}
-      <section className="max-w-4xl mx-auto text-center py-12">
-        <h2 className="text-5xl font-bold mb-8">Why Trusty Matters</h2>
+      <section className="max-w-4xl mx-auto text-center py-16">
+        <h2 className="text-5xl font-bold mb-12">Why Trusty Matters</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-          <div className="bg-base-100 rounded-xl shadow p-6 text-xl border border-base-300">
+          <div className="bg-base-100 rounded-xl shadow p-6 text-xl border border-base-300 transition hover:scale-105 hover:border-primary cursor-pointer flex flex-col items-center gap-2">
+            <Shield className="h-10 w-10 text-primary mb-2" />
             <p className="font-bold text-primary text-3xl mb-2">1 in 4</p>
             <p>older adults gets targeted by an online scam every year</p>
           </div>
-          <div className="bg-base-100 rounded-xl shadow p-6 text-xl border border-base-300">
+          <div className="bg-base-100 rounded-xl shadow p-6 text-xl border border-base-300 transition hover:scale-105 hover:border-primary cursor-pointer flex flex-col items-center gap-2">
+            <DollarSign className="h-10 w-10 text-primary mb-2" />
             <p className="font-bold text-primary text-3xl mb-2">$3 Billion+</p>
             <p>seniors lost to fraud in 2023</p>
           </div>
-          <div className="bg-base-100 rounded-xl shadow p-6 text-xl border border-base-300">
+          <div className="bg-base-100 rounded-xl shadow p-6 text-xl border border-base-300 transition hover:scale-105 hover:border-primary cursor-pointer flex flex-col items-center gap-2">
+            <BookOpen className="h-10 w-10 text-primary mb-2" />
             <p className="font-bold text-primary text-3xl mb-2">It's Getting Harder</p>
             <p>With AI, fake websites, and scam calls, it’s harder to tell what’s real</p>
           </div>
@@ -83,96 +90,123 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* What You'll Learn */}
-      <section className="max-w-4xl mx-auto py-12">
-        <h2 className="text-5xl font-bold text-center mb-8">What You’ll Learn</h2>
-        <ul className="list-disc list-inside text-2xl text-left max-w-2xl mx-auto space-y-4">
-          <li>How to recognize online scams</li>
-          <li>How to spot fake news and photos</li>
-          <li>How to browse the internet safely</li>
-          <li>Where to go for help if something seems suspicious</li>
-        </ul>
-        <p className="text-xl text-center text-base-content/70 mt-8">All explained in a calm, friendly way, with big text, short lessons, and helpful examples!</p>
+      <section className="max-w-4xl mx-auto py-16">
+        <h2 className="text-5xl font-bold text-center mb-10">What You’ll Learn</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-2xl mx-auto">
+          <div className="flex items-start gap-4">
+            <CheckCircle className="h-8 w-8 text-success mt-1" />
+            <div>
+              <span className="font-bold">Scam spotting</span>
+              <div className="text-xl">How to recognize online scams</div>
+            </div>
+          </div>
+          <div className="flex items-start gap-4">
+            <CheckCircle className="h-8 w-8 text-success mt-1" />
+            <div>
+              <span className="font-bold">Fake news detection</span>
+              <div className="text-xl">How to spot fake news and photos</div>
+            </div>
+          </div>
+          <div className="flex items-start gap-4">
+            <CheckCircle className="h-8 w-8 text-success mt-1" />
+            <div>
+              <span className="font-bold">Safe browsing</span>
+              <div className="text-xl">How to browse the internet safely</div>
+            </div>
+          </div>
+          <div className="flex items-start gap-4">
+            <CheckCircle className="h-8 w-8 text-success mt-1" />
+            <div>
+              <span className="font-bold">Getting help</span>
+              <div className="text-xl">Where to go for help if something seems suspicious</div>
+            </div>
+          </div>
+        </div>
+        <p className="text-xl text-center text-base-content/70 mt-10">All explained in a calm, friendly way, with big text, short lessons, and helpful examples!</p>
       </section>
 
       {/* Curriculum Overview */}
-      <section className="max-w-4xl mx-auto py-12">
-        <h2 className="text-5xl font-bold text-center mb-8">TRUSTY Digital Safety Course</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className="bg-base-100 rounded-xl shadow p-6 border border-base-300">
-            <h3 className="text-2xl font-bold mb-2">Module 1: The Basics</h3>
-            <p className="text-lg">What is Online Safety?</p>
-          </div>
-          <div className="bg-base-100 rounded-xl shadow p-6 border border-base-300">
-            <h3 className="text-2xl font-bold mb-2">Module 2: Common Scams Explained</h3>
-            <p className="text-lg">Internet Scams & How to Spot Them</p>
-          </div>
-          <div className="bg-base-100 rounded-xl shadow p-6 border border-base-300">
-            <h3 className="text-2xl font-bold mb-2">Module 3: Spotting Fake News & Deepfakes</h3>
-            <p className="text-lg">How to tell real from fake online</p>
-          </div>
-          <div className="bg-base-100 rounded-xl shadow p-6 border border-base-300">
-            <h3 className="text-2xl font-bold mb-2">Module 4: Safe Browsing & Websites</h3>
-            <p className="text-lg">How to know if a website can be trusted</p>
-          </div>
-          <div className="bg-base-100 rounded-xl shadow p-6 border border-base-300">
-            <h3 className="text-2xl font-bold mb-2">Module 5: Passwords & Privacy</h3>
-            <p className="text-lg">Protecting your digital life</p>
-          </div>
-          <div className="bg-base-100 rounded-xl shadow p-6 border border-base-300">
-            <h3 className="text-2xl font-bold mb-2">Module 6: AI & Misinformation</h3>
-            <p className="text-lg">Staying smart in an AI-powered world</p>
-          </div>
-          <div className="bg-base-100 rounded-xl shadow p-6 border border-base-300">
-            <h3 className="text-2xl font-bold mb-2">Module 7: Cyber Hygiene Habits</h3>
-            <p className="text-lg">Keeping your digital life clean and healthy</p>
-          </div>
-          <div className="bg-base-100 rounded-xl shadow p-6 border border-base-300">
-            <h3 className="text-2xl font-bold mb-2">Module 8: Reporting & Getting Help</h3>
-            <p className="text-lg">What to do when something goes wrong</p>
-          </div>
-          <div className="bg-base-100 rounded-xl shadow p-6 border border-primary">
-            <h3 className="text-2xl font-bold mb-2 text-primary">Final Quiz & Certificate</h3>
-            <p className="text-lg">Review what you’ve learned and earn your Trusty certificate!</p>
-          </div>
+      <section className="max-w-4xl mx-auto py-16">
+        <h2 className="text-5xl font-bold text-center mb-12">TRUSTY Digital Safety Course</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {[
+            {
+              title: "The Basics",
+              desc: "What is Online Safety?"
+            },
+            {
+              title: "Common Scams Explained",
+              desc: "Internet Scams & How to Spot Them"
+            },
+            {
+              title: "Spotting Fake News & Deepfakes",
+              desc: "How to tell real from fake online"
+            },
+            {
+              title: "Safe Browsing & Websites",
+              desc: "How to know if a website can be trusted"
+            },
+            {
+              title: "Passwords & Privacy",
+              desc: "Protecting your digital life"
+            },
+            {
+              title: "AI & Misinformation",
+              desc: "Staying smart in an AI-powered world"
+            },
+            {
+              title: "Cyber Hygiene Habits",
+              desc: "Keeping your digital life clean and healthy"
+            },
+            {
+              title: "Reporting & Getting Help",
+              desc: "What to do when something goes wrong"
+            },
+            {
+              title: "Final Quiz & Certificate",
+              desc: "Review what you’ve learned and earn your Trusty certificate!"
+            }
+          ].map((mod, idx) => (
+            <div
+              key={mod.title}
+              className={`bg-base-100 rounded-xl shadow p-6 border ${idx === 8 ? 'border-primary' : 'border-base-300'} flex flex-col items-start gap-4 transition hover:scale-105 hover:border-primary cursor-pointer`}
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <div className={`rounded-full bg-primary text-white font-bold text-xl w-10 h-10 flex items-center justify-center ${idx === 8 ? 'bg-primary/80' : ''}`}>{(idx+1).toString().padStart(2, '0')}</div>
+                <span className={`text-2xl font-bold ${idx === 8 ? 'text-primary' : ''}`}>{mod.title}</span>
+              </div>
+              <p className="text-lg">{mod.desc}</p>
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* CTA and Tool Cards */}
-      <section className="max-w-4xl mx-auto py-12">
-        <div className="flex justify-center mb-12">
-          <NavLink to="/course" className="btn btn-primary btn-lg text-xl">
-            <BookOpen className="mr-2" /> Start the Course
-          </NavLink>
-        </div>
+      {/* Free Tools You Can Try Right Now */}
+      <section className="max-w-4xl mx-auto py-16">
+        <h2 className="text-4xl font-bold text-center mb-10 text-primary">Free Tools You Can Try Right Now</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <FeatureCard 
             icon={<BookOpen size={48} className="text-primary" />} 
-            title="Digital Safety Course" 
-            description="Step-by-step lessons to help you stay safe online." 
-            link="/course" 
-          />
-          <FeatureCard 
-            icon={<BookOpen size={48} className="text-primary" />} 
             title="AI Text Checker" 
-            description="Paste an email or article to see if it was written by a computer." 
+            description="Quickly find out if that email or article was written by a computer." 
             link="/text-checker" 
           />
           <FeatureCard 
-            icon={<BookOpen size={48} className="text-primary" />} 
+            icon={<CheckCircle size={48} className="text-success" />} 
             title="Feedback Tool" 
-            description="Get friendly feedback on your own writing." 
+            description="Get friendly, helpful feedback on your own writing." 
             link="/feedback-tool" 
           />
           <FeatureCard 
-            icon={<BookOpen size={48} className="text-primary" />} 
+            icon={<Shield size={48} className="text-primary" />} 
             title="AI Image Checker" 
             description="Upload a picture to check for signs of AI-generation." 
             link="/image-checker" 
           />
           <FeatureCard 
-            icon={<BookOpen size={48} className="text-primary" />} 
+            icon={<DollarSign size={48} className="text-primary" />} 
             title="Fact-Checker" 
-            description="Check the credibility of a claim or news story." 
+            description="Quickly check the credibility of a claim or news story." 
             link="/fact-checker" 
           />
         </div>
