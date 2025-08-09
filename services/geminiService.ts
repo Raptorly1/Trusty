@@ -153,13 +153,14 @@ Your response MUST be in JSON format and adhere to the provided schema. Ensure s
 
 
 export const factCheckClaim = async (claim: string): Promise<{ summary: string, sources: any[] }> => {
-    const params = {
-        model: "gemini-2.5-flash",
-        contents: `Fact-check the following claim and provide a summary of your findings. Use Google Search to find relevant sources. Claim: "${claim}"`,
-        config: {
-            tools: [{ googleSearch: {} }],
-        },
-    };
+  const params = {
+    model: "gemini-2.5-flash",
+    contents: `Fact-check the following claim and provide a summary of your findings. Use Google Search to find relevant sources. Claim: "${claim}"`,
+    config: {
+      tools: [{ googleSearch: {} }],
+      temperature: 0.2,
+    },
+  };
     
     const response = await callGeminiProxy('generateContent', params);
     const summary = response.text;
@@ -182,7 +183,7 @@ const factCheckProcessorSchema = {
         properties: {
           url: { type: Type.STRING },
           title: { type: Type.STRING },
-          credibility: { type: Type.STRING, enum: ['High', 'Medium', 'Low', 'Unknown'] },
+          credibility: { type: Type.STRING, enum: ['Very High', 'High', 'Medium High', 'Medium', 'Medium Low', 'Low', 'Very Low', 'Unknown'] },
           explanation: { type: Type.STRING, description: "A concise, one-sentence explanation for the credibility rating." }
         },
         required: ["url", "title", "credibility", "explanation"],
@@ -204,7 +205,7 @@ export const processFactCheckResults = async (
 
     Follow these instructions carefully:
     1.  **Rewrite the Summary**: Read the initial summary and the list of sources. Write a comprehensive, clear summary of the findings. In your summary, you MUST embed citations in the format [1], [2], etc., to link statements to the source that backs them up.
-    2.  **Analyze Source Credibility**: For each source provided, analyze its credibility based on its URL and title. Assign a credibility rating of 'High', 'Medium', or 'Low'. Provide a brief, one-sentence explanation for your rating. For example, a major news organization or scientific journal is 'High', while a personal blog is 'Low'. If you cannot determine, use 'Unknown'.
+    2.  **Analyze Source Credibility**: For each source provided, analyze its credibility based on its URL and title. Assign a credibility rating of 'Very High', 'High', 'Medium High', 'Medium', 'Medium Low', 'Low', or 'Very Low'. Provide a brief, one-sentence explanation for your rating. For example, a major news organization or scientific journal is 'High', while a personal blog is 'Low'. If you cannot determine, use 'Unknown'.
     3.  **Format Output**: Your entire response MUST be a single JSON object that strictly adheres to the provided schema.
 
     **Initial Summary:**
