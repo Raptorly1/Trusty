@@ -31,21 +31,70 @@ const courseModules: CourseModule[] = [
 			]
 		}
 	},
-	{
-		title: "Common Scams",
-		description: "Learning to recognize and avoid common online scams",
-		content: <Module2 />,
-		exercise: {
-			type: ExerciseType.SCAM_IDENTIFICATION,
-			instructions: "Look at these messages and select which ones are scams:",
-			items: [
-				{ content: "Dear Customer, Your account will be suspended! Click here to verify immediately!", isScam: true, explanation: "This is a scam. The urgent language and generic greeting are red flags." },
-				{ content: "Hi Mom, it's me. Can you send me $500 for an emergency? Don't call my phone.", isScam: true, explanation: "This is a common scam. Family members should be able to verify through normal contact methods." },
-				{ content: "Your library book 'Digital Privacy' is due tomorrow. Renew at library.org or return in person.", isScam: false, explanation: "This is likely legitimate. It's a polite reminder without urgent demands or suspicious links." },
-				{ content: "CONGRATULATIONS! You've won $10,000! Click to claim your prize now!", isScam: true, explanation: "This is a classic scam. Legitimate prizes don't require immediate action through random links." }
-			]
-		}
-	},
+ {
+ 	title: "Common Scams",
+ 	description: "Learning to recognize and avoid common online scams",
+ 	content: <Module2 />,
+ 	exercise: {
+ 		type: ExerciseType.QUIZ,
+ 		questions: [
+ 			{
+ 				question: "Which of the following is a red flag in a phone scam?",
+ 				options: [
+ 					{ text: "The caller says hello politely", isCorrect: false },
+ 					{ text: "The caller asks you to confirm your name", isCorrect: false },
+ 					{ text: "The caller threatens arrest if you don’t pay right away", isCorrect: true },
+ 					{ text: "The caller offers you a free magazine subscription", isCorrect: false }
+ 				]
+ 			},
+ 			{
+ 				question: "You get an email from 'your bank' asking you to click a link and verify your account. What should you do?",
+ 				options: [
+ 					{ text: "Click the link and enter your details right away", isCorrect: false },
+ 					{ text: "Forward the email to your friends", isCorrect: false },
+ 					{ text: "Delete the email and call your bank using the number on your bank card", isCorrect: true },
+ 					{ text: "Reply and ask if the email is real", isCorrect: false }
+ 				]
+ 			},
+ 			{
+ 				question: "What makes a text message suspicious?",
+ 				options: [
+ 					{ text: "It uses emojis", isCorrect: false },
+ 					{ text: "It comes from a friend", isCorrect: false },
+ 					{ text: "It includes a short link and asks for personal info", isCorrect: true },
+ 					{ text: "It says 'Have a nice day!'", isCorrect: false }
+ 				]
+ 			},
+ 			{
+ 				question: "Which of the following giveaway messages is most likely a scam?",
+ 				options: [
+ 					{ text: "Enter now to win a vacation", isCorrect: false },
+ 					{ text: "You’ve won the lottery, click here to claim your prize!", isCorrect: true },
+ 					{ text: "Sign up for our newsletter", isCorrect: false },
+ 					{ text: "Take our survey for a chance to win", isCorrect: false }
+ 				]
+ 			},
+ 			{
+ 				question: "Why should you be careful of email addresses that look almost correct, like 'amaz0n.com'?",
+ 				options: [
+ 					{ text: "They might be a new version of the company’s website", isCorrect: false },
+ 					{ text: "It’s probably a scam site pretending to be the real one", isCorrect: true },
+ 					{ text: "They usually offer better deals", isCorrect: false },
+ 					{ text: "They’re safe if the email says 'Dear Customer'", isCorrect: false }
+ 				]
+ 			},
+ 			{
+ 				question: "A caller says your grandchild is in jail and needs money urgently. What should you do?",
+ 				options: [
+ 					{ text: "Send the money immediately", isCorrect: false },
+ 					{ text: "Ask the caller to confirm your grandchild’s birthday", isCorrect: false },
+ 					{ text: "Hang up and call your grandchild or a trusted family member directly", isCorrect: true },
+ 					{ text: "Keep talking to the caller to learn more", isCorrect: false }
+ 				]
+ 			}
+ 		]
+ 	}
+ },
 	{
 		title: "Spotting Fake News",
 		description: "How to identify misinformation and verify facts",
