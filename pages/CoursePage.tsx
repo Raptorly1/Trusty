@@ -192,7 +192,7 @@ const CoursePage: React.FC = () => {
 						<p className="text-lg mb-6">{exercise.instructions}</p>
 						<div className="space-y-3">
 							{exercise.items?.map((item, index) => (
-								<div key={index} className="flex items-start gap-3">
+								<div key={typeof item === 'string' ? item : index} className="flex items-start gap-3">
 									<input 
 										type="checkbox" 
 										className="checkbox checkbox-primary mt-1" 
@@ -391,16 +391,7 @@ const CoursePage: React.FC = () => {
 		}
 	};
 
-	const handleQuizComplete = (score: number) => {
-		setQuizScore(score);
-	}
 
-	const handleRestart = () => {
-		setCurrentModuleIndex(0);
-		setIsExerciseMode(false);
-		setIsQuizMode(false);
-		setQuizScore(null);
-	}
 
 	const currentModule = courseModules[currentModuleIndex] || { title: '', description: '', content: <div>Loading...</div>, exercise: { type: ExerciseType.QUIZ, question: '', options: [], correctFeedback: '', incorrectFeedback: '' } };
 	const progress = (currentModuleIndex + (isExerciseMode ? 0.5 : 0)) / courseModules.length * 100;
