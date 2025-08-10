@@ -29,17 +29,25 @@ const AnnotatedImage: React.FC<{ src: string; result: AIImageAnalysisResult }> =
                 return (
                     <div
                         key={`${x}-${y}-${width}-${height}-${anomaly.reason}`}
-                        className="absolute border-4 border-red-500 rounded-full tooltip tooltip-open tooltip-error"
-                        data-tip={anomaly.reason}
+                        className="absolute border-4 border-red-500 rounded-full group"
                         style={{
                             left: `${x * dimensions.width}px`,
                             top: `${y * dimensions.height}px`,
                             width: `${width * dimensions.width}px`,
                             height: `${height * dimensions.height}px`,
                             boxShadow: '0 0 15px rgba(255,0,0,0.7)',
-                            backgroundColor: 'rgba(255,0,0,0.2)',
+                            backgroundColor: 'rgba(255,0,0,0.13)',
+                            transition: 'background-color 0.2s',
+                            cursor: 'pointer',
                         }}
-                    ></div>
+                    >
+                        <div
+                            className="opacity-0 group-hover:opacity-100 absolute -top-12 left-1/2 -translate-x-1/2 bg-black bg-opacity-80 text-white text-xs rounded px-3 py-2 shadow-lg pointer-events-none z-10 transition-opacity duration-200"
+                            style={{ whiteSpace: 'pre-line', minWidth: '120px', maxWidth: '220px' }}
+                        >
+                            {anomaly.reason}
+                        </div>
+                    </div>
                 );
             })}
         </div>
