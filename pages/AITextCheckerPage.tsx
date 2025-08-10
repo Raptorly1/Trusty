@@ -30,7 +30,7 @@ const HighlightedText: React.FC<{ text: string, highlights: AIHighlight[], color
 
         // Add the highlighted text
         parts.push(
-            <span key={`highlight-${i}`} className={`tooltip tooltip-bottom ${color} rounded p-1`} data-tip={highlight.reason}>
+            <span key={`highlight-${highlight.snippet}`} className={`tooltip tooltip-bottom ${color} rounded p-1`} data-tip={highlight.reason}>
                 {highlight.snippet}
             </span>
         );
