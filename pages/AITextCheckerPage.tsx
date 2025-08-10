@@ -1,3 +1,5 @@
+import Tippy from '@tippyjs/react';
+import 'tippy.js/dist/tippy.css';
 import React, { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Lightbulb, Users, Bot, FileText, BarChart2, AlertCircle } from 'lucide-react';
@@ -28,11 +30,25 @@ const HighlightedText: React.FC<{ text: string, highlights: AIHighlight[], color
             parts.push(<span key={`text-${startIndex}-${partText}`}>{partText}</span>);
         }
 
-        // Add the highlighted text
+        // Add the highlighted text with Tippy.js tooltip
         parts.push(
-            <span key={`highlight-${highlight.snippet}`} className={`tooltip tooltip-bottom ${color} rounded p-1`} data-tip={highlight.reason}>
-                {highlight.snippet}
-            </span>
+            <Tippy
+                key={`highlight-${highlight.snippet}`}
+                content={
+                    <span className="text-base font-semibold px-4 py-3" style={{ minWidth: 180, maxWidth: 320, display: 'block', whiteSpace: 'pre-line' }}>
+                        {highlight.reason}
+                    </span>
+                }
+                placement="top"
+                arrow={true}
+                animation="shift-away"
+                theme="light"
+                maxWidth={320}
+            >
+                <span className={`${color} rounded p-1 font-bold cursor-pointer transition duration-200`} style={{ outline: '2px solid #333' }}>
+                    {highlight.snippet}
+                </span>
+            </Tippy>
         );
 
         lastIndex = startIndex + highlight.snippet.length;
