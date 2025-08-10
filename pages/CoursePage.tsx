@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import FinalQuiz from '../components/common/FinalQuiz';
 import { motion, AnimatePresence } from 'framer-motion';
 import { finalQuizQuestions } from '../constants/courseData';
 import { CourseModule, ExerciseType, ScamItem } from '../types';
@@ -400,11 +401,12 @@ const CoursePage: React.FC = () => {
 	const animationKey = `${currentModuleIndex}-${isExerciseMode ? 'exercise' : 'module'}`;
 
 	if (quizScore !== null) {
-		return <div>Certificate goes here</div>; // Replace with your Certificate component
+		// Certificate UI is handled in FinalQuiz component
+		return null;
 	}
 
 	if (isQuizMode) {
-		return <div>Final Quiz goes here</div>; // Replace with your FinalQuiz component
+		return <FinalQuiz onComplete={score => setQuizScore(score)} />;
 	}
 
 	return (
