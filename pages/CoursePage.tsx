@@ -2,9 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import FinalQuiz from '../components/common/FinalQuiz';
 import { motion, AnimatePresence } from 'framer-motion';
-import { finalQuizQuestions } from '../constants/courseData';
-import { CourseModule, ExerciseType, ScamItem } from '../types';
-import { CheckCircle, Star, ArrowRight, RotateCcw } from 'lucide-react';
+import { CourseModule, ExerciseType } from '../types';
+import { CheckCircle, Star, ArrowRight } from 'lucide-react';
 import Module1 from '../components/course/Module1';
 import Module2 from '../components/course/Module2';
 import Module3 from '../components/course/Module3';
@@ -13,6 +12,118 @@ import Module5 from '../components/course/Module5';
 import Module6 from '../components/course/Module6';
 import Module7 from '../components/course/Module7';
 import Module8 from '../components/course/Module8';
+
+// Extra questions for Module 2
+const module2ExtraQuestions = [
+	{
+		question: "A caller says you owe money to the IRS and must pay immediately using a gift card. What kind of scam is this?",
+		options: [
+			{ text: "Email scam", isCorrect: false },
+			{ text: "Giveaway scam", isCorrect: false },
+			{ text: "Phone scam", isCorrect: true },
+			{ text: "Text message scam", isCorrect: false }
+		]
+	},
+	{
+		question: "Which of the following is a red flag of a phone scam?",
+		options: [
+			{ text: "The caller has a clear voice", isCorrect: false },
+			{ text: "They speak calmly and clearly", isCorrect: false },
+			{ text: "They ask for gift card payments", isCorrect: true },
+			{ text: "They offer helpful tech tips", isCorrect: false }
+		]
+	},
+	{
+		question: "What's wrong with this email: \"Dear Customer, click here to verify your account or risk suspension\"?",
+		options: [
+			{ text: "It's helpful", isCorrect: false },
+			{ text: "It includes your full name", isCorrect: false },
+			{ text: "It sounds official", isCorrect: false },
+			{ text: "It uses a generic greeting and urgency", isCorrect: true }
+		]
+	},
+	{
+		question: "A scammer sends you a message about a delivery you didn't order, asking you to click a short link. What should you do?",
+		options: [
+			{ text: "Click it to track the package", isCorrect: false },
+			{ text: "Forward it to your friends", isCorrect: false },
+			{ text: "Ignore and delete the message", isCorrect: true },
+			{ text: "Reply with your delivery info", isCorrect: false }
+		]
+	},
+	{
+		question: "Why are emails with poor grammar and spelling a red flag?",
+		options: [
+			{ text: "They are written by children", isCorrect: false },
+			{ text: "They usually come from official sources", isCorrect: false },
+			{ text: "Real companies don't proofread", isCorrect: false },
+			{ text: "They're often signs of phishing scams", isCorrect: true }
+		]
+	},
+	{
+		question: "Which of the following is a sign of a text scam?",
+		options: [
+			{ text: "A message from your mom", isCorrect: false },
+			{ text: "A security alert from your bank about your real account", isCorrect: false },
+			{ text: "A message from a number you don't know about a \"free prize\"", isCorrect: true },
+			{ text: "A text about an upcoming doctor's appointment", isCorrect: false }
+		]
+	},
+	{
+		question: "A message says: \"Congratulations! You've won a gift card. Pay $10 to claim it.\" What kind of scam is this?",
+		options: [
+			{ text: "Email scam", isCorrect: false },
+			{ text: "Text message scam", isCorrect: false },
+			{ text: "Phone scam", isCorrect: false },
+			{ text: "Giveaway/lottery scam", isCorrect: true }
+		]
+	},
+	{
+		question: "What's a common red flag in a giveaway scam?",
+		options: [
+			{ text: "You need to answer survey questions", isCorrect: false },
+			{ text: "They ask for your address", isCorrect: false },
+			{ text: "You're asked to send money to get your prize", isCorrect: true },
+			{ text: "You must agree to terms and conditions", isCorrect: false }
+		]
+	},
+	{
+		question: "Which of the following is NOT a common method scammers use in phone scams?",
+		options: [
+			{ text: "Pretending to be the IRS", isCorrect: false },
+			{ text: "Offering free Medicare equipment", isCorrect: false },
+			{ text: "Asking you to join a real sweepstakes", isCorrect: true },
+			{ text: "Claiming a grandchild is in trouble", isCorrect: false }
+		]
+	},
+	{
+		question: "An email warning you about \"suspicious activity\" asks you to click a link. What should you do first?",
+		options: [
+			{ text: "Click the link to fix the problem fast", isCorrect: false },
+			{ text: "Call the number in the email", isCorrect: false },
+			{ text: "Check if the email address is correct", isCorrect: true },
+			{ text: "Forward it to friends", isCorrect: false }
+		]
+	},
+	{
+		question: "What makes a scam text look urgent?",
+		options: [
+			{ text: "It uses emojis", isCorrect: false },
+			{ text: "It says, \"Act now!\" or \"Verify immediately!\"", isCorrect: true },
+			{ text: "It thanks you politely", isCorrect: false },
+			{ text: "It includes personal stories", isCorrect: false }
+		]
+	},
+	{
+		question: "What makes a fake email look official even when it's a scam?",
+		options: [
+			{ text: "It always uses emojis", isCorrect: false },
+			{ text: "It includes real news headlines", isCorrect: false },
+			{ text: "It mimics the look of a real company email", isCorrect: true },
+			{ text: "It's short and vague", isCorrect: false }
+		]
+	}
+];
 
 // Course modules configuration
 const courseModules: CourseModule[] = [
@@ -208,6 +319,9 @@ const CoursePage: React.FC = () => {
 	const [exerciseAnswers, setExerciseAnswers] = useState<any>({});
 	const [selectedAnswers, setSelectedAnswers] = useState<number[]>([]);
 	const [quizRetakeKey, setQuizRetakeKey] = useState(0);
+	const [showExtraQuestions, setShowExtraQuestions] = useState(false);
+	const [extraQuestionAnswers, setExtraQuestionAnswers] = useState<number[]>([]);
+	const [extraExerciseAnswers, setExtraExerciseAnswers] = useState<any>({});
 
 	// Sync moduleId from URL to state
 	useEffect(() => {
@@ -236,6 +350,9 @@ const CoursePage: React.FC = () => {
 			setIsExerciseMode(false);
 			setExerciseAnswers({});
 			setSelectedAnswers([]);
+			setShowExtraQuestions(false);
+			setExtraQuestionAnswers([]);
+			setExtraExerciseAnswers({});
 			return;
 		}
 		setIsQuizMode(true);
@@ -247,10 +364,103 @@ const CoursePage: React.FC = () => {
 			setIsExerciseMode(false);
 			setExerciseAnswers({});
 			setSelectedAnswers([]);
+			setShowExtraQuestions(false);
+			setExtraQuestionAnswers([]);
+			setExtraExerciseAnswers({});
 		} else {
 			setIsQuizMode(true);
 		}
 	}
+
+	const renderExtraQuestions = () => {
+		return (
+			<motion.div
+				initial={{ opacity: 0, y: 20 }}
+				animate={{ opacity: 1, y: 0 }}
+				transition={{ duration: 0.5 }}
+				className="mt-8 space-y-6"
+			>
+				<div className="divider">
+					<span className="text-lg font-semibold">Extra Practice Questions</span>
+				</div>
+				
+				{module2ExtraQuestions.map((question, qIndex) => (
+					<div key={`extra-question-${qIndex}`} className="card bg-base-200 shadow-lg">
+						<div className="card-body">
+							<h4 className="text-lg font-semibold mb-4">
+								Question {qIndex + 1}: {question.question}
+							</h4>
+							<div className="space-y-2">
+								{question.options.map((option, oIndex) => {
+									const answerKey = `${qIndex}-${oIndex}`;
+									const isSelected = extraQuestionAnswers.includes(qIndex) && extraExerciseAnswers[qIndex] === oIndex;
+									const hasAnswered = extraQuestionAnswers.includes(qIndex);
+									const buttonClass = hasAnswered ? 
+										(option.isCorrect ? 'btn-success' : isSelected ? 'btn-error' : 'btn-outline') : 
+										'btn-outline';
+									
+									return (
+										<button
+											key={`extra-option-${qIndex}-${oIndex}`}
+											className={`btn ${buttonClass} w-full justify-start`}
+											onClick={() => {
+												if (!extraQuestionAnswers.includes(qIndex)) {
+													setExtraQuestionAnswers(prev => [...prev, qIndex]);
+													setExtraExerciseAnswers(prev => ({ ...prev, [qIndex]: oIndex }));
+												}
+											}}
+											disabled={hasAnswered}
+										>
+											{String.fromCharCode(65 + oIndex)}. {option.text}
+										</button>
+									);
+								})}
+							</div>
+							{extraQuestionAnswers.includes(qIndex) && (
+								<motion.div 
+									initial={{ opacity: 0, height: 0 }}
+									animate={{ opacity: 1, height: 'auto' }}
+									className="mt-4"
+								>
+									<div className={`p-4 rounded-lg ${
+										question.options[extraExerciseAnswers[qIndex]]?.isCorrect ? 
+											'bg-success/20 text-success-content' : 
+											'bg-error/20 text-error-content'
+									}`}>
+										{question.options[extraExerciseAnswers[qIndex]]?.isCorrect ? 
+											'✅ Correct! Great job.' : 
+											`❌ Incorrect. The correct answer is: ${String.fromCharCode(65 + question.options.findIndex(o => o.isCorrect))}. ${question.options.find(o => o.isCorrect)?.text}`
+										}
+									</div>
+								</motion.div>
+							)}
+						</div>
+					</div>
+				))}
+				
+				<div className="text-center mt-8">
+					<div className="stats shadow">
+						<div className="stat">
+							<div className="stat-title">Progress</div>
+							<div className="stat-value text-2xl">
+								{extraQuestionAnswers.length}/{module2ExtraQuestions.length}
+							</div>
+							<div className="stat-desc">Questions completed</div>
+						</div>
+						<div className="stat">
+							<div className="stat-title">Score</div>
+							<div className="stat-value text-2xl">
+								{extraQuestionAnswers.filter(qIndex => 
+									module2ExtraQuestions[qIndex].options[extraExerciseAnswers[qIndex]]?.isCorrect
+								).length}/{extraQuestionAnswers.length || 1}
+							</div>
+							<div className="stat-desc">Correct answers</div>
+						</div>
+					</div>
+				</div>
+			</motion.div>
+		);
+	};
 
 	const renderExercise = () => {
 		const exercise = currentModule.exercise;
@@ -378,6 +588,33 @@ const CoursePage: React.FC = () => {
 								)}
 							</div>
 						))}
+						
+						{/* Show extra questions button for Module 2 only */}
+						{currentModuleIndex === 1 && !showExtraQuestions && (
+							<motion.div 
+								initial={{ opacity: 0, y: 20 }}
+								animate={{ opacity: 1, y: 0 }}
+								transition={{ delay: 0.5, duration: 0.3 }}
+								className="mt-8 text-center"
+							>
+								<div className="divider">Want more practice?</div>
+								<button 
+									onClick={() => setShowExtraQuestions(true)}
+									className="btn btn-outline btn-lg gap-2"
+								>
+									<Star className="h-5 w-5" />
+									Try Extra Questions
+									<ArrowRight className="h-4 w-4" />
+								</button>
+								<p className="text-sm text-base-content/70 mt-2">
+									12 additional questions to test your scam detection skills
+								</p>
+							</motion.div>
+						)}
+						
+						{/* Render extra questions if enabled for Module 2 */}
+						{currentModuleIndex === 1 && showExtraQuestions && renderExtraQuestions()}
+						
 						<div className="mt-8">
 							<button onClick={handleExerciseComplete} className="btn btn-primary btn-lg">
 								Continue to Next Module
