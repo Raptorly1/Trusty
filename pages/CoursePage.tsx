@@ -222,7 +222,7 @@ const CoursePage: React.FC = () => {
 						<p className="text-lg mb-6">{exercise.instructions}</p>
 						<div className="space-y-4">
 							{exercise.items?.map((item, index) => (
-								<div key={index} className="card bg-base-200 shadow">
+								<div key={item.content} className="card bg-base-200 shadow">
 									<div className="card-body">
 										<p className="text-base mb-4">"{item.content}"</p>
 										<div className="flex gap-3">
@@ -269,7 +269,7 @@ const CoursePage: React.FC = () => {
 				return (
 					<div className="space-y-4">
 						{questions.map((question: any, qIndex: number) => (
-							<div key={`question-${qIndex}`} className="space-y-4">
+							<div key={`question-${question.question}`} className="space-y-4">
 								<h3 className="text-xl font-semibold">{question.question}</h3>
 								<div className="space-y-2">
 									{question.options.map((option: any, oIndex: number) => {
