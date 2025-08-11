@@ -4,6 +4,7 @@ export enum ExerciseType {
   PASSWORD_CHECKER = 'PASSWORD_CHECKER',
   SCAM_IDENTIFICATION = 'SCAM_IDENTIFICATION',
   CHECKLIST = 'CHECKLIST',
+  PDF_VIEWER = 'PDF_VIEWER',
 }
 
 export interface ChecklistExerciseData {
@@ -46,7 +47,13 @@ export interface ScamIdentificationData {
   items: ScamItem[];
 }
 
-export type ExerciseData = QuizExerciseData | PasswordCheckerData | ScamIdentificationData | ChecklistExerciseData;
+export interface PDFViewerData {
+  type: ExerciseType.PDF_VIEWER;
+  instructions: string;
+  pdfPath: string;
+}
+
+export type ExerciseData = QuizExerciseData | PasswordCheckerData | ScamIdentificationData | ChecklistExerciseData | PDFViewerData;
 
 export interface CourseModule {
   title:string;
