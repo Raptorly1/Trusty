@@ -274,21 +274,9 @@ const courseModules: CourseModule[] = [
 		description: "Building healthy digital habits for long-term safety",
 		content: <Module7 />,
 		exercise: {
-			type: ExerciseType.CHECKLIST,
-			instructions: "Create Your Own Digital Safety Cheat Sheet. Choose your top 5 safety habits and write a reminder phrase.",
-			items: [
-				"Keep my phone and computer updated",
-				"Only download apps from the official app store",
-				"Use antivirus software",
-				"Hover over links before clicking",
-				"Don't share passwords with anyone who messages or calls me",
-				"Use a different password for each account",
-				"Back up important files or photos",
-				"Ignore pop-ups that say I've won something",
-				"Pause and double-check urgent or scary messages",
-				"Delete old apps I no longer use",
-				"Check privacy settings on social media"
-			]
+			type: ExerciseType.PDF_VIEWER,
+			instructions: "Review this Digital Safety Cheat Sheet to reinforce your cyber hygiene habits:",
+			pdfPath: "/assets/documents/mod7CheatSheet.pdf"
 		}
 	},
 	{
@@ -683,6 +671,53 @@ const CoursePage: React.FC = () => {
 						</div>
 					</div>
 				);
+
+			case ExerciseType.PDF_VIEWER:
+				 return (
+					 <div className="space-y-4">
+						 <p className="text-lg mb-6">{exercise.instructions}</p>
+							 <motion.div
+								 initial={{ opacity: 0, y: 10 }}
+								 animate={{ opacity: 1, y: 0 }}
+								 transition={{ duration: 0.3 }}
+								 className="mb-4 flex justify-end"
+							 >
+								 <button
+									 className="btn btn-outline btn-sm"
+									 aria-label="Open PDF fullscreen"
+									 onClick={() => window.open(exercise.pdfPath, '_blank', 'noopener,noreferrer')}
+								 >
+									 Fullscreen
+								 </button>
+							 </motion.div>
+							 <div className="w-full h-[600px] border border-base-300 rounded-lg overflow-hidden shadow-lg">
+								 <iframe
+									 src={exercise.pdfPath}
+									 width="100%"
+									 height="100%"
+									 className="border-0"
+									 title="Digital Safety Cheat Sheet"
+								 />
+							 </div>
+						 <div className="alert alert-info">
+							 <div className="flex items-start gap-2">
+								 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="stroke-current shrink-0 w-6 h-6">
+									 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+								 </svg>
+								 <div>
+									 <h3 className="font-bold">Print or Save This Cheat Sheet!</h3>
+									 <p className="text-sm">Right-click on the PDF and select "Save As" to keep this handy reference guide for your digital safety habits.</p>
+								 </div>
+							 </div>
+						 </div>
+						 <div className="mt-8">
+							 <button onClick={handleExerciseComplete} className="btn btn-primary btn-lg">
+								 Continue to Next Module
+								 <ArrowRight />
+							 </button>
+						 </div>
+					 </div>
+				 );
 
 			default:
 				return (
