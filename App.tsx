@@ -2,7 +2,7 @@
 import React from 'react';
 import { HashRouter, Routes, Route, NavLink, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Home, BookOpen, Search, FileText, ImageIcon, CheckSquare, Shield } from 'lucide-react';
+import { Home, BookOpen, Search, FileText, ImageIcon, CheckSquare } from 'lucide-react';
 
 import HomePage from './pages/HomePage';
 import CoursePage from './pages/CoursePage';
@@ -35,8 +35,8 @@ const Header: React.FC = () => {
               ))}
             </ul>
           </div>
-          <NavLink to="/" className="inline-flex items-center gap-2 px-4 py-2 text-2xl font-bold text-primary normal-case rounded-full border border-transparent hover:border-primary hover:bg-primary/10 focus:border-primary focus:bg-primary/20 transition">
-                <Shield className="h-7 w-7" fill="#4B006E" stroke="#2D003B" /> Trusty
+          <NavLink to="/" className="inline-flex items-center gap-3 px-4 py-2 text-2xl font-bold text-primary normal-case rounded-full border border-transparent hover:border-primary hover:bg-primary/10 focus:border-primary focus:bg-primary/20 transition">
+                          <img src="/assets/images/Logo.png" alt="Trusty Logo" className="h-12 w-12 object-contain" /> Trusty
           </NavLink>
         </div>
         <div className="navbar-center hidden lg:flex">
