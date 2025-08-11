@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { HashRouter, Routes, Route, NavLink, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Home, BookOpen, Search, FileText, ImageIcon, CheckSquare } from 'lucide-react';
@@ -10,6 +10,9 @@ import AITextCheckerPage from './pages/AITextCheckerPage';
 import FeedbackToolPage from './pages/FeedbackToolPage';
 import AIImageCheckerPage from './pages/AIImageCheckerPage';
 import FactCheckerPage from './pages/FactCheckerPage';
+import ServerStatusPopup from './components/common/ServerStatusPopup';
+import ServerStatusIndicator from './components/common/ServerStatusIndicator';
+import { useServerStatus } from './hooks/useServerStatus';
 
 const navLinks = [
   { path: '/', label: 'Home', icon: Home },
@@ -21,6 +24,8 @@ const navLinks = [
 ];
 
 const Header: React.FC = () => {
+  const { status } = useServerStatus(true);
+
   return (
     <header className="bg-base-200/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
       <div className="navbar container mx-auto px-4">
@@ -46,7 +51,8 @@ const Header: React.FC = () => {
             ))}
           </ul>
         </div>
-        <div className="navbar-end">
+        <div className="navbar-end flex items-center gap-4">
+          <ServerStatusIndicator status={status} showText size="sm" />
           <a className="btn btn-primary" href="#/course">Start Learning</a>
         </div>
       </div>
@@ -85,6 +91,30 @@ const PageWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 
 const App: React.FC = () => {
   const location = useLocation();
+  const [showServerPopup, setShowServerPopup] = useState(false);
+  const { status, isWarming, estimatedWaitTime, startWarmUp, checkStatus } = useServerStatus(true);
+
+  // Warm up server on initial load
+  useEffect(() => {
+    startWarmUp();
+  }, [startWarmUp]);
+
+  // Show popup when server is warming and user tries to access AI features
+  useEffect(() => {
+    const aiRoutes = ['/text-checker', '/image-checker', '/fact-checker', '/feedback-tool'];
+    const isAIRoute = aiRoutes.some(route => location.pathname.includes(route));
+    
+    if (isAIRoute && isWarming) {
+      setShowServerPopup(true);
+    }
+  }, [location.pathname, isWarming]);
+
+  const handleRetryServer = async () => {
+    await checkStatus();
+    if (status === 'ready') {
+      setShowServerPopup(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-base-100 flex flex-col">
@@ -103,6 +133,15 @@ const App: React.FC = () => {
         </AnimatePresence>
       </main>
       <Footer />
+      
+      {/* Server Status Popup */}
+      <ServerStatusPopup
+        status={status}
+        isVisible={showServerPopup}
+        estimatedWaitTime={estimatedWaitTime}
+        onClose={() => setShowServerPopup(false)}
+        onRetry={handleRetryServer}
+      />
     </div>
   );
 }

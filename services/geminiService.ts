@@ -3,6 +3,74 @@ import { AITextAnalysisResult, AnnotationType, FeedbackResult, AIImageAnalysisRe
 
 const PROXY_URL = 'https://trusty-ldqx.onrender.com/api/gemini';
 
+// Server status tracking
+let serverStatus: 'unknown' | 'warming' | 'ready' | 'error' = 'unknown';
+let lastServerCheck = 0;
+const SERVER_CHECK_INTERVAL = 30000; // 30 seconds
+
+export const getServerStatus = () => serverStatus;
+
+/**
+ * Check if the Render server is ready by calling the health endpoint
+ */
+export const checkServerHealth = async (): Promise<{ status: 'warming' | 'ready' | 'error', estimatedWaitTime?: number }> => {
+  const now = Date.now();
+  
+  // Don't check too frequently
+  if (now - lastServerCheck < 5000 && serverStatus !== 'unknown') {
+    return { 
+      status: serverStatus as 'warming' | 'ready' | 'error',
+      estimatedWaitTime: serverStatus === 'warming' ? 30 : undefined
+    };
+  }
+  
+  try {
+    const healthUrl = PROXY_URL.replace('/api/gemini', '/health');
+    const response = await fetch(healthUrl, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    
+    lastServerCheck = now;
+    
+    if (response.ok) {
+      serverStatus = 'ready';
+      return { status: 'ready' };
+    } else if (response.status === 503) {
+      // Service unavailable - likely warming up
+      serverStatus = 'warming';
+      return { status: 'warming', estimatedWaitTime: 30 };
+    } else {
+      serverStatus = 'error';
+      return { status: 'error' };
+    }
+  } catch (error) {
+    lastServerCheck = now;
+    console.warn('Server health check failed:', error);
+    
+    // If it's a network error, the server might be warming up
+    if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+      serverStatus = 'warming';
+      return { status: 'warming', estimatedWaitTime: 45 };
+    }
+    
+    serverStatus = 'error';
+    return { status: 'error' };
+  }
+};
+
+/**
+ * Warm up the server by making a simple request
+ */
+export const warmUpServer = async (): Promise<void> => {
+  try {
+    serverStatus = 'warming';
+    await checkServerHealth();
+  } catch (error) {
+    console.warn('Server warm-up failed:', error);
+  }
+};
+
 /**
  * A helper function to call the backend proxy which in turn calls the Gemini API.
  * @param endpoint The Gemini SDK method to call (e.g., 'generateContent').
@@ -10,6 +78,17 @@ const PROXY_URL = 'https://trusty-ldqx.onrender.com/api/gemini';
  * @returns The response from the Gemini API, as returned by the proxy.
  */
 async function callGeminiProxy(endpoint: string, params: any): Promise<any> {
+  // Check server status before making the request
+  const healthCheck = await checkServerHealth();
+  
+  if (healthCheck.status === 'warming') {
+    throw new Error('SERVER_WARMING');
+  }
+  
+  if (healthCheck.status === 'error') {
+    throw new Error('SERVER_ERROR');
+  }
+
   try {
     const response = await fetch(PROXY_URL, {
       method: 'POST',
@@ -22,6 +101,13 @@ async function callGeminiProxy(endpoint: string, params: any): Promise<any> {
     if (!response.ok) {
       const errorText = await response.text();
       let errorMessage = `Proxy API call failed with status ${response.status}`;
+      
+      // Check if this is a server warming issue
+      if (response.status === 503) {
+        serverStatus = 'warming';
+        throw new Error('SERVER_WARMING');
+      }
+      
       try {
         const errorJson = JSON.parse(errorText);
         errorMessage = errorJson.message || errorJson.error || errorMessage;
@@ -34,9 +120,18 @@ async function callGeminiProxy(endpoint: string, params: any): Promise<any> {
       throw new Error(errorMessage);
     }
 
+    // Server is working, mark as ready
+    serverStatus = 'ready';
     return response.json();
   } catch (error) {
     console.error('Error calling Gemini proxy:', error);
+    
+    // If it's a network error, the server might be warming up
+    if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+      serverStatus = 'warming';
+      throw new Error('SERVER_WARMING');
+    }
+    
     // Re-throw the error to be caught by the calling function's try/catch block
     throw error;
   }
