@@ -78,6 +78,14 @@ const HomePage: React.FC = () => {
             className="text-2xl md:text-3xl text-base-content/80 mb-6">
             One simple step at a time, Trusty helps you stay safe, confident, and in control online.
           </motion.p>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="text-xl md:text-2xl text-base-content/90 mb-4"
+          >
+            “We know scams can be tricky to spot, and with technology changing so fast, it’s hard to keep up. But Trusty’s here to guide you every step of the way… and it’s completely free!”
+          </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -86,7 +94,7 @@ const HomePage: React.FC = () => {
           >
             <div className="flex items-center gap-3 mb-2">
               <User className="h-10 w-10 text-primary" />
-              <span className="font-semibold text-primary">Story from Clara, 72</span>
+              <span className="font-semibold text-primary">Story from Clara, 72 &mdash; Santa Ana, California</span>
             </div>
             <p className="mb-2">“One morning, I got an email that looked like it came from my bank. It asked me to click a link and update my information.</p>
             <p className="mb-2">It looked real, but something felt a little off. So I showed it to my son, Mason. He told me it was a scam, and I’m glad I didn’t click it.</p>
