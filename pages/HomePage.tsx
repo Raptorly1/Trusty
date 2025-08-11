@@ -84,7 +84,9 @@ const HomePage: React.FC = () => {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="text-xl md:text-2xl text-base-content/90 mb-4"
           >
-            “We know scams can be tricky to spot, and with technology changing so fast, it’s hard to keep up. But Trusty’s here to guide you every step of the way… and it’s completely free!”
+            {`We know scams can be tricky to spot, and with technology changing so fast, it's hard to keep up. But Trusty's here to guide you every step of the way… and it's `}
+            <span className="font-bold text-primary">completely free</span>
+            {`!`}
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
