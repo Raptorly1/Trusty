@@ -163,6 +163,8 @@ const AITextCheckerPage: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [result, setResult] = useState<AITextAnalysisResult | null>(null);
+    const [retryCount, setRetryCount] = useState(0);
+    const [autoRetrying, setAutoRetrying] = useState(false);
 
     const { isPlaying, isGenerating, error: audioError, generateAndPlay, play, pause } = useAudioPlayer();
 
@@ -177,9 +179,20 @@ const AITextCheckerPage: React.FC = () => {
         try {
             const analysisResult = await analyzeTextForAI(text);
             setResult(analysisResult);
+            setRetryCount(0); // Reset retry count on success
+            setAutoRetrying(false);
         } catch (e: any) {
             if (e.message === 'SERVER_WARMING') {
-                setError('Our server is starting up. Please wait a moment and try again.');
+                setError('Our server is starting up. Your request will be processed once it\'s ready - this usually takes 30-45 seconds.');
+                
+                // Auto-retry after a delay if it's the first few attempts
+                if (retryCount < 2) {
+                    setAutoRetrying(true);
+                    setTimeout(() => {
+                        setRetryCount(prev => prev + 1);
+                        handleAnalysis();
+                    }, 15000); // Retry after 15 seconds
+                }
             } else if (e.message === 'SERVER_ERROR') {
                 setError('Our server is temporarily unavailable. Please try again in a few minutes.');
             } else {
@@ -187,9 +200,11 @@ const AITextCheckerPage: React.FC = () => {
             }
             console.error(e);
         } finally {
-            setIsLoading(false);
+            if (!autoRetrying) {
+                setIsLoading(false);
+            }
         }
-    }, [text]);
+    }, [text, retryCount, autoRetrying]);
 
     const handleFileUpload = (content: string) => {
         setText(content);
