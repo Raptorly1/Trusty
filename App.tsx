@@ -92,28 +92,36 @@ const PageWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 const App: React.FC = () => {
   const location = useLocation();
   const [showServerPopup, setShowServerPopup] = useState(false);
+  const [hasShownWarmingPopup, setHasShownWarmingPopup] = useState(false);
   const { status, isWarming, estimatedWaitTime, startWarmUp, checkStatus } = useServerStatus(true);
 
-  // Warm up server on initial load
+  // Warm up server on initial load (non-blocking)
   useEffect(() => {
     startWarmUp();
   }, [startWarmUp]);
 
-  // Show popup when server is warming and user tries to access AI features
+  // Show informational popup when server is warming and user visits AI features for the first time
   useEffect(() => {
     const aiRoutes = ['/text-checker', '/image-checker', '/fact-checker', '/feedback-tool'];
     const isAIRoute = aiRoutes.some(route => location.pathname.includes(route));
     
-    if (isAIRoute && isWarming) {
+    if (isAIRoute && isWarming && !hasShownWarmingPopup) {
       setShowServerPopup(true);
+      setHasShownWarmingPopup(true);
     }
-  }, [location.pathname, isWarming]);
+    
+    // Auto-hide popup when server becomes ready
+    if (status === 'ready' && showServerPopup) {
+      setTimeout(() => setShowServerPopup(false), 2000);
+    }
+  }, [location.pathname, isWarming, hasShownWarmingPopup, status, showServerPopup]);
 
   const handleRetryServer = async () => {
     await checkStatus();
-    if (status === 'ready') {
-      setShowServerPopup(false);
-    }
+  };
+
+  const handleClosePopup = () => {
+    setShowServerPopup(false);
   };
 
   return (
@@ -134,12 +142,12 @@ const App: React.FC = () => {
       </main>
       <Footer />
       
-      {/* Server Status Popup */}
+      {/* Server Status Popup - Informational only */}
       <ServerStatusPopup
         status={status}
         isVisible={showServerPopup}
         estimatedWaitTime={estimatedWaitTime}
-        onClose={() => setShowServerPopup(false)}
+        onClose={handleClosePopup}
         onRetry={handleRetryServer}
       />
     </div>

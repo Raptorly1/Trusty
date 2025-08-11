@@ -78,17 +78,7 @@ export const warmUpServer = async (): Promise<void> => {
  * @returns The response from the Gemini API, as returned by the proxy.
  */
 async function callGeminiProxy(endpoint: string, params: any): Promise<any> {
-  // Check server status before making the request
-  const healthCheck = await checkServerHealth();
-  
-  if (healthCheck.status === 'warming') {
-    throw new Error('SERVER_WARMING');
-  }
-  
-  if (healthCheck.status === 'error') {
-    throw new Error('SERVER_ERROR');
-  }
-
+  // Non-blocking approach: always attempt the request, handle warming gracefully
   try {
     const response = await fetch(PROXY_URL, {
       method: 'POST',
