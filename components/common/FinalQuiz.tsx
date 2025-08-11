@@ -298,21 +298,17 @@ const FinalQuiz: React.FC<{ onComplete: (score: number) => void }> = ({ onComple
     const printWindow = window.open('', '_blank');
     if (!printWindow) return;
     
-    printWindow.document.write(`
-      <html>
-        <head>
-          <title>Certificate - ${certificateName}</title>
-          <style>
-            body { margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-            img { max-width: 100%; height: auto; }
-            @media print { body { margin: 0; } img { width: 100%; } }
-          </style>
-        </head>
-        <body>
-          <img src="${generatedCertificate}" alt="Certificate" />
-        </body>
-      </html>
-    `);
+    printWindow.document.title = `Certificate - ${certificateName}`;
+    printWindow.document.head.innerHTML = `
+      <style>
+        body { margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        img { max-width: 100%; height: auto; }
+        @media print { body { margin: 0; } img { width: 100%; } }
+      </style>
+    `;
+    printWindow.document.body.innerHTML = `
+      <img src="${generatedCertificate}" alt="Certificate" />
+    `;
     printWindow.document.close();
     printWindow.focus();
     printWindow.print();
