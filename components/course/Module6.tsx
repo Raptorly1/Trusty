@@ -1,5 +1,6 @@
 import React from 'react';
 import { Bot, Eye, AlertTriangle, Search, CheckCircle, Zap, Image as ImageIcon } from 'lucide-react';
+import SourcesButton from '../common/SourcesButton';
 
 const Module6: React.FC = () => {
   return (
@@ -273,6 +274,9 @@ const Module6: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Sources Button */}
+      <SourcesButton moduleNumber={6} />
     </div>
   );
 };
