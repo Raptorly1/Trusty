@@ -53,6 +53,7 @@ const FeatureCard: React.FC<{ icon: React.ReactNode, title: string, description:
 );
 
 const HomePage: React.FC = () => {
+// NOTE: Ensure mobile-first responsive design. Use Tailwind breakpoints (sm:, md:, lg:) so mobile styles apply by default and desktop styles only at larger widths.
   return (
     <div className="space-y-16 relative">
   {/* Hero & Clara's Story */}
