@@ -91,28 +91,31 @@ const Header: React.FC = () => {
 
   return (
     <header id="trusty-header" className="bg-base-200/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
-      <div className="navbar container mx-auto px-3 sm:px-4 min-h-[64px]">
-        <div className="navbar-start">
-          {/* Show mobile dropdown if scrolled or on small screens */}
+      <div className="container mx-auto px-3 sm:px-4 min-h-[64px] flex items-center justify-between">
+        {/* Logo and mobile dropdown */}
+        <div className="flex items-center gap-2 lg:gap-6 flex-shrink-0">
           <div className="lg:hidden">
             {(isScrolled || window.innerWidth < 1024) ? (
               <MobileDropdown navLinks={navLinks} dropdownOpen={dropdownOpen} setDropdownOpen={setDropdownOpen} />
             ) : null}
           </div>
-          <NavLink to="/" className="inline-flex items-center gap-2 px-3 py-2 text-xl sm:text-2xl font-bold text-primary normal-case rounded-full border border-transparent hover:border-primary hover:bg-primary/10 focus:border-primary focus:bg-primary/20 transition">
+          <NavLink to="/" className="inline-flex items-center gap-2 px-2 py-2 text-xl sm:text-2xl font-bold text-primary normal-case rounded-full border border-transparent hover:border-primary hover:bg-primary/10 focus:border-primary focus:bg-primary/20 transition">
             <img src="/Logo.png" alt="Trusty Logo" className="h-8 w-8 sm:h-12 sm:w-12 object-contain" />
             <span className="hidden xs:inline sm:inline">Trusty</span>
           </NavLink>
         </div>
-        {/* Desktop nav links */}
-        <div className="navbar-center hidden lg:flex">
-          <ul className="menu menu-horizontal px-1 text-base font-medium">
+        {/* Desktop nav links - spread out */}
+        <nav className="hidden lg:flex flex-1 justify-start ml-8">
+          <ul className="flex gap-6 xl:gap-10 text-base font-medium">
             {navLinks.map(({ path, label }) => (
-              <li key={path}><NavLink to={path} className={({ isActive }) => isActive ? "active" : ""}>{label}</NavLink></li>
+              <li key={path}>
+                <NavLink to={path} className={({ isActive }) => isActive ? "active text-primary" : "hover:text-primary/80"}>{label}</NavLink>
+              </li>
             ))}
           </ul>
-        </div>
-        <div className="navbar-end flex items-center gap-2 sm:gap-4">
+        </nav>
+        {/* Status and CTA */}
+        <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
           <div className="hidden sm:flex">
             <ServerStatusIndicator status={status} showText size="sm" />
           </div>
