@@ -1,81 +1,100 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { Server, Clock, AlertCircle, CheckCircle } from 'lucide-react';
-
-export type ServerStatus = 'unknown' | 'warming' | 'ready' | 'error';
+import { Wifi, WifiOff, Loader2 } from 'lucide-react';
+import { ServerStatus } from '../../hooks/useServerStatus';
 
 interface ServerStatusIndicatorProps {
   status: ServerStatus;
   showText?: boolean;
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'xs' | 'sm' | 'md' | 'lg';
   className?: string;
 }
 
 const ServerStatusIndicator: React.FC<ServerStatusIndicatorProps> = ({
   status,
-  showText = false,
+  showText = true,
   size = 'md',
   className = ''
 }) => {
-  const sizeClasses = {
-    sm: 'h-4 w-4',
-    md: 'h-5 w-5',
-    lg: 'h-6 w-6'
+  const getSizeClasses = () => {
+    switch (size) {
+      case 'xs':
+        return {
+          icon: 'h-3 w-3',
+          text: 'text-xs',
+          container: 'gap-1 px-2 py-1'
+        };
+      case 'sm':
+        return {
+          icon: 'h-4 w-4',
+          text: 'text-sm',
+          container: 'gap-2 px-3 py-1'
+        };
+      case 'lg':
+        return {
+          icon: 'h-6 w-6',
+          text: 'text-lg',
+          container: 'gap-3 px-4 py-2'
+        };
+      case 'md':
+      default:
+        return {
+          icon: 'h-5 w-5',
+          text: 'text-base',
+          container: 'gap-2 px-3 py-2'
+        };
+    }
   };
+
+  const sizeClasses = getSizeClasses();
 
   const getStatusConfig = () => {
     switch (status) {
       case 'ready':
         return {
-          icon: <CheckCircle className={`${sizeClasses[size]} text-success`} />,
+          icon: Wifi,
           text: 'Server Ready',
-          badgeColor: 'badge-success'
+          color: 'text-success',
+          bgColor: 'bg-success/10'
         };
       case 'warming':
         return {
-          icon: <Clock className={`${sizeClasses[size]} text-warning animate-spin`} />,
+          icon: Loader2,
           text: 'Server Starting',
-          badgeColor: 'badge-warning'
+          color: 'text-warning',
+          bgColor: 'bg-warning/10',
+          animate: 'animate-spin'
         };
       case 'error':
         return {
-          icon: <AlertCircle className={`${sizeClasses[size]} text-error`} />,
+          icon: WifiOff,
           text: 'Server Error',
-          badgeColor: 'badge-error'
+          color: 'text-error',
+          bgColor: 'bg-error/10'
         };
       default:
         return {
-          icon: <Server className={`${sizeClasses[size]} text-info animate-pulse`} />,
-          text: 'Checking Server',
-          badgeColor: 'badge-info'
+          icon: WifiOff,
+          text: 'Server Offline',
+          color: 'text-base-content/50',
+          bgColor: 'bg-base-content/5'
         };
     }
   };
 
-  const config = getStatusConfig();
-
-  if (showText) {
-    return (
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className={`badge ${config.badgeColor} gap-2 ${className}`}
-      >
-        {config.icon}
-        <span className="text-xs font-medium">{config.text}</span>
-      </motion.div>
-    );
-  }
+  const statusConfig = getStatusConfig();
+  const Icon = statusConfig.icon;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      className={`tooltip tooltip-bottom ${className}`}
-      data-tip={config.text}
-    >
-      {config.icon}
-    </motion.div>
+    <div className={`inline-flex items-center rounded-full ${sizeClasses.container} ${statusConfig.bgColor} ${className}`}>
+      <Icon 
+        className={`${sizeClasses.icon} ${statusConfig.color} ${statusConfig.animate || ''} flex-shrink-0`}
+      />
+      {showText && (
+        <span className={`${sizeClasses.text} ${statusConfig.color} font-medium`}>
+          {statusConfig.text}
+        </span>
+      )}
+    </div>
   );
 };
 
