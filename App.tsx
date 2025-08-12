@@ -28,20 +28,39 @@ const Header: React.FC = () => {
 
   return (
     <header className="bg-base-200/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
-      <div className="navbar container mx-auto px-4">
+      <div className="navbar container mx-auto px-3 sm:px-4 min-h-[64px]">
         <div className="navbar-start">
           <div className="dropdown">
-            <button tabIndex={0} aria-label="Open navigation menu" className="btn btn-ghost lg:hidden w-full h-full flex items-center justify-center bg-transparent border-none p-0">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" /></svg>
+            <button 
+              tabIndex={0} 
+              aria-label="Open navigation menu" 
+              className="btn btn-ghost lg:hidden min-h-[44px] h-11 w-11 p-0 rounded-lg flex items-center justify-center border border-transparent hover:border-primary hover:bg-primary/10 focus:border-primary focus:bg-primary/20"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" />
+              </svg>
             </button>
-            <ul className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+            <ul className="menu menu-sm dropdown-content mt-3 z-[1] p-3 shadow-lg bg-base-100 rounded-2xl w-56 border border-base-300 animate-in slide-in-from-top-2 duration-200">
               {navLinks.map(({ path, label, icon: Icon }) => (
-                <li key={path}><NavLink to={path} className={({ isActive }) => isActive ? "active" : ""}> <Icon className="h-4 w-4" /> {label}</NavLink></li>
+                <li key={path} className="mb-1 last:mb-0">
+                  <NavLink 
+                    to={path} 
+                    className={({ isActive }) => `flex items-center gap-3 p-3 rounded-lg text-base font-medium transition-colors focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-base-100 ${
+                      isActive 
+                        ? "bg-primary text-primary-content" 
+                        : "hover:bg-base-200 text-base-content"
+                    }`}
+                  > 
+                    <Icon className="h-5 w-5 flex-shrink-0" /> 
+                    <span>{label}</span>
+                  </NavLink>
+                </li>
               ))}
             </ul>
           </div>
-          <NavLink to="/" className="inline-flex items-center gap-3 px-4 py-2 text-2xl font-bold text-primary normal-case rounded-full border border-transparent hover:border-primary hover:bg-primary/10 focus:border-primary focus:bg-primary/20 transition">
-                          <img src="/Logo.png" alt="Trusty Logo" className="h-12 w-12 object-contain" /> Trusty
+          <NavLink to="/" className="inline-flex items-center gap-2 px-3 py-2 text-xl sm:text-2xl font-bold text-primary normal-case rounded-full border border-transparent hover:border-primary hover:bg-primary/10 focus:border-primary focus:bg-primary/20 transition">
+                          <img src="/Logo.png" alt="Trusty Logo" className="h-8 w-8 sm:h-12 sm:w-12 object-contain" /> 
+                          <span className="hidden xs:inline sm:inline">Trusty</span>
           </NavLink>
         </div>
         <div className="navbar-center hidden lg:flex">
@@ -51,9 +70,17 @@ const Header: React.FC = () => {
             ))}
           </ul>
         </div>
-        <div className="navbar-end flex items-center gap-4">
-          <ServerStatusIndicator status={status} showText size="sm" />
-          <a className="btn btn-primary" href="#/course">Start Learning</a>
+        <div className="navbar-end flex items-center gap-2 sm:gap-4">
+          <div className="hidden sm:flex">
+            <ServerStatusIndicator status={status} showText size="sm" />
+          </div>
+          <div className="flex sm:hidden">
+            <ServerStatusIndicator status={status} showText={false} size="xs" />
+          </div>
+          <a className="btn btn-primary min-h-[44px] h-11 px-3 sm:px-4 text-sm sm:text-base font-medium" href="#/course">
+            <span className="hidden sm:inline">Start Learning</span>
+            <span className="sm:hidden">Start</span>
+          </a>
         </div>
       </div>
     </header>
