@@ -1,5 +1,6 @@
 import React from 'react';
 import { Key, Shield, Lock, AlertTriangle, CheckCircle, Smartphone, X, Eye, EyeOff } from 'lucide-react';
+import SourcesButton from '../common/SourcesButton';
 
 const Module5: React.FC = () => {
   return (
@@ -331,6 +332,7 @@ const Module5: React.FC = () => {
       </div>
 
       {/* Summary */}
+            {/* Summary */}
       <div className="card bg-primary text-primary-content">
         <div className="card-body text-center">
           <h3 className="text-2xl font-bold">Strong passwords are your first line of defense!</h3>
@@ -353,6 +355,9 @@ const Module5: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Sources Button */}
+      <SourcesButton moduleNumber={5} />
     </div>
   );
 };
