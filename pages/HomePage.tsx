@@ -27,6 +27,8 @@ import { BookOpen, Shield, DollarSign, CheckCircle, User } from 'lucide-react';
 
 import { NavLink } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import TestimonialCarousel from '../components/common/TestimonialCarousel';
+import { topCarouselTestimonials, bottomCarouselTestimonials } from '../constants/testimonialsData';
 
 const FeatureCard: React.FC<{ icon: React.ReactNode, title: string, description: string, link: string }> = ({ icon, title, description, link }) => (
   <motion.div
@@ -125,6 +127,79 @@ const HomePage: React.FC = () => {
             </motion.div>
           </motion.div>
         </div>
+  </motion.section>
+
+  {/* Testimonials Section - Counter-rotating carousels */}
+  <motion.section
+    initial={{ opacity: 0, y: 40 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true, amount: 0.3 }}
+    transition={{ duration: 0.7, delay: 0.1 }}
+    className="py-16 bg-gradient-to-br from-base-200 to-base-300 rounded-xl overflow-hidden relative"
+  >
+    {/* Background pattern */}
+    <div className="absolute inset-0 opacity-5">
+      <svg className="w-full h-full" viewBox="0 0 100 100" fill="none">
+        <defs>
+          <pattern id="testimonial-pattern" patternUnits="userSpaceOnUse" width="20" height="20">
+            <circle cx="10" cy="10" r="1" fill="currentColor" />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#testimonial-pattern)" />
+      </svg>
+    </div>
+    
+    <div className="text-center mb-12 relative z-10">
+      <motion.h2 
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+        className="text-5xl font-bold text-primary mb-4"
+      >
+        Join Others Who Feel Safer Online
+      </motion.h2>
+      <motion.p 
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, delay: 0.2 }}
+        className="text-xl text-base-content/80 max-w-2xl mx-auto"
+      >
+        Real stories from real people who've taken control of their digital safety
+      </motion.p>
+    </div>
+    
+    {/* Top carousel - moving left */}
+    <motion.div 
+      className="mb-8"
+      initial={{ opacity: 0, x: -100 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.8, delay: 0.3 }}
+    >
+      <TestimonialCarousel 
+        testimonials={topCarouselTestimonials} 
+        direction="left" 
+        speed={20}
+        className="py-4"
+      />
+    </motion.div>
+    
+    {/* Bottom carousel - moving right */}
+    <motion.div
+      initial={{ opacity: 0, x: 100 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.8, delay: 0.5 }}
+    >
+      <TestimonialCarousel 
+        testimonials={bottomCarouselTestimonials} 
+        direction="right" 
+        speed={25}
+        className="py-4"
+      />
+    </motion.div>
   </motion.section>
 
   {/* Why Trusty Matters */}
