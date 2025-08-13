@@ -313,7 +313,7 @@ const HomePage: React.FC = () => {
         transition={{ duration: 0.7, delay: 0.4 }}
   className="max-w-4xl mx-auto py-12 rounded-xl" style={{ backgroundColor: '#F3F0F8' }}
       >
-  <h2 className="text-4xl font-bold text-center mb-10" style={{ color: '#6C1BA0' }}>Free Tools You Can Try Right Now</h2>
+  <h2 className="text-4xl font-bold text-center mb-10" style={{ color: '#000' }}>Free Tools to Use</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <FeatureCard 
             icon={<BookOpen size={48} style={{ color: '#6C1BA0' }} />} 
