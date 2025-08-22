@@ -373,18 +373,38 @@ RULES (follow exactly):
 - For each source, include: url (use the exact URL given), title, credibility (one of ${CRED_ENUM.join(', ')}), and a one-sentence explanation.
 - Output must conform to the provided schema; no extra keys.
 
-Guidance for credibility (heuristic, not output):
-- Very High: peer-reviewed journals, official government/standards docs, top-tier reference works, authoritative datasets.
-- High: major reputable newsrooms with strong editorial standards; authoritative institutions.
-- Medium High: recognized outlets or NGOs with generally reliable records.
-- Medium or below: personal blogs, forums, SEO content farms, unverifiable or opaque sites, etc.
+CRITICAL: Evaluate each SOURCE INDIVIDUALLY based on the SPECIFIC PAGE/PAPER, not just the domain:
+- For academic papers (ArXiv, journal articles): Consider the specific paper's methodology, peer-review status, author credentials, and relevance to the claim
+- For news articles: Evaluate the specific article's sourcing, evidence presented, and journalistic standards  
+- For government/organization pages: Assess the specific content's authority and relevance to the topic
+- For research institutions: Consider the specific study/paper cited, not just the institution's general reputation
+
+Examples of GOOD evaluations:
+- "High - Peer-reviewed study from Nature with robust methodology and relevant findings on this specific topic"
+- "Medium - ArXiv preprint with solid methodology but not yet peer-reviewed, from credible authors in the field"
+- "Very High - Official CDC guidance document directly addressing this health claim with evidence citations"
+- "Medium Low - News article lacks direct expert quotes and relies mainly on secondary sources"
+
+Examples of BAD (domain-only) evaluations:
+- "High - From a reputable university" (too general)
+- "Very High - Government source" (not considering specific content)
+- "Low - ArXiv paper" (ignoring paper quality)
+
+Guidance for credibility (evaluate the SPECIFIC content, not just domain):
+- Very High: Peer-reviewed studies with strong methodology relevant to the claim, official government guidance on the specific topic, authoritative reference works directly addressing the question
+- High: Well-sourced news articles with expert quotes, pre-prints from credible researchers with solid methodology, established organization reports with evidence
+- Medium High: News articles with some expert sourcing, research reports from recognized organizations, government pages with relevant but general information
+- Medium: Basic news coverage with limited sourcing, organization statements without strong evidence backing, general informational pages
+- Medium Low: Articles with weak sourcing, opinion pieces presented as fact, content with unclear authorship but from recognized domains
+- Low: Blog posts, forums, content with no clear sourcing, outdated information, or clearly biased sources
+- Very Low: Clearly unreliable sources, content contradicted by established evidence, sources with obvious conflicts of interest
 
 Initial Summary:
 ---
 ${summary}
 ---
 
-Sources:
+Sources (evaluate each specific page/paper/article individually):
 ---
 ${sourceList}
 ---

@@ -302,7 +302,7 @@ const FactCheckerPage: React.FC = () => {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                     {[
                                         "Does drinking coffee dehydrate you?",
-                                        "Find credible studies on effectiveness of gen AI in education",
+                                        "Find studies  explaining the distribution and credibility of sources that ChatGPT and other major LLMs use.",
                                         "Is chocolate good for your heart?",
                                         "Do goldfish have 3-second memory?"
                                     ].map((example) => (
@@ -345,7 +345,7 @@ const FactCheckerPage: React.FC = () => {
                                             <CheckCircle className="w-6 h-6 text-primary" />
                                         </div>
                                         <h4 className="font-semibold text-gray-900 mb-2">2. Analyze</h4>
-                                        <p className="text-sm text-gray-600">We evaluate source credibility and analyze evidence, on top of the links already filtered</p>
+                                        <p className="text-sm text-gray-600">We evaluate each specific source's content, methodology, and relevance—not just the domain</p>
                                     </div>
                                     <div className="text-center">
                                         <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
@@ -465,9 +465,10 @@ const FactCheckerPage: React.FC = () => {
                                             How We Rate Sources
                                         </h4>
                                         <div className="text-sm text-gray-600 space-y-1">
-                                            <p><strong>Very High/High:</strong> Peer-reviewed journals, official government sources, major reputable news outlets</p>
-                                            <p><strong>Medium:</strong> Recognized organizations, established publications with editorial standards</p>
-                                            <p><strong>Low:</strong> Personal blogs, unverified content, sources with unclear authorship</p>
+                                            <p><strong>Very High/High:</strong> Peer-reviewed studies with relevant methodology, official sources with specific guidance, well-sourced articles with expert evidence</p>
+                                            <p><strong>Medium:</strong> News with some expert sourcing, organization reports, government pages with general information</p>
+                                            <p><strong>Low:</strong> Poor sourcing, opinion pieces, outdated information, or sources with unclear authorship</p>
+                                            <p className="text-xs mt-2 italic">We evaluate each specific page/paper, not just the website domain.</p>
                                         </div>
                                     </div>
                                 </div>
