@@ -287,7 +287,7 @@ const FinalQuiz: React.FC<{ onComplete: (score: number) => void }> = ({ onComple
     setGeneratedCertificate(dataUrl);
     };
     
-    img.src = '/resources/FinalCertificate.png';
+    img.src = '/FinalCertificate.png';
   }, []);
 
   // Download certificate function
