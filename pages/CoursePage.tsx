@@ -1504,6 +1504,26 @@ const CoursePage: React.FC = () => {
 	// Animation key: changes for every module/exercise view
 	const animationKey = `${currentModuleIndex}-${isExerciseMode ? 'exercise' : 'module'}`;
 
+	// Auto-scroll to top whenever the visible module or exercise changes
+	useEffect(() => {
+		if (typeof window === 'undefined') return;
+		try {
+			window.scrollTo({ top: 0, behavior: 'smooth' });
+		} catch (e) {
+			// Fallback for older browsers
+			try {
+				window.scrollTo(0, 0);
+			} catch (err) {
+				console.error('Failed to scroll to top:', err);
+			}
+			if (e instanceof Error) {
+				console.error('Error during smooth scroll to top:', e);
+			} else {
+				console.error('Unknown error during smooth scroll to top');
+			}
+		}
+	}, [animationKey]);
+
 	// Show certificate UI if score >= 8
 	if (quizScore !== null && quizScore >= 8) {
 		return (
