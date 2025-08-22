@@ -22,9 +22,7 @@ const navLinks = [
   { path: '/fact-checker', label: 'Fact-Checker', icon: Search },
 ];
 
-
-
-// Move MobileDropdown out of Header
+// Mobile Dropdown Component
 const MobileDropdown: React.FC<{
   navLinks: typeof navLinks,
   dropdownOpen: boolean,
@@ -43,30 +41,50 @@ const MobileDropdown: React.FC<{
     </button>
     <AnimatePresence>
       {dropdownOpen && (
-        <motion.ul
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          transition={{ duration: 0.2 }}
-          className="absolute left-0 mt-2 z-50 p-3 shadow-lg bg-base-100 rounded-2xl w-56 border border-base-300 flex flex-col items-center"
-        >
-          {navLinks.map(({ path, label, icon: Icon }) => (
-            <li key={path} className="mb-1 last:mb-0">
-              <NavLink
-                to={path}
-                className={({ isActive }) => `flex flex-col items-center justify-center gap-2 p-3 rounded-lg text-base font-medium transition-colors focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-base-100 text-center ${
-                    isActive
-                      ? "text-[#6C1BA0] font-bold"
-                      : "text-black hover:text-[#6C1BA0] hover:bg-base-200"
-                  }`}
-                onClick={() => setDropdownOpen(false)}
-              >
-                <Icon className="h-5 w-5 flex-shrink-0 mx-auto" />
-                <span className="w-full text-center">{label}</span>
-              </NavLink>
-            </li>
-          ))}
-        </motion.ul>
+        <>
+          {/* Backdrop for mobile - closes dropdown when tapped */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-40 lg:hidden"
+            onClick={() => setDropdownOpen(false)}
+          />
+          <motion.ul
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className="absolute left-0 mt-2 z-50 p-3 shadow-lg bg-base-100 rounded-2xl w-56 border border-base-300 flex flex-col items-center"
+            style={{ touchAction: 'manipulation' }} // Improve touch responsiveness
+          >
+            {navLinks.map(({ path, label, icon: Icon }) => (
+              <li key={path} className="mb-1 last:mb-0">
+                <NavLink
+                  to={path}
+                  className={({ isActive }) => `flex flex-col items-center justify-center gap-2 p-3 rounded-lg text-base font-medium transition-colors focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-base-100 text-center ${
+                      isActive
+                        ? "text-[#6C1BA0] font-bold"
+                        : "text-black hover:text-[#6C1BA0] hover:bg-base-200"
+                    }`}
+                  onClick={(e) => {
+                    // Ensure the navigation happens even on mobile
+                    setDropdownOpen(false);
+                    // Small delay to ensure dropdown closes before navigation
+                    setTimeout(() => {
+                      if (e.currentTarget.getAttribute('href') !== window.location.hash) {
+                        // Navigation will be handled by React Router
+                      }
+                    }, 50);
+                  }}
+                >
+                  <Icon className="h-5 w-5 flex-shrink-0 mx-auto" />
+                  <span className="w-full text-center">{label}</span>
+                </NavLink>
+              </li>
+            ))}
+          </motion.ul>
+        </>
       )}
     </AnimatePresence>
   </div>
@@ -76,6 +94,93 @@ const Header: React.FC = () => {
   const { status } = useServerStatus(true);
   const [isScrolled, setIsScrolled] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const location = useLocation();
+
+  // Close dropdown when location changes (mobile navigation fix)
+  useEffect(() => {
+    setDropdownOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+
+// Mobile Dropdown Component
+const MobileDropdown: React.FC<{
+  navLinks: typeof navLinks,
+  dropdownOpen: boolean,
+  setDropdownOpen: React.Dispatch<React.SetStateAction<boolean>>
+}> = ({ navLinks, dropdownOpen, setDropdownOpen }) => (
+  <div className="relative">
+    <button
+      tabIndex={0}
+      aria-label="Open navigation menu"
+      className="btn btn-ghost min-h-[44px] h-11 w-11 p-0 rounded-lg flex items-center justify-center border border-transparent hover:border-primary hover:bg-primary/10 focus:border-primary focus:bg-primary/20"
+      onClick={() => setDropdownOpen((open) => !open)}
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" />
+      </svg>
+    </button>
+    <AnimatePresence>
+      {dropdownOpen && (
+        <>
+          {/* Backdrop for mobile - closes dropdown when tapped */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-40 lg:hidden"
+            onClick={() => setDropdownOpen(false)}
+          />
+          <motion.ul
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className="absolute left-0 mt-2 z-50 p-3 shadow-lg bg-base-100 rounded-2xl w-56 border border-base-300 flex flex-col items-center"
+            style={{ touchAction: 'manipulation' }} // Improve touch responsiveness
+          >
+            {navLinks.map(({ path, label, icon: Icon }) => (
+              <li key={path} className="mb-1 last:mb-0">
+                <NavLink
+                  to={path}
+                  className={({ isActive }) => `flex flex-col items-center justify-center gap-2 p-3 rounded-lg text-base font-medium transition-colors focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-base-100 text-center ${
+                      isActive
+                        ? "text-[#6C1BA0] font-bold"
+                        : "text-black hover:text-[#6C1BA0] hover:bg-base-200"
+                    }`}
+                  onClick={(e) => {
+                    // Ensure the navigation happens even on mobile
+                    setDropdownOpen(false);
+                    // Small delay to ensure dropdown closes before navigation
+                    setTimeout(() => {
+                      if (e.currentTarget.getAttribute('href') !== window.location.hash) {
+                        // Navigation will be handled by React Router
+                      }
+                    }, 50);
+                  }}
+                >
+                  <Icon className="h-5 w-5 flex-shrink-0 mx-auto" />
+                  <span className="w-full text-center">{label}</span>
+                </NavLink>
+              </li>
+            ))}
+          </motion.ul>
+        </>
+      )}
+    </AnimatePresence>
+  </div>
+);
+
+const Header: React.FC = () => {
+  const { status } = useServerStatus(true);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const location = useLocation();
+
+  // Close dropdown when location changes (mobile navigation fix)
+  useEffect(() => {
+    setDropdownOpen(false);
+  }, [location.pathname]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -113,8 +218,8 @@ const Header: React.FC = () => {
                   className={({ isActive }) =>
                     // Keep the header links the same primary shade as the site title
                     isActive
-                      ? "active text-[#6C1BA0] text-center font-bold"
-                      : "text-black hover:text-[#6C1BA0] transition-colors text-center"
+                      ? "text-primary font-bold border-b-2 border-primary px-3 py-2 transition-all duration-200"
+                      : "text-base-content px-3 py-2 hover:text-primary transition-all duration-200"
                   }
                 >
                   {label}
@@ -169,7 +274,6 @@ const PageWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   </motion.div>
 );
 
-
 const App: React.FC = () => {
   const location = useLocation();
   const [showServerPopup, setShowServerPopup] = useState(false);
@@ -190,7 +294,7 @@ const App: React.FC = () => {
       setShowServerPopup(true);
       setHasShownWarmingPopup(true);
     }
-    
+
     // Auto-hide popup when server becomes ready
     if (status === 'ready' && showServerPopup) {
       setTimeout(() => setShowServerPopup(false), 2000);
