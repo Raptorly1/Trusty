@@ -6,6 +6,59 @@ import { factCheckClaim, processFactCheckResults } from '../services/geminiServi
 import { SourceCredibility } from '../types';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 
+// Progress Bar Component
+const ProgressBar: React.FC<{ 
+    percentage: number; 
+    stage: string; 
+    stages: string[];
+}> = ({ percentage, stage, stages }) => {
+    const currentStageIndex = stages.findIndex(s => s === stage);
+    
+    return (
+        <div className="w-full max-w-2xl mx-auto mb-6">
+            <div className="flex justify-between text-sm text-gray-600 mb-2">
+                <span className="font-medium">{stage}</span>
+                <span>{Math.round(percentage)}%</span>
+            </div>
+            
+            {/* Progress Bar */}
+            <div className="w-full bg-gray-200 rounded-full h-3 mb-4">
+                <div 
+                    className="bg-primary h-3 rounded-full transition-all duration-500 ease-out"
+                    style={{ width: `${percentage}%` }}
+                />
+            </div>
+            
+            {/* Stage Indicators */}
+            <div className="flex justify-between">
+                {stages.map((stageName, index) => {
+                    const isComplete = index < currentStageIndex;
+                    const isCurrent = index === currentStageIndex;
+                    const isPending = index > currentStageIndex;
+                    
+                    let dotClass = 'bg-gray-300';
+                    if (isComplete) {
+                        dotClass = 'bg-primary';
+                    } else if (isCurrent) {
+                        dotClass = 'bg-primary animate-pulse';
+                    }
+                    
+                    return (
+                        <div key={stageName} className="flex flex-col items-center">
+                            <div className={`w-3 h-3 rounded-full transition-colors duration-300 ${dotClass}`} />
+                            <span className={`text-xs mt-1 transition-colors duration-300 ${
+                                !isPending ? 'text-primary font-medium' : 'text-gray-500'
+                            }`}>
+                                {stageName}
+                            </span>
+                        </div>
+                    );
+                })}
+            </div>
+        </div>
+    );
+};
+
 const CredibilityBadge: React.FC<{ credibility: SourceCredibility['credibility'] }> = ({ credibility }) => {
     const getCredibilityStyle = () => {
         switch (credibility) {
@@ -178,6 +231,8 @@ const FactCheckerPage: React.FC = () => {
     const [summary, setSummary] = useState<string | null>(null);
     const [sources, setSources] = useState<SourceCredibility[]>([]);
     const [sortOrder, setSortOrder] = useState<'default' | 'high-to-low' | 'low-to-high'>('default');
+    const [progressStage, setProgressStage] = useState<string>('');
+    const [progressPercentage, setProgressPercentage] = useState<number>(0);
 
     const handleAnalysis = useCallback(async () => {
         if (!claim.trim()) {
@@ -188,10 +243,17 @@ const FactCheckerPage: React.FC = () => {
         setError(null);
         setSummary(null);
         setSources([]);
+        setProgressStage('Searching');
+        setProgressPercentage(10);
 
         try {
             // Step 1: Get initial summary and source URLs from Gemini with Search
+            setProgressStage('Searching');
+            setProgressPercentage(15);
             const { summary: initialSummary, sources: rawSources } = await factCheckClaim(claim);
+            
+            setProgressStage('Searching');
+            setProgressPercentage(35);
 
             // Step 2: Extract unique sources with titles and clean URLs
              const uniqueSources = Array.from(new Map(
@@ -204,14 +266,24 @@ const FactCheckerPage: React.FC = () => {
                     })
             ).values());
             
+            setProgressStage('Analyzing');
+            setProgressPercentage(50);
+            
             if (uniqueSources.length === 0) {
               setSummary(initialSummary); // Show at least the initial summary if no sources are found
+              setProgressStage('Complete');
+              setProgressPercentage(100);
               setIsLoading(false);
               return;
             }
 
             // Step 3: Get annotated summary and credibility for sources
+            setProgressStage('Verifying');
+            setProgressPercentage(75);
             const { annotatedSummary, sources: processedSources } = await processFactCheckResults(initialSummary, uniqueSources);
+            
+            setProgressStage('Complete');
+            setProgressPercentage(100);
             
             setSummary(annotatedSummary);
             setSources(processedSources.map(s => ({...s, url: cleanUrl(s.url)})));
@@ -302,7 +374,7 @@ const FactCheckerPage: React.FC = () => {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                     {[
                                         "Does drinking coffee dehydrate you?",
-                                        "Find studies  explaining the distribution and credibility of sources that ChatGPT and other major LLMs use.",
+                                        "Find studies explaining the distribution and credibility of sources that ChatGPT and other major LLMs use.",
                                         "Is chocolate good for your heart?",
                                         "Do goldfish have 3-second memory?"
                                     ].map((example) => (
@@ -363,10 +435,23 @@ const FactCheckerPage: React.FC = () => {
                 <div className="space-y-8">
                     {isLoading && (
                         <div className="flex flex-col items-center justify-center py-12">
-                            <LoadingSpinner message="Analyzing claim and gathering sources..." />
-                            <p className="text-gray-600 mt-4 text-center max-w-md">
-                                We're searching through credible sources to fact-check your claim. This usually takes 10-15 seconds.
-                            </p>
+                            <ProgressBar 
+                                percentage={progressPercentage} 
+                                stage={progressStage}
+                                stages={['Searching', 'Analyzing', 'Verifying', 'Complete']}
+                            />
+                            <div className="text-center">
+                                <LoadingSpinner message={`${progressStage} claim and gathering sources...`} />
+                                <p className="text-gray-600 mt-4 max-w-md">
+                                    {progressStage === 'Searching' && "We're searching through credible sources to fact-check your claim."}
+                                    {progressStage === 'Analyzing' && "Analyzing the quality and relevance of sources found."}
+                                    {progressStage === 'Verifying' && "Evaluating each source's credibility and evidence."}
+                                    {progressStage === 'Complete' && "Finalizing your fact-check results."}
+                                </p>
+                                <p className="text-sm text-gray-500 mt-2">
+                                    This usually takes 15-30 seconds depending on the complexity of your claim.
+                                </p>
+                            </div>
                         </div>
                     )}
                     
