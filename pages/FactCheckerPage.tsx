@@ -7,46 +7,129 @@ import { SourceCredibility } from '../types';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 
 const CredibilityBadge: React.FC<{ credibility: SourceCredibility['credibility'] }> = ({ credibility }) => {
-    const baseClass = "badge badge-lg font-semibold";
-    switch (credibility) {
-        case 'Very High':
-            return <span className={`${baseClass} badge-success`}><CheckCircle className="mr-2" /> Very High</span>;
-        case 'High':
-            return <span className={`${baseClass} badge-success`}><CheckCircle className="mr-2" /> High</span>;
-        case 'Medium High':
-            return <span className={`${baseClass} badge-success`}><HelpCircle className="mr-2" /> Medium High</span>;
-        case 'Medium':
-            return <span className={`${baseClass} badge-warning`}><HelpCircle className="mr-2" /> Medium</span>;
-        case 'Medium Low':
-            return <span className={`${baseClass} badge-warning`}><AlertCircle className="mr-2" /> Medium Low</span>;
-        case 'Low':
-            return <span className={`${baseClass} badge-error`}><XCircle className="mr-2" /> Low</span>;
-        case 'Very Low':
-            return <span className={`${baseClass} badge-error`}><XCircle className="mr-2" /> Very Low</span>;
-        default:
-            return <span className={`${baseClass} badge-ghost`}>Unknown</span>;
-    }
+    const getCredibilityStyle = () => {
+        switch (credibility) {
+            case 'Very High':
+                return {
+                    className: "bg-green-100 text-green-800 border border-green-200",
+                    icon: <CheckCircle className="w-4 h-4" />,
+                    text: "Very High"
+                };
+            case 'High':
+                return {
+                    className: "bg-green-100 text-green-800 border border-green-200",
+                    icon: <CheckCircle className="w-4 h-4" />,
+                    text: "High"
+                };
+            case 'Medium High':
+                return {
+                    className: "bg-green-50 text-green-700 border border-green-200",
+                    icon: <CheckCircle className="w-4 h-4" />,
+                    text: "Medium High"
+                };
+            case 'Medium':
+                return {
+                    className: "bg-yellow-100 text-yellow-800 border border-yellow-200",
+                    icon: <HelpCircle className="w-4 h-4" />,
+                    text: "Medium"
+                };
+            case 'Medium Low':
+                return {
+                    className: "bg-orange-100 text-orange-800 border border-orange-200",
+                    icon: <AlertCircle className="w-4 h-4" />,
+                    text: "Medium Low"
+                };
+            case 'Low':
+                return {
+                    className: "bg-red-100 text-red-800 border border-red-200",
+                    icon: <XCircle className="w-4 h-4" />,
+                    text: "Low"
+                };
+            case 'Very Low':
+                return {
+                    className: "bg-red-100 text-red-800 border border-red-200",
+                    icon: <XCircle className="w-4 h-4" />,
+                    text: "Very Low"
+                };
+            default:
+                return {
+                    className: "bg-gray-100 text-gray-800 border border-gray-200",
+                    icon: <HelpCircle className="w-4 h-4" />,
+                    text: "Unknown"
+                };
+        }
+    };
+
+    const { className, icon, text } = getCredibilityStyle();
+    
+    return (
+        <span className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-semibold ${className}`}>
+            {icon}
+            {text}
+        </span>
+    );
 };
 
 const RenderedSummary: React.FC<{ summary: string; sources: SourceCredibility[] }> = ({ summary, sources }) => {
-    const parts = summary.split(/(\[\d+\])/g);
-    return (
-        <p className="whitespace-pre-wrap">
-            {parts.filter(Boolean).map((part, i) => {
-                const match = RegExp(/\[(\d+)\]/).exec(part);
-                if (match) {
-                    const sourceIndex = parseInt(match[1], 10) - 1;
-                    if (sources[sourceIndex]) {
-                        return (
-                            <a key={`${part}-${i}`} href={`#source-${sourceIndex}`} className="font-bold text-primary no-underline tooltip" data-tip={`Jump to Source: ${sources[sourceIndex].title}`}>
-                                <sup>{part}</sup>
-                            </a>
-                        );
-                    }
+    // Extract verdict from first sentence and rest of content
+    const sentences = summary.split(/(?<=[.!?])\s+/);
+    const verdict = sentences[0];
+    const restOfSummary = sentences.slice(1).join(' ');
+    
+    const renderTextWithCitations = (text: string) => {
+        const parts = text.split(/(\[\d+\])/g);
+        return parts.filter(Boolean).map((part, i) => {
+            const match = RegExp(/\[(\d+)\]/).exec(part);
+            if (match) {
+                const sourceIndex = parseInt(match[1], 10) - 1;
+                if (sources[sourceIndex]) {
+                    return (
+                        <a 
+                            key={`${part}-${i}`} 
+                            href={`#source-${sourceIndex}`} 
+                            className="inline-flex items-center text-primary hover:text-primary-focus transition-colors duration-200 no-underline font-medium text-sm ml-0.5"
+                            title={`Source: ${sources[sourceIndex].title}`}
+                        >
+                            <sup className="bg-primary text-primary-content px-1.5 py-0.5 rounded-full text-xs font-bold hover:bg-primary-focus transition-all duration-200">
+                                {match[1]}
+                            </sup>
+                        </a>
+                    );
                 }
-                return <span key={`${part}-${i}`}>{part}</span>;
-            })}
-        </p>
+            }
+            return <span key={`${part}-${i}`}>{part}</span>;
+        });
+    };
+
+    return (
+        <div className="space-y-6">
+            {/* Verdict */}
+            <div className="bg-gradient-to-r from-primary/10 to-secondary/10 border border-primary/20 rounded-xl p-6">
+                <div className="flex items-start gap-3">
+                    <CheckCircle className="w-6 h-6 text-primary mt-1 flex-shrink-0" />
+                    <div>
+                        <h3 className="text-lg font-bold text-gray-900 mb-2">Quick Verdict</h3>
+                        <p className="text-xl leading-relaxed text-gray-800 font-medium">
+                            {renderTextWithCitations(verdict)}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            {/* Detailed Analysis */}
+            {restOfSummary && (
+                <div className="prose prose-lg max-w-none">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-3">Detailed Analysis</h3>
+                    <div className="text-lg leading-relaxed text-gray-700 space-y-4">
+                        {restOfSummary.split('\n\n').map((paragraph) => (
+                            <p key={paragraph.substring(0, 50)} className="mb-4">
+                                {renderTextWithCitations(paragraph)}
+                            </p>
+                        ))}
+                    </div>
+                </div>
+            )}
+        </div>
     );
 };
 
@@ -66,24 +149,24 @@ const cleanUrl = (url: string): string => {
 };
 
 const getCredibilityClass = (credibility: SourceCredibility['credibility']) => {
-    const base = 'p-4 rounded-lg border transition-all scroll-mt-24';
+    const base = 'p-6 rounded-xl border transition-all duration-200 scroll-mt-24 hover:shadow-md';
     switch (credibility) {
         case 'Very High':
-            return `${base} bg-green-200 border-green-400 hover:shadow-md hover:border-green-500`;
+            return `${base} bg-green-50 border-green-200 hover:border-green-300`;
         case 'High':
-            return `${base} bg-green-100 border-green-300 hover:shadow-md hover:border-green-400`;
+            return `${base} bg-green-50 border-green-200 hover:border-green-300`;
         case 'Medium High':
-            return `${base} bg-green-50 border-green-200 hover:shadow-md hover:border-green-300`;
+            return `${base} bg-green-50 border-green-200 hover:border-green-300`;
         case 'Medium':
-            return `${base} bg-yellow-50 border-yellow-200 hover:shadow-md hover:border-yellow-300`;
+            return `${base} bg-yellow-50 border-yellow-200 hover:border-yellow-300`;
         case 'Medium Low':
-            return `${base} bg-yellow-100 border-yellow-300 hover:shadow-md hover:border-yellow-400`;
+            return `${base} bg-orange-50 border-orange-200 hover:border-orange-300`;
         case 'Low':
-            return `${base} bg-red-50 border-red-200 hover:shadow-md hover:border-red-300`;
+            return `${base} bg-red-50 border-red-200 hover:border-red-300`;
         case 'Very Low':
-            return `${base} bg-red-200 border-red-400 hover:shadow-md hover:border-red-500`;
+            return `${base} bg-red-50 border-red-200 hover:border-red-300`;
         default:
-            return `${base} bg-slate-50 border-slate-200 hover:shadow-md hover:border-slate-300`;
+            return `${base} bg-gray-50 border-gray-200 hover:border-gray-300`;
     }
 };
 
@@ -175,89 +258,224 @@ const FactCheckerPage: React.FC = () => {
 
 
     return (
-        <div>
-            <div className="text-center">
-                <h1 className="text-5xl font-bold">Trusty Fact-Checker</h1>
-                <p className="text-2xl mt-4 text-base-content/70">Get a quick read on claims and news stories.</p>
-            </div>
+        <div className="min-h-screen bg-gray-50">
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div className="text-center mb-12">
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4">Trusty Fact-Checker</h1>
+                    <p className="text-lg sm:text-xl md:text-2xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+                        Get a quick read on claims and news stories with credible sources.
+                    </p>
+                </div>
 
-            <div className="max-w-3xl mx-auto mt-12">
-                <div className="form-control">
-                    <div className="join">
-                        <input
-                            type="text"
-                            className="input input-bordered input-lg join-item w-full text-lg"
-                            placeholder="Enter a claim, e.g., 'Does vitamin C prevent colds?'"
-                            value={claim}
-                            onChange={(e) => setClaim(e.target.value)}
-                            onKeyDown={(e) => e.key === 'Enter' && handleAnalysis()}
-                            disabled={isLoading}
-                        />
-                        <button className="btn btn-primary btn-lg join-item" onClick={handleAnalysis} disabled={isLoading || !claim}>
-                            {isLoading ? <span className="loading loading-spinner"></span> : <Search size={28} />}
-                        </button>
+                <div className="max-w-3xl mx-auto mb-12">
+                    <div className="form-control">
+                        <div className="join shadow-lg">
+                            <input
+                                type="text"
+                                className="input input-bordered input-lg join-item w-full text-lg bg-white border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20"
+                                placeholder="Enter a claim, e.g., 'Does vitamin C prevent colds?'"
+                                value={claim}
+                                onChange={(e) => setClaim(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && handleAnalysis()}
+                                disabled={isLoading}
+                            />
+                            <button 
+                                className="btn btn-primary btn-lg join-item px-8" 
+                                onClick={handleAnalysis} 
+                                disabled={isLoading || !claim}
+                            >
+                                {isLoading ? (
+                                    <span className="loading loading-spinner loading-md"></span>
+                                ) : (
+                                    <>
+                                        <Search size={24} />
+                                        <span className="hidden sm:inline ml-2">Check Claim</span>
+                                    </>
+                                )}
+                            </button>
+                        </div>
+                        
+                        {/* Example claims when no input */}
+                        {!claim && !summary && !isLoading && (
+                            <div className="mt-6 p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
+                                <h3 className="font-semibold text-gray-900 mb-3 text-center">Try these example claims:</h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    {[
+                                        "Does drinking coffee dehydrate you?",
+                                        "Find credible studies on effectiveness of gen AI in education",
+                                        "Is chocolate good for your heart?",
+                                        "Do goldfish have 3-second memory?"
+                                    ].map((example) => (
+                                        <button
+                                            key={example}
+                                            onClick={() => setClaim(example)}
+                                            className="text-left p-3 rounded-lg bg-gray-50 hover:bg-primary/5 border border-gray-200 hover:border-primary/30 transition-all duration-200 text-sm"
+                                        >
+                                            <span className="text-primary">→</span> {example}
+                                        </button>
+                                    ))}
+                                </div>
+                                <p className="text-xs text-gray-500 text-center mt-4">
+                                    Click any example to try it, or type your own claim above
+                                </p>
+                            </div>
+                        )}
                     </div>
                 </div>
-            </div>
 
-            <div className="mt-12 max-w-4xl mx-auto">
-                {isLoading && <LoadingSpinner message="Fact-checking..." />}
-                {error && <div className="alert alert-error"><AlertCircle /><span>{error}</span></div>}
+                {/* How it Works section when no results */}
+                {!summary && !isLoading && !error && (
+                    <div className="max-w-3xl mx-auto mb-8">
+                        <div className="card bg-white shadow-lg border border-gray-200">
+                            <div className="card-body p-6">
+                                <h3 className="text-xl font-bold text-gray-900 mb-4 text-center flex items-center justify-center gap-2">
+                                    <HelpCircle className="w-5 h-5 text-primary" />
+                                    How Our Fact-Checking Works
+                                </h3>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    <div className="text-center">
+                                        <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                                            <Search className="w-6 h-6 text-primary" />
+                                        </div>
+                                        <h4 className="font-semibold text-gray-900 mb-2">1. Search</h4>
+                                        <p className="text-sm text-gray-600">We search through Google, iterating with variations in our searching methods until credible sources are found.</p>
+                                    </div>
+                                    <div className="text-center">
+                                        <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                                            <CheckCircle className="w-6 h-6 text-primary" />
+                                        </div>
+                                        <h4 className="font-semibold text-gray-900 mb-2">2. Analyze</h4>
+                                        <p className="text-sm text-gray-600">We evaluate source credibility and analyze evidence, on top of the links already filtered</p>
+                                    </div>
+                                    <div className="text-center">
+                                        <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                                            <HelpCircle className="w-6 h-6 text-primary" />
+                                        </div>
+                                        <h4 className="font-semibold text-gray-900 mb-2">3. Report</h4>
+                                        <p className="text-sm text-gray-600">We provide a clear verdict with source transparency</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                <div className="space-y-8">
+                    {isLoading && (
+                        <div className="flex flex-col items-center justify-center py-12">
+                            <LoadingSpinner message="Analyzing claim and gathering sources..." />
+                            <p className="text-gray-600 mt-4 text-center max-w-md">
+                                We're searching through credible sources to fact-check your claim. This usually takes 10-15 seconds.
+                            </p>
+                        </div>
+                    )}
+                    
+                    {error && (
+                        <div className="alert alert-error shadow-lg bg-red-50 border border-red-200">
+                            <AlertCircle className="w-6 h-6 text-red-600" />
+                            <span className="text-red-800">{error}</span>
+                        </div>
+                    )}
 
                 {(summary || sources.length > 0) && (
                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
                         {summary && (
-                             <div className="card bg-base-200 shadow-xl">
-                                <div className="card-body prose prose-lg max-w-none">
-                                    <h2 className="card-title text-3xl">Summary</h2>
+                             <div className="card bg-white shadow-xl border border-gray-200">
+                                <div className="card-body p-8 max-w-none">
+                                    <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+                                        <Search className="w-6 h-6 text-primary" />
+                                        Fact-Check Results
+                                    </h2>
                                     <RenderedSummary summary={summary} sources={sources} />
                                 </div>
                             </div>
                         )}
 
                         {sources.length > 0 && (
-                            <div className="card bg-base-100 shadow-xl border border-base-300">
-                                <div className="card-body">
-                                    <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-4">
-                                        <h2 className="card-title text-3xl">Sources Found</h2>
+                            <div className="card bg-white shadow-xl border border-gray-200">
+                                <div className="card-body p-8">
+                                    <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-6">
+                                        <div>
+                                            <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-3 mb-2">
+                                                <HelpCircle className="w-6 h-6 text-primary" />
+                                                Sources & Credibility
+                                            </h2>
+                                            <p className="text-gray-600">
+                                                {sources.length} source{sources.length !== 1 ? 's' : ''} found • Click numbers above to jump to sources
+                                            </p>
+                                        </div>
                                         <div className="form-control w-full sm:w-auto">
                                             <label htmlFor="credibility-sort" className="label hidden sm:block">
-                                                <span className="label-text font-semibold">Sort by Credibility</span>
+                                                <span className="label-text font-semibold text-gray-700">Sort by Credibility</span>
                                             </label>
                                             <select
                                                 id="credibility-sort"
-                                                className="select select-bordered"
+                                                className="select select-bordered bg-white border-gray-300"
                                                 value={sortOrder}
                                                 onChange={(e) => setSortOrder(e.target.value as 'default' | 'high-to-low' | 'low-to-high')}
                                                 aria-label="Sort sources by credibility"
                                             >
                                                 <option value="default">Default Order</option>
-                                                <option value="high-to-low">High to Low</option>
-                                                <option value="low-to-high">Low to High</option>
+                                                <option value="high-to-low">High to Low Credibility</option>
+                                                <option value="low-to-high">Low to High Credibility</option>
                                             </select>
                                         </div>
                                     </div>
 
-                                    <div className="space-y-4">
+                                    <div className="grid gap-4">
                                         {sortedSources.map((source) => (
                                             <div key={source.url} id={`source-${source.originalIndex}`} className={getCredibilityClass(source.credibility)}>
-                                                <div className="flex justify-between items-start gap-4">
-                                                    <div className="flex-grow">
-                                                        <a href={source.url} target="_blank" rel="noopener noreferrer" className="link link-primary font-semibold text-lg" title={source.url}>{source.title}</a>
+                                                <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-4">
+                                                    <div className="flex-grow space-y-3">
+                                                        <div className="flex items-start gap-3">
+                                                            <span className="bg-primary text-primary-content px-2 py-1 rounded-full text-sm font-bold flex-shrink-0 mt-0.5">
+                                                                {source.originalIndex + 1}
+                                                            </span>
+                                                            <div>
+                                                                <a 
+                                                                    href={source.url} 
+                                                                    target="_blank" 
+                                                                    rel="noopener noreferrer" 
+                                                                    className="text-primary hover:text-primary-focus font-semibold text-lg leading-tight transition-colors duration-200 block"
+                                                                    title={source.url}
+                                                                >
+                                                                    {source.title}
+                                                                </a>
+                                                                <p className="text-gray-600 text-sm mt-1 break-all">
+                                                                    {new URL(source.url).hostname}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        <p className="text-gray-700 leading-relaxed pl-9">
+                                                            {source.explanation}
+                                                        </p>
                                                     </div>
-                                                    <div className="flex-shrink-0">
+                                                    <div className="flex-shrink-0 lg:ml-4">
                                                         <CredibilityBadge credibility={source.credibility} />
                                                     </div>
                                                 </div>
-                                                <p className="mt-2 text-base-content/80">{source.explanation}</p>
                                             </div>
                                         ))}
+                                    </div>
+                                    
+                                    {/* Trust indicators */}
+                                    <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                                        <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                                            <CheckCircle className="w-4 h-4 text-green-600" />
+                                            How We Rate Sources
+                                        </h4>
+                                        <div className="text-sm text-gray-600 space-y-1">
+                                            <p><strong>Very High/High:</strong> Peer-reviewed journals, official government sources, major reputable news outlets</p>
+                                            <p><strong>Medium:</strong> Recognized organizations, established publications with editorial standards</p>
+                                            <p><strong>Low:</strong> Personal blogs, unverified content, sources with unclear authorship</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         )}
                     </motion.div>
                 )}
+                </div>
             </div>
         </div>
     );
