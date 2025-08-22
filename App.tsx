@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { HashRouter, Routes, Route, NavLink, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -56,10 +55,10 @@ const MobileDropdown: React.FC<{
               <NavLink
                 to={path}
                 className={({ isActive }) => `flex flex-col items-center justify-center gap-2 p-3 rounded-lg text-base font-medium transition-colors focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-base-100 text-center ${
-                  isActive
-                    ? "bg-primary text-primary-content"
-                    : "hover:bg-base-200 text-base-content"
-                }`}
+                    isActive
+                      ? "text-[#6C1BA0] font-bold"
+                      : "text-black hover:text-[#6C1BA0] hover:bg-base-200"
+                  }`}
                 onClick={() => setDropdownOpen(false)}
               >
                 <Icon className="h-5 w-5 flex-shrink-0 mx-auto" />
@@ -109,7 +108,17 @@ const Header: React.FC = () => {
           <ul className="flex gap-6 xl:gap-10 text-base font-medium w-full justify-center">
             {navLinks.map(({ path, label }) => (
               <li key={path} className="w-full flex justify-center">
-                <NavLink to={path} className={({ isActive }) => isActive ? "active text-primary text-center" : "hover:text-primary/80 text-center"}>{label}</NavLink>
+                <NavLink
+                  to={path}
+                  className={({ isActive }) =>
+                    // Keep the header links the same primary shade as the site title
+                    isActive
+                      ? "active text-[#6C1BA0] text-center font-bold"
+                      : "text-black hover:text-[#6C1BA0] transition-colors text-center"
+                  }
+                >
+                  {label}
+                </NavLink>
               </li>
             ))}
           </ul>
