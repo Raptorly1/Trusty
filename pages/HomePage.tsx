@@ -77,7 +77,7 @@ const HomePage: React.FC = () => {
           </motion.h1>
             <motion.p 
               initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              animate={{ opacity: 1, y: 0 }![1755896915111](image/HomePage/1755896915111.png)}
               transition={{ duration: 0.5, delay: 0.2 }}
               className="text-2xl md:text-3xl text-base-content/80 mb-6">
               One simple step at a time, Trusty helps seniors stay safe, confident, and in control online. Backed by a vibrant group of volunteers, we share your goal of staying secure.
@@ -207,29 +207,29 @@ const HomePage: React.FC = () => {
           <div className="flex items-start gap-4">
             <CheckCircle className="h-8 w-8 text-success mt-1" />
             <div>
-              <span className="font-bold">Scam spotting</span>
-              <div className="text-xl">How to recognize online scams</div>
+              <span className="font-bold text-2xl">Scam spotting</span>
+              <div className="text-lg">How to recognize online scams</div>
             </div>
           </div>
           <div className="flex items-start gap-4">
             <CheckCircle className="h-8 w-8 text-success mt-1" />
             <div>
-              <span className="font-bold">Fake news detection</span>
-              <div className="text-xl">How to spot fake news and photos</div>
+              <span className="font-bold text-2xl">Fake news detection</span>
+              <div className="text-lg">How to spot fake news and photos</div>
             </div>
           </div>
           <div className="flex items-start gap-4">
             <CheckCircle className="h-8 w-8 text-success mt-1" />
             <div>
-              <span className="font-bold">Safe browsing</span>
-              <div className="text-xl">How to browse the internet safely</div>
+              <span className="font-bold text-2xl">Safe browsing</span>
+              <div className="text-lg">How to browse the internet safely</div>
             </div>
           </div>
           <div className="flex items-start gap-4">
             <CheckCircle className="h-8 w-8 text-success mt-1" />
             <div>
-              <span className="font-bold">Getting help</span>
-              <div className="text-xl">Where to go for help if something seems suspicious</div>
+              <span className="font-bold text-2xl">Getting help</span>
+              <div className="text-lg">Where to go for help if something seems suspicious</div>
             </div>
           </div>
         </div>
