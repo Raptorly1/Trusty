@@ -65,7 +65,7 @@ const MobileDropdown: React.FC<{
                   className={({ isActive }) => `flex flex-col items-center justify-center gap-2 p-3 rounded-lg text-base font-medium transition-colors focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-base-100 text-center ${
                       isActive
                         ? "text-[#6C1BA0] font-bold"
-                        : "text-black hover:text-[#6C1BA0] hover:bg-base-200"
+                        : "text-black hover:bg-base-200"
                     }`}
                   onClick={(e) => {
                     // Allow the navigation to process first, then close dropdown
@@ -128,12 +128,15 @@ const Header: React.FC = () => {
               <li key={path} className="w-full flex justify-center">
                 <NavLink
                   to={path}
+                  // Apply purple color only when active; otherwise use default text color
                   className={({ isActive }) =>
-                    // Keep the header links the same primary shade as the site title
                     isActive
-                      ? "text-primary font-bold border-b-2 border-primary px-3 py-2 transition-all duration-200"
-                      : "text-base-content px-3 py-2 hover:text-primary transition-all duration-200"
+                      ? "font-bold border-b-2 px-3 py-2 transition-all duration-200 text-[#6C1BA0]"
+                      : "px-3 py-2 transition-all duration-200 text-base-content"
                   }
+                  style={({ isActive }) => ({
+                    borderBottomColor: isActive ? '#6C1BA0' : undefined,
+                  })}
                 >
                   {label}
                 </NavLink>
