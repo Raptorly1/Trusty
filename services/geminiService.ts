@@ -1,5 +1,5 @@
 import { Type } from "@google/genai";
-import { AITextAnalysisResult, AnnotationType, FeedbackResult, AIImageAnalysisResult } from '../types';
+import { AITextAnalysisResult, AIImageAnalysisResult } from '../types';
 
 const PROXY_URL = 'https://trusty-ldqx.onrender.com/api/gemini';
 
@@ -185,57 +185,6 @@ Your response MUST be in JSON format and adhere to the provided schema. Highligh
   const jsonResponse = JSON.parse(response.text);
   return jsonResponse as AITextAnalysisResult;
 };
-
-const feedbackSchema = {
-    type: Type.OBJECT,
-    properties: {
-        summary: {
-            type: Type.OBJECT,
-            properties: {
-                strengths: { type: Type.STRING, description: "A paragraph summarizing the strengths of the writing." },
-                improvements: { type: Type.STRING, description: "A paragraph summarizing the main areas for improvement." }
-            }
-        },
-        annotations: {
-            type: Type.ARRAY,
-            items: {
-                type: Type.OBJECT,
-                properties: {
-                    snippet: { type: Type.STRING, description: "The exact text snippet being commented on." },
-                    feedback: { type: Type.STRING, description: "Constructive feedback about the snippet." },
-                    suggestion: { type: Type.STRING, description: "An optional, concrete suggestion for rewriting the snippet." },
-                    type: { type: Type.STRING, enum: Object.values(AnnotationType), description: "The category of feedback." }
-                }
-            }
-        }
-    }
-};
-
-export const getFeedbackForText = async (text: string): Promise<FeedbackResult> => {
-    const prompt = `Act as a helpful and encouraging writing coach. Analyze the following text for clarity, logic, evidence, and tone. Provide a summary of strengths and weaknesses. Then, provide specific, actionable annotations on snippets of the text. For each annotation, suggest a potential improvement if applicable. Identify any factual claims that might need verification.
-
-Text to analyze:
----
-${text}
----
-
-Your response MUST be in JSON format and adhere to the provided schema. Ensure snippets are precise.`;
-    
-    const params = {
-        model: 'gemini-2.5-flash',
-        contents: prompt,
-        config: {
-            responseMimeType: 'application/json',
-            responseSchema: feedbackSchema,
-            temperature: 0.5,
-        }
-    };
-    
-    const response = await callGeminiProxy('generateContent', params);
-    const jsonResponse = JSON.parse(response.text);
-    return jsonResponse as FeedbackResult;
-};
-
 
 export const factCheckClaim = async (claim: string): Promise<{ summary: string, sources: any[] }> => {
   const params = {

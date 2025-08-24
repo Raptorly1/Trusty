@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { HashRouter, Routes, Route, NavLink, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Home, BookOpen, Search, FileText, ImageIcon, CheckSquare } from 'lucide-react';
+import { Home, BookOpen, Search, FileText, ImageIcon } from 'lucide-react';
 
 import HomePage from './pages/HomePage';
 import CoursePage from './pages/CoursePage';
 import AITextCheckerPage from './pages/AITextCheckerPage';
-import FeedbackToolPage from './pages/FeedbackToolPage';
 import AIImageCheckerPage from './pages/AIImageCheckerPage';
 import FactCheckerPage from './pages/FactCheckerPage';
 import ServerStatusPopup from './components/common/ServerStatusPopup';
@@ -17,7 +16,6 @@ const navLinks = [
   { path: '/', label: 'Home', icon: Home },
   { path: '/course', label: 'Course', icon: BookOpen },
   { path: '/text-checker', label: 'Text Checker', icon: FileText },
-  { path: '/feedback-tool', label: 'Feedback Tool', icon: CheckSquare },
   { path: '/image-checker', label: 'Image Checker', icon: ImageIcon },
   { path: '/fact-checker', label: 'Fact-Checker', icon: Search },
 ];
@@ -204,7 +202,7 @@ const App: React.FC = () => {
 
   // Show informational popup when server is warming and user visits AI features for the first time
   useEffect(() => {
-    const aiRoutes = ['/text-checker', '/image-checker', '/fact-checker', '/feedback-tool'];
+    const aiRoutes = ['/text-checker', '/image-checker', '/fact-checker'];
     const isAIRoute = aiRoutes.some(route => location.pathname.includes(route));
 
     if (isAIRoute && isWarming && !hasShownWarmingPopup) {
@@ -236,7 +234,6 @@ const App: React.FC = () => {
             <Route path="/course" element={<PageWrapper><CoursePage /></PageWrapper>} />
             <Route path="/course/:moduleId" element={<PageWrapper><CoursePage /></PageWrapper>} />
             <Route path="/text-checker" element={<PageWrapper><AITextCheckerPage /></PageWrapper>} />
-            <Route path="/feedback-tool" element={<PageWrapper><FeedbackToolPage /></PageWrapper>} />
             <Route path="/image-checker" element={<PageWrapper><AIImageCheckerPage /></PageWrapper>} />
             <Route path="/fact-checker" element={<PageWrapper><FactCheckerPage /></PageWrapper>} />
           </Routes>
