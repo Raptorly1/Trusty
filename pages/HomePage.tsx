@@ -48,7 +48,7 @@ const FeatureCard: React.FC<{ icon: React.ReactNode, title: string, description:
       <p className="text-lg text-base-content/80">{description}</p>
       <div className="card-actions justify-end mt-4">
   <NavLink to={link} style={{ borderColor: '#6C1BA0', color: '#6C1BA0' }} className="btn btn-outline">
-          Try Now
+          Use Tool
         </NavLink>
       </div>
     </div>
@@ -309,7 +309,7 @@ const HomePage: React.FC = () => {
         transition={{ duration: 0.7, delay: 0.4 }}
   className="max-w-4xl mx-auto py-12 rounded-xl" style={{ backgroundColor: '#F3F0F8' }}
       >
-  <h2 className="text-5xl font-bold text-center mb-10" style={{ color: '#6C1BA0' }}>Free Tools to Use</h2>
+  <h2 className="text-5xl font-bold text-center mb-10" style={{ color: '#6C1BA0' }}>Helpful Tools to Use</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           <FeatureCard 
             icon={<BookOpen size={48} style={{ color: '#6C1BA0' }} />} 
