@@ -200,7 +200,7 @@ const allQuizQuestions: FinalQuizQuestion[] = [
     correctIndex: 0,
   },
   {
-    question: "If you suspect you've fallen for an online scam, which of the following is the best first step?",
+    question: "If you suspect you've fallen for an online scam, which of the following is a good first step?",
     options: [
       "Post about it on social media to warn friends",
       "Change your phone number immediately",
