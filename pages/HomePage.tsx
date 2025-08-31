@@ -282,10 +282,12 @@ const HomePage: React.FC = () => {
               desc: "Review what you've learned and earn your Trusty certificate!"
             }
           ].map((mod, idx) => (
-            <div
+            <NavLink
               key={mod.title}
+              to={`/course/${idx + 1}`}
               className={`bg-base-100 rounded-xl shadow p-6 border flex flex-col items-start gap-4 transition hover:scale-105 cursor-pointer`}
               style={{ borderColor: idx === 8 ? '#6C1BA0' : '#E5E7EB' }}
+              aria-label={`Open module ${idx + 1}: ${mod.title}`}
             >
               <div className="flex items-center gap-3 mb-2">
                 <div className={`rounded-full text-white font-bold text-xl w-10 h-10 flex items-center justify-center`} style={{ backgroundColor: '#6C1BA0' }}>
@@ -294,7 +296,7 @@ const HomePage: React.FC = () => {
                 <span className={`text-2xl font-bold`} style={{ color: idx === 8 ? '#6C1BA0' : undefined }}>{mod.title}</span>
               </div>
               <p className="text-lg">{mod.desc}</p>
-            </div>
+            </NavLink>
           ))}
         </div>
       </motion.section>
