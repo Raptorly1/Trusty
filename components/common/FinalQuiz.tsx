@@ -253,33 +253,35 @@ const FinalQuiz: React.FC<{ onComplete: (score: number) => void }> = ({ onComple
       // Draw the certificate background
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-      // Configure text styles for the name (use Pacifico if loaded, fallback to serif)
-      ctx.font = 'bold 56px Pacifico, serif';
-      ctx.fillStyle = '#2c3e50';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
+  // Configure text styles for the name (use Pacifico if loaded, fallback to serif)
+  // Use a slightly smaller font and alphabetic baseline so the text sits on/above the NAME line
+  ctx.font = 'bold 42px Pacifico, serif';
+  ctx.fillStyle = '#2c3e50';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'alphabetic';
 
-      // Add a subtle shadow effect for better contrast on the background
-      ctx.shadowColor = 'rgba(0, 0, 0, 0.08)';
-      ctx.shadowBlur = 4;
-      ctx.shadowOffsetX = 1;
-      ctx.shadowOffsetY = 1;
+  // Add a subtle shadow effect for better contrast on the background
+  ctx.shadowColor = 'rgba(0, 0, 0, 0.06)';
+  ctx.shadowBlur = 3;
+  ctx.shadowOffsetX = 1;
+  ctx.shadowOffsetY = 1;
 
-      // Draw the name slightly higher to better match the certificate layout
-      const centerX = canvas.width / 2;
-      const nameY = canvas.height * 0.47; // moved up from 0.55
-      ctx.fillText(name, centerX, nameY);
+  // Draw the name aligned with the NAME underline: tuned to sit just above it
+  const centerX = canvas.width / 2;
+  const nameY = canvas.height * 0.545; // tuned down from 0.47 to sit closer to the underline
+  ctx.fillText(name, centerX, nameY);
 
-      // Draw the current date in the lower-left above the 'DATE' label
-      ctx.font = 'italic 28px serif';
-      ctx.fillStyle = '#34495e';
-      ctx.textAlign = 'left';
-      ctx.textBaseline = 'middle';
-      const dateStr = new Date().toLocaleDateString();
-      // Coordinates tuned for a 1200x900 canvas to align with the DATE line
-      const dateX = 160; // left margin
-      const dateY = canvas.height - 80; // lowered to near the bottom (was 760)
-      ctx.fillText(dateStr, dateX, dateY);
+  // Draw the current date in the lower-left above the 'DATE' label
+  ctx.font = 'italic 26px serif';
+  ctx.fillStyle = '#34495e';
+  ctx.textAlign = 'left';
+  // Use alphabetic baseline so numbers sit nicely on the printed DATE underline
+  ctx.textBaseline = 'alphabetic';
+  const dateStr = new Date().toLocaleDateString();
+  // Coordinates tuned for a 1200x900 canvas to align with the DATE line
+  const dateX = 220; // moved right to align with DATE label
+  const dateY = canvas.height - 180; // moved up to sit above the DATE underline
+  ctx.fillText(dateStr, dateX, dateY);
 
       // Generate the final certificate as data URL
       const dataUrl = canvas.toDataURL('image/png', 1.0);
@@ -312,7 +314,7 @@ const FinalQuiz: React.FC<{ onComplete: (score: number) => void }> = ({ onComple
     printWindow.document.head.innerHTML = `
       <style>
         body { margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        img { max-width: 1![1754873825558](image/FinalQuiz/1754873825558.png)00%; height: auto; }
+        img { max-width: 100%; height: auto; }
         @media print { body { margin: 0; } img { width: 100%; } }
       </style>
     `;
