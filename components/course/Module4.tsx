@@ -1,5 +1,14 @@
 import React from 'react';
-import { Globe, Lock, Shield, AlertTriangle, Eye, ExternalLink, X, Zap } from 'lucide-react';
+import {
+  Globe,
+  Lock,
+  Shield,
+  AlertTriangle,
+  Eye,
+  ExternalLink,
+  X,
+  Zap,
+} from 'lucide-react';
 import SourcesButton from '../common/SourcesButton';
 
 const Module4: React.FC = () => {
@@ -22,25 +31,27 @@ const Module4: React.FC = () => {
           <p className="text-lg leading-relaxed mb-6">
             When you visit a website, especially to shop or enter personal information, you want to make sure it's legitimate and secure. Here's what to look for:
           </p>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Secure example */}
             <div className="card bg-success/10 border border-success/20">
               <div className="card-body">
                 <h3 className="card-title text-success">
                   <Shield className="w-5 h-5" />
                   HTTPS & Lock Icon
                 </h3>
-                <div className="mockup-browser border border-success">
-                  <div className="mockup-browser-toolbar">
-                    <div className="flex items-center gap-2 w-full">
-                      <Lock className="w-4 h-4 text-success" />
-                      <input
-                        readOnly
-                        value="https://secure-website.com"
-                        className="input input-bordered border-success w-full text-sm"
-                      />
-                    </div>
+
+                {/* Custom "browser" with tiny nav icons */}
+                <div className="border border-success rounded-xl overflow-hidden">
+                  <div className="flex items-center gap-2 w-full px-3 py-2 bg-base-200">
+                    <Lock className="w-4 h-4 text-success" />
+                    <input
+                      readOnly
+                      value="https://secure-website.com"
+                      className="input input-bordered border-success w-full text-sm"
+                    />
                   </div>
+
                   <div className="flex justify-center px-4 py-8 bg-success/5">
                     <div className="text-center">
                       <Shield className="w-8 h-8 mx-auto text-success mb-2" />
@@ -48,27 +59,32 @@ const Module4: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                <p className="text-sm mt-2">Look for "https://" and a lock icon in your browser's address bar. This means your information is encrypted.</p>
+
+                <p className="text-sm mt-2">
+                  Look for "https://" and a lock icon in your browser's address bar. This means your information is encrypted.
+                </p>
               </div>
             </div>
 
+            {/* Warning example */}
             <div className="card bg-error/10 border border-error/20">
               <div className="card-body">
                 <h3 className="card-title text-error">
                   <AlertTriangle className="w-5 h-5" />
                   Warning Signs
                 </h3>
-                <div className="mockup-browser border border-error">
-                  <div className="mockup-browser-toolbar">
-                    <div className="flex items-center gap-2 w-full">
-                      <AlertTriangle className="w-4 h-4 text-error" />
-                      <input
-                        readOnly
-                        value="http://suspicious-site.com"
-                        className="input input-bordered border-error w-full text-sm"
-                      />
-                    </div>
+
+                {/* Custom "browser" with tiny nav icons */}
+                <div className="border border-error rounded-xl overflow-hidden">
+                  <div className="flex items-center gap-2 w-full px-3 py-2 bg-base-200">
+                    <AlertTriangle className="w-4 h-4 text-error" />
+                    <input
+                      readOnly
+                      value="http://suspicious-site.com"
+                      className="input input-bordered border-error w-full text-sm"
+                    />
                   </div>
+
                   <div className="flex justify-center px-4 py-8 bg-error/5">
                     <div className="text-center">
                       <X className="w-8 h-8 mx-auto text-error mb-2" />
@@ -76,7 +92,10 @@ const Module4: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                <p className="text-sm mt-2">Avoid entering personal information on sites without "https://" or that show security warnings.</p>
+
+                <p className="text-sm mt-2">
+                  Avoid entering personal information on sites without "https://" or that show security warnings.
+                </p>
               </div>
             </div>
           </div>
@@ -90,7 +109,7 @@ const Module4: React.FC = () => {
             <Eye className="w-6 h-6" />
             How to Tell if a Website is Real (or Fake)
           </h2>
-          
+
           <div className="space-y-6">
             <div className="alert alert-info">
               <AlertTriangle className="w-5 h-5" />
@@ -235,7 +254,7 @@ const Module4: React.FC = () => {
             <AlertTriangle className="w-6 h-6" />
             Watch Out for Pop-Ups and Malware Tricks
           </h2>
-          <p className="text-lg mb-6">
+        <p className="text-lg mb-6">
             Some websites show <strong>pop-up windows</strong> designed to scare or trick you. These are almost always fake and can install harmful programs if you click them.
           </p>
 
