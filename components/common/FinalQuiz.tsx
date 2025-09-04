@@ -235,6 +235,11 @@ const FinalQuiz: React.FC<{ onComplete: (score: number) => void }> = ({ onComple
   const [generatedCertificate, setGeneratedCertificate] = useState<string | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
+  // Scroll to top function
+  const scrollToTop = useCallback(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
   // Certificate generation function
   const generateCertificate = useCallback(async (name: string) => {
     if (!canvasRef.current) return;
@@ -353,6 +358,7 @@ const FinalQuiz: React.FC<{ onComplete: (score: number) => void }> = ({ onComple
   const handleSubmit = () => {
     setSubmitted(true);
     setShowModal(true);
+    scrollToTop();
     const score = answers.filter((a, i) => a === finalQuizQuestions[i].correctIndex).length;
     onComplete(score);
   };
@@ -375,7 +381,10 @@ const FinalQuiz: React.FC<{ onComplete: (score: number) => void }> = ({ onComple
                 ) : (
                   <div className="text-error font-semibold mb-2">You did not reach the cutoff.</div>
                 )}
-                <button className="btn btn-primary mt-4" onClick={() => setShowModal(false)}>
+                <button className="btn btn-primary mt-4" onClick={() => {
+                  setShowModal(false);
+                  scrollToTop();
+                }}>
                   {passed ? 'View Certificate & Answers' : 'Review Answers'}
                 </button>
               </div>
@@ -398,6 +407,7 @@ const FinalQuiz: React.FC<{ onComplete: (score: number) => void }> = ({ onComple
                   setSubmitted(false);
                   setShowRetakeModal(false);
                   setShowModal(false);
+                  scrollToTop();
                 }}>
                   Retake Quiz <RotateCcw />
                 </button>
@@ -542,6 +552,7 @@ const FinalQuiz: React.FC<{ onComplete: (score: number) => void }> = ({ onComple
                 <button className="btn btn-primary btn-lg" onClick={() => {
                   setShowRetakeModal(true);
                   setShowModal(false);
+                  scrollToTop();
                 }}>
                   Retake Quiz <RotateCcw />
                 </button>
