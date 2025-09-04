@@ -284,7 +284,7 @@ const HomePage: React.FC = () => {
           ].map((mod, idx) => (
             <NavLink
               key={mod.title}
-              to={`/course/${idx + 1}`}
+              to={idx === 8 ? "/course/quiz" : `/course/${idx + 1}`}
               className={`bg-base-100 rounded-xl shadow p-6 border flex flex-col items-start gap-4 transition hover:scale-105 cursor-pointer`}
               style={{ borderColor: idx === 8 ? '#6C1BA0' : '#E5E7EB' }}
               aria-label={`Open module ${idx + 1}: ${mod.title}`}

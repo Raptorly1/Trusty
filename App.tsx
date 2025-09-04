@@ -5,6 +5,7 @@ import { Home, BookOpen, Search, FileText, ImageIcon } from 'lucide-react';
 
 import HomePage from './pages/HomePage';
 import CoursePage from './pages/CoursePage';
+import FinalQuizPage from './pages/FinalQuizPage';
 import AITextCheckerPage from './pages/AITextCheckerPage';
 import AIImageCheckerPage from './pages/AIImageCheckerPage';
 import FactCheckerPage from './pages/FactCheckerPage';
@@ -301,6 +302,7 @@ const App: React.FC = () => {
             <Route path="/" element={<PageWrapper><HomePage /></PageWrapper>} />
             <Route path="/course" element={<PageWrapper><CoursePage /></PageWrapper>} />
             <Route path="/course/:moduleId" element={<PageWrapper><CoursePage /></PageWrapper>} />
+                         <Route path="/course/quiz" element={<PageWrapper><FinalQuizPage /></PageWrapper>} />
             <Route path="/text-checker" element={<PageWrapper><AITextCheckerPage /></PageWrapper>} />
             <Route path="/image-checker" element={<PageWrapper><AIImageCheckerPage /></PageWrapper>} />
             <Route path="/fact-checker" element={<PageWrapper><FactCheckerPage /></PageWrapper>} />
