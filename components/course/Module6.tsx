@@ -135,50 +135,186 @@ const Module6: React.FC = () => {
             <ImageIcon className="w-6 h-6" />
             Practice: Can You Spot the AI?
           </h2>
+          <p className="text-base-content/70 mb-6">
+            Test your skills with these real examples from CNET's AI detection gallery. Can you identify which images are AI-generated and which are real photographs?
+          </p>
           
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-            <div className="card bg-error/10 border border-error/20">
-              <div className="card-body">
-                <h3 className="card-title text-error">Likely AI-Generated</h3>
-                <div className="mockup-window border border-error bg-base-300">
-                  <div className="flex justify-center px-4 py-8 bg-base-200">
-                    <div className="text-center">
-                      <Bot className="w-16 h-16 mx-auto text-error mb-4" />
-                      <p className="text-sm font-mono">"Perfect person with flawless skin, six fingers on one hand, and eyes that seem to glow unnaturally"</p>
-                    </div>
+          {/* Example 1: Easy - Tourist Couple */}
+          <div className="mb-8">
+            <h3 className="text-xl font-bold mb-4 text-warning">🟡 Example 1: Easy Level</h3>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="card bg-error/10 border border-error/20">
+                <div className="card-body">
+                  <h4 className="card-title text-error">Tourist Couple in San Francisco</h4>
+                  <div className="bg-base-200 p-4 rounded-lg">
+                    <img 
+                      src="https://www.cnet.com/a/img/resize/d3c0086e86e32c5b7a47ea28c693fbbe8dc36080/hub/2023/11/08/60090f17-e873-479b-ba85-55a096f74772/firefly-a-portrait-of-a-tourist-couple-in-foggy-san-francisco-on-vacation-in-casual-clothing-backpa.jpg?auto=webp&width=768"
+                      alt="Tourist couple in front of Golden Gate Bridge"
+                      className="w-full h-48 object-cover rounded"
+                    />
+                    <p className="text-sm mt-2 italic">A couple posing in front of the Golden Gate Bridge</p>
+                  </div>
+                  <div className="mt-4">
+                    <h5 className="font-bold text-error mb-2">🤖 This is AI-Generated</h5>
+                    <p className="text-sm mb-2">Key detection clues:</p>
+                    <ul className="text-sm space-y-1">
+                      <li>• Problems with backpack strap textures</li>
+                      <li>• Continuity issues with the lanyard</li>
+                      <li>• Overly smooth skin textures</li>
+                      <li>• Inconsistent lighting details</li>
+                    </ul>
                   </div>
                 </div>
-                <div className="mt-3">
-                  <h4 className="font-bold text-error mb-2">Red flags:</h4>
-                  <ul className="text-sm space-y-1">
-                    <li>• Too-perfect appearance</li>
-                    <li>• Wrong number of fingers</li>
-                    <li>• Unnatural glowing eyes</li>
-                  </ul>
+              </div>
+
+              <div className="card bg-success/10 border border-success/20">
+                <div className="card-body">
+                  <h4 className="card-title text-success">Concert Crowd at Outside Lands</h4>
+                  <div className="bg-base-200 p-4 rounded-lg">
+                    <img 
+                      src="https://www.cnet.com/a/img/resize/8fa9a58189e23e3663e85e726960454fef0d4caf/hub/2023/11/15/f85545f2-ad7e-4e2e-9f4b-4f065900eab1/outside-lands-2015-classixx-0054.jpg?auto=webp&width=768"
+                      alt="Enthusiastic crowd at music festival"
+                      className="w-full h-48 object-cover rounded"
+                    />
+                    <p className="text-sm mt-2 italic">Crowd at Classixx show, Outside Lands 2015</p>
+                  </div>
+                  <div className="mt-4">
+                    <h5 className="font-bold text-success mb-2">📸 This is a Real Photograph</h5>
+                    <p className="text-sm mb-2">Signs of authenticity:</p>
+                    <ul className="text-sm space-y-1">
+                      <li>• Natural variations in facial features</li>
+                      <li>• Realistic crowd dynamics</li>
+                      <li>• Consistent lighting throughout</li>
+                      <li>• Genuine human expressions</li>
+                    </ul>
+                  </div>
                 </div>
               </div>
             </div>
+          </div>
 
-            <div className="card bg-success/10 border border-success/20">
-              <div className="card-body">
-                <h3 className="card-title text-success">Likely Real</h3>
-                <div className="mockup-window border border-success bg-base-300">
-                  <div className="flex justify-center px-4 py-8 bg-base-200">
-                    <div className="text-center">
-                      <CheckCircle className="w-16 h-16 mx-auto text-success mb-4" />
-                      <p className="text-sm font-mono">"Natural photo with normal lighting, realistic skin texture, and proper human proportions"</p>
-                    </div>
+          {/* Example 2: Medium - Product Photography */}
+          <div className="mb-8">
+            <h3 className="text-xl font-bold mb-4 text-orange-500">🟠 Example 2: Medium Level</h3>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="card bg-error/10 border border-error/20">
+                <div className="card-body">
+                  <h4 className="card-title text-error">Wooden Headphones</h4>
+                  <div className="bg-base-200 p-4 rounded-lg">
+                    <img 
+                      src="https://www.cnet.com/a/img/resize/ecbdc148af1104661c7651b9e18f9aab7327bc9b/hub/2023/11/08/b9c1aade-cdf3-4d27-a44c-db914145934f/firefly-brand-new-wireless-headphones-made-out-wood-on-a-textured-concrete-surface-85428.jpg?auto=webp&width=768"
+                      alt="Wooden wireless headphones on concrete surface"
+                      className="w-full h-48 object-cover rounded"
+                    />
+                    <p className="text-sm mt-2 italic">Wooden wireless headphones on textured surface</p>
+                  </div>
+                  <div className="mt-4">
+                    <h5 className="font-bold text-error mb-2">🤖 This is AI-Generated</h5>
+                    <p className="text-sm mb-2">Subtle detection clues:</p>
+                    <ul className="text-sm space-y-1">
+                      <li>• Flat, lifeless wood textures</li>
+                      <li>• Reads more like 2D rendering than photo</li>
+                      <li>• Too-perfect product positioning</li>
+                      <li>• Lack of realistic material depth</li>
+                    </ul>
                   </div>
                 </div>
-                <div className="mt-3">
-                  <h4 className="font-bold text-success mb-2">Good signs:</h4>
-                  <ul className="text-sm space-y-1">
-                    <li>• Natural imperfections</li>
-                    <li>• Consistent lighting</li>
-                    <li>• Proper anatomy</li>
-                  </ul>
+              </div>
+
+              <div className="card bg-success/10 border border-success/20">
+                <div className="card-body">
+                  <h4 className="card-title text-success">Avocado Toast</h4>
+                  <div className="bg-base-200 p-4 rounded-lg">
+                    <img 
+                      src="https://www.cnet.com/a/img/resize/536c7bcbab7b345453647fc06b2ba5be8c045d89/hub/2023/11/08/b5c3695a-5d5c-4726-96fa-696b700584c0/img-0738.jpg?auto=webp&width=768"
+                      alt="Avocado toast on white paper plate"
+                      className="w-full h-48 object-cover rounded"
+                    />
+                    <p className="text-sm mt-2 italic">Real avocado toast with natural imperfections</p>
+                  </div>
+                  <div className="mt-4">
+                    <h5 className="font-bold text-success mb-2">📸 This is a Real Photograph</h5>
+                    <p className="text-sm mb-2">Signs of authenticity:</p>
+                    <ul className="text-sm space-y-1">
+                      <li>• Natural food textures and colors</li>
+                      <li>• Realistic shadows and lighting</li>
+                      <li>• Imperfect, organic presentation</li>
+                      <li>• Authentic paper plate wrinkles</li>
+                    </ul>
+                  </div>
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* Example 3: Hard - Very Convincing AI */}
+          <div className="mb-6">
+            <h3 className="text-xl font-bold mb-4 text-red-500">🔴 Example 3: Hard Level</h3>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="card bg-error/10 border border-error/20">
+                <div className="card-body">
+                  <h4 className="card-title text-error">Gray Headphones</h4>
+                  <div className="bg-base-200 p-4 rounded-lg">
+                    <img 
+                      src="https://www.cnet.com/a/img/resize/6f874b13cfc24f248a5f57cf90f44607d236d917/hub/2023/11/14/1a1b95d6-1700-41cb-96c4-90d9235cffd5/firefly-brand-new-wireless-headphones-made-out-of-metallic-material-laid-out-neatly-on-a-black-tabl-1.jpg?auto=webp&width=768"
+                      alt="Gray metallic headphones on black table"
+                      className="w-full h-48 object-cover rounded"
+                    />
+                    <p className="text-sm mt-2 italic">Professional-looking metallic headphones</p>
+                  </div>
+                  <div className="mt-4">
+                    <h5 className="font-bold text-error mb-2">🤖 This is AI-Generated</h5>
+                    <p className="text-sm mb-2">Very subtle clues (experts needed!):</p>
+                    <ul className="text-sm space-y-1">
+                      <li>• Slightly off band proportions</li>
+                      <li>• Too-perfect lighting consistency</li>
+                      <li>• Subtle geometric inconsistencies</li>
+                      <li>• Even CNET said "very hard to discern"!</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div className="card bg-success/10 border border-success/20">
+                <div className="card-body">
+                  <h4 className="card-title text-success">Lake Tahoe Landscape</h4>
+                  <div className="bg-base-200 p-4 rounded-lg">
+                    <img 
+                      src="https://www.cnet.com/a/img/resize/1cd43dfe590e67911ddae7ba96430b2a7c58aa9a/hub/2023/11/14/08214bb4-4e19-4f98-9445-b297eae97ff2/img-9842.jpg?auto=webp&width=768"
+                      alt="Lake Tahoe shoreline in Incline Village, Nevada"
+                      className="w-full h-48 object-cover rounded"
+                    />
+                    <p className="text-sm mt-2 italic">Lake Tahoe shoreline, Incline Village, Nevada</p>
+                  </div>
+                  <div className="mt-4">
+                    <h5 className="font-bold text-success mb-2">📸 This is a Real Photograph</h5>
+                    <p className="text-sm mb-2">Signs of authenticity:</p>
+                    <ul className="text-sm space-y-1">
+                      <li>• Natural water movement patterns</li>
+                      <li>• Realistic rock formations</li>
+                      <li>• Authentic atmospheric perspective</li>
+                      <li>• Genuine photographic depth of field</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Attribution */}
+          <div className="card bg-base-200 border border-base-300">
+            <div className="card-body">
+              <p className="text-sm text-base-content/70">
+                <strong>Image Credits:</strong> Examples adapted from "AI or Not AI: Can You Spot the Real Photos?" by James Martin, CNET.{' '}
+                <a 
+                  href="https://www.cnet.com/pictures/ai-or-not-ai-can-you-spot-the-real-photos/" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="link link-primary"
+                >
+                  View original article
+                </a>
+              </p>
             </div>
           </div>
         </div>
