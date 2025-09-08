@@ -757,7 +757,6 @@ const courseModules: CourseModule[] = [
  					{ text: "You are our lucky winner! Pay a small processing fee to unlock your prize.", isCorrect: false },
  					{ text: "Click this special link right now to claim your free vacation.", isCorrect: false },
  					{ text: "Reply with your credit card number so we can ship your free prize immediately!", isCorrect: false },
- 					{ text: "Reply with your credit card number so we can ship your free prize immediately!", isCorrect: false },
 					{ text: "All of the above", isCorrect: true }
  				]
  			},
