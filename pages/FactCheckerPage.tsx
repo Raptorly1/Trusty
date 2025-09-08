@@ -493,7 +493,7 @@ const FactCheckerPage: React.FC = () => {
                                                 Sources & Credibility
                                             </h2>
                                             <p className="text-gray-600">
-                                                {sources.length} source{sources.length !== 1 ? 's' : ''} found • Click numbers above to jump to sources
+                                                {sources.length} source{sources.length !== 1 ? 's' : ''} found
                                             </p>
                                         </div>
                                         <div className="form-control w-full sm:w-auto">
