@@ -313,13 +313,13 @@ const HomePage: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           <FeatureCard 
             icon={<BookOpen size={48} style={{ color: '#6C1BA0' }} />} 
-            title="AI Text Checker" 
+            title="Trusty Text Checker" 
             description="Quickly find out if that email or article was written by a computer." 
             link="/text-checker" 
           />
           <FeatureCard 
             icon={<Shield size={48} style={{ color: '#6C1BA0' }} />} 
-            title="AI Image Checker" 
+            title="Trusty Image Checker" 
             description="Upload a picture to check for signs of AI-generation." 
             link="/image-checker" 
           />
