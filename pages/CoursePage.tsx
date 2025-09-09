@@ -1735,10 +1735,10 @@ const CoursePage: React.FC = () => {
                                                 {(currentModuleIndex > 0 || isExerciseMode) && (
                                                         <button
                                                                 onClick={handleBack}
-                                                                className="btn btn-ghost btn-sm mb-4 gap-2"
+                                                                className="btn btn-outline btn-lg mb-4 gap-2"
                                                                 aria-label="Go back"
                                                         >
-                                                                <ArrowLeft className="h-4 w-4" />
+                                                                <ArrowLeft className="h-5 w-5" />
                                                                 Back
                                                         </button>
                                                 )}
