@@ -87,7 +87,7 @@ const ResultsDisplay: React.FC<{ result: AITextAnalysisResult, originalText: str
                 <div className="stat bg-base-200 rounded-box">
                     <div className="stat-figure text-secondary"><BarChart2 size={36}/></div>
                     <div className="stat-title text-lg">Readability</div>
-                    <div className="stat-value text-lg break-words leading-tight">{result.readability}</div>
+                        <div className="stat-value text-lg break-words whitespace-normal max-w-xs mx-auto leading-tight">{result.readability}</div>
                 </div>
                 <div className="stat bg-base-200 rounded-box">
                     <div className="stat-figure text-secondary"><Lightbulb size={36}/></div>
