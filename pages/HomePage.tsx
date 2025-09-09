@@ -324,7 +324,7 @@ const HomePage: React.FC = () => {
             link="/image-checker" 
           />
           <FeatureCard 
-            icon={<DollarSign size={48} style={{ color: '#6C1BA0' }} />} 
+            icon={<CheckCircle size={48} style={{ color: '#6C1BA0' }} />} 
             title="Fact-Checker" 
             description="Quickly check the credibility of a claim or news story." 
             link="/fact-checker" 
