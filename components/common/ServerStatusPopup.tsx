@@ -143,6 +143,7 @@ const ServerStatusPopup: React.FC<ServerStatusPopupProps> = ({
                 <div className="text-sm text-base-content/60 bg-base-200 rounded-lg p-3">
                   <p className="font-medium mb-1">Why is this happening?</p>
                   <p>Our server goes to sleep when not in use to save energy. You can still use the website normally - just submit your requests and they'll be processed when ready!</p>
+                  <p className="mt-2">It usually takes about <span className="font-semibold">15–45 seconds</span> for the server to start up and be ready to process requests.</p>
                 </div>
               )}
             </div>
