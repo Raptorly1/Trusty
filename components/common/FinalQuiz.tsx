@@ -578,7 +578,7 @@ const FinalQuiz: React.FC<{ onComplete: (score: number) => void }> = ({ onComple
                       <button
                         type="button"
                         key={opt}
-                        className={`btn w-full justify-start ${isSelected ? 'btn-primary' : 'btn-outline'}`}
+                        className={`btn w-full justify-start text-left ${isSelected ? 'btn-primary' : 'btn-outline'}`}
                         onClick={() => handleSelect(qIdx, oIdx)}
                       >
                         {opt}
