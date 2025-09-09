@@ -9,7 +9,7 @@ import { AIImageAnalysisResult } from '../types';
 import FileUpload from '../components/common/FileUpload';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 
-// This component is a stand-in for a complex react-konva implementation
+// This component renders AI anomaly detection as dots to prevent overlap issues
 const AnnotatedImage: React.FC<{ src: string; result: AIImageAnalysisResult }> = ({ src, result }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -28,28 +28,33 @@ const AnnotatedImage: React.FC<{ src: string; result: AIImageAnalysisResult }> =
             <img src={src} alt="Analyzed" className="w-full h-auto rounded-lg shadow-lg" />
             {result.anomalies.map((anomaly, index) => {
                 const { x, y, width, height } = anomaly.box;
+                // Calculate center point of the bounding box for dot placement
+                const centerX = (x + width / 2) * dimensions.width;
+                const centerY = (y + height / 2) * dimensions.height;
+                
                 return (
                     <Tippy
-                        key={`${x}-${y}-${width}-${height}-${anomaly.reason}`}
-                        content={<span className="text-xs font-medium">{anomaly.reason}</span>}
+                        key={`${x}-${y}-${width}-${height}-${anomaly.reason}-${index}`}
+                        content={<span className="text-sm font-medium">{anomaly.reason}</span>}
                         placement="top"
                         arrow={true}
                         animation="shift-away"
                         theme="light"
                         delay={[100, 0]}
-                        maxWidth={220}
+                        maxWidth={280}
+                        offset={[0, 12]}
                     >
                         <div
-                            className="absolute border-4 border-red-500 rounded-full"
+                            className="absolute rounded-full cursor-pointer transform -translate-x-1/2 -translate-y-1/2 hover:scale-110 transition-all duration-200"
                             style={{
-                                left: `${x * dimensions.width}px`,
-                                top: `${y * dimensions.height}px`,
-                                width: `${width * dimensions.width}px`,
-                                height: `${height * dimensions.height}px`,
-                                boxShadow: '0 0 15px rgba(255,0,0,0.7)',
-                                backgroundColor: 'rgba(255,0,0,0.13)',
-                                transition: 'background-color 0.2s',
-                                cursor: 'pointer',
+                                left: `${centerX}px`,
+                                top: `${centerY}px`,
+                                width: '16px',
+                                height: '16px',
+                                backgroundColor: '#ef4444',
+                                border: '3px solid white',
+                                boxShadow: '0 2px 12px rgba(239, 68, 68, 0.4), 0 0 0 2px rgba(239, 68, 68, 0.2)',
+                                zIndex: 10,
                             }}
                         />
                     </Tippy>
