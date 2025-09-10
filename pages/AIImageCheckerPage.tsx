@@ -31,19 +31,19 @@ const AnnotatedImage: React.FC<{ src: string; result: AIImageAnalysisResult }> =
                 return (
                     <Tippy
                         key={`${x}-${y}-${width}-${height}-${anomaly.reason}`}
-                        content={<span className="text-xs font-medium">{anomaly.reason}</span>}
+                        content={<span className="text-sm font-medium">{anomaly.reason}</span>}
                         placement="top"
                         arrow={true}
                         animation="shift-away"
                         theme="light"
                         delay={[100, 0]}
-                        maxWidth={220}
+                        maxWidth={300}
                     >
                         <div
-                            className="absolute w-3 h-3 bg-red-500 rounded-full border-2 border-white"
+                            className="absolute w-6 h-6 bg-red-500 rounded-full border-2 border-white"
                             style={{
-                                left: `${(x + width/2) * dimensions.width - 6}px`,
-                                top: `${(y + height/2) * dimensions.height - 6}px`,
+                                left: `${(x + width/2) * dimensions.width - 12}px`,
+                                top: `${(y + height/2) * dimensions.height - 12}px`,
                                 boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
                                 cursor: 'pointer',
                             }}
