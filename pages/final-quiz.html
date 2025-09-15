@@ -4,11 +4,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Final Quiz & Certificate - Trusty Digital Safety</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="../assets/css/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        .quiz-option {
+            cursor: pointer;
+            padding: 1rem;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            transition: all 0.3s ease;
+        }
+        .quiz-option:hover {
+            background-color: #f8f9fa;
+        }
+        .quiz-option.selected {
+            border-color: #4285F4;
+        }
+        .quiz-option.correct {
+            border-color: #34A853;
+            background-color: rgba(52, 168, 83, 0.1);
+        }
+        .quiz-option.incorrect {
+            border-color: #EA4335;
+            background-color: rgba(234, 67, 53, 0.1);
+        }
+        .feedback {
+            padding: 0.75rem;
+            margin-top: 1rem;
+            border-radius: 8px;
+            display: none;
+        }
+        .feedback.success {
+            background-color: rgba(52, 168, 83, 0.1);
+            color: #34A853;
+        }
+        .feedback.error {
+            background-color: rgba(234, 67, 53, 0.1);
+            color: #EA4335;
+        }
         .certificate {
             display: none;
             max-width: 800px;
@@ -122,7 +158,7 @@
             </div>
             <nav>
                 <ul>
-                    <li><a href="index.html">Home</a></li>
+                    <li><a href="../index.html">Home</a></li>
                     <li><a href="curriculum.html" class="active">Curriculum</a></li>
                 </ul>
             </nav>
@@ -229,16 +265,17 @@
                         </div>
                     </div>
 
-                    <div class="navigation-buttons">
-                        <a href="module8.html" class="btn-outline">Back to Module 8</a>
-                        <a href="curriculum.html" class="btn-outline">Curriculum Overview</a>
+                    <div class="module-navigation">
+                        <div class="prev-next-buttons">
+                            <a href="modules/module8.html" class="btn btn-secondary prev-module">Back to Module 8</a>
+                            <a href="curriculum.html" class="btn btn-secondary">Back to Curriculum</a>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
     </main>
 
-    <script src="scripts.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const quizOptions = document.querySelectorAll('.quiz-option');
@@ -246,30 +283,30 @@
             let correctAnswers = 0;
             let questionsAnswered = 0;
             
-            // Set up quiz interactions
+            /* Set up quiz interactions */
             quizOptions.forEach(option => {
                 option.addEventListener('click', function() {
                     const questionContainer = this.closest('.quiz-container');
                     const options = questionContainer.querySelectorAll('.quiz-option');
                     const feedback = questionContainer.querySelector('.feedback');
                     
-                    // Skip if already answered
+                    /* Skip if already answered */
                     if (options[0].classList.contains('selected')) {
                         return;
                     }
                     
-                    // Mark question as answered
+                    /* Mark question as answered */
                     questionsAnswered++;
                     
-                    // Clear previous selections
+                    /* Clear previous selections */
                     options.forEach(opt => {
                         opt.classList.remove('selected', 'correct', 'incorrect');
                     });
                     
-                    // Mark this option as selected
+                    /* Mark this option as selected */
                     this.classList.add('selected');
                     
-                    // Check if answer is correct
+                    /* Check if answer is correct */
                     if(this.getAttribute('data-correct') === 'true') {
                         this.classList.add('correct');
                         correctAnswers++;
@@ -288,7 +325,7 @@
                             feedback.style.display = 'block';
                         }
                         
-                        // Show the correct answer
+                        /* Show the correct answer */
                         options.forEach(opt => {
                             if(opt.getAttribute('data-correct') === 'true') {
                                 opt.classList.add('correct');
@@ -296,7 +333,7 @@
                         });
                     }
                     
-                    // Check if quiz is complete
+                    /* Check if quiz is complete */
                     if (questionsAnswered === totalQuestions) {
                         setTimeout(showResults, 1000);
                     }
@@ -320,7 +357,7 @@
                 resultsDiv.scrollIntoView({ behavior: 'smooth' });
             }
             
-            // Reset quiz
+            /* Reset quiz */
             document.getElementById('retryQuiz').addEventListener('click', function() {
                 correctAnswers = 0;
                 questionsAnswered = 0;
@@ -344,7 +381,7 @@
                 });
             });
             
-            // Generate certificate
+            /* Generate certificate */
             document.getElementById('generateCert').addEventListener('click', function() {
                 const nameInput = document.getElementById('certificateName').value;
                 if (!nameInput) {
