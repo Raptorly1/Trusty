@@ -132,8 +132,8 @@ const HomePage: React.FC = () => {
             className="bg-base-100 rounded-xl shadow p-6 text-xl border border-base-300 transition hover:scale-105 hover:border-primary cursor-pointer flex flex-col items-center gap-2"
           >
             <Shield className="h-10 w-10 mb-2" style={{ color: '#6C1BA0' }} />
-            <p className="font-bold text-3xl mb-2" style={{ color: '#6C1BA0' }}>1 in 4</p>
-            <p>Every year, one in four older adults is targeted by an online scam.</p>
+            <p className="font-bold text-3xl mb-2" style={{ color: '#6C1BA0' }}>3 in 4</p>
+            <p>Every year, three in four older adults is targeted by an online scam.</p>
           </motion.div>
           {/* $3 Billion+ */}
           <motion.div
