@@ -1,5 +1,5 @@
 import React from 'react';
-import { AlertTriangle, Phone, Shield, Heart, HelpCircle, Users, MapPin, FileText, CheckCircle } from 'lucide-react';
+import { AlertTriangle, Phone, Shield, Heart, HelpCircle, Users, MapPin, FileText, CheckCircle, Download } from 'lucide-react';
 import SourcesButton from '../common/SourcesButton';
 
 const Module8: React.FC = () => {
@@ -330,15 +330,33 @@ const Module8: React.FC = () => {
       </div>
 
       {/* Emergency Contact List */}
-      <div className="card bg-base-100 shadow-lg">
+      <div className="card bg-base-100 shadow-lg border-l-4 border-l-primary">
         <div className="card-body">
           <h2 className="card-title text-2xl text-primary">
             <FileText className="w-6 h-6" />
-            Create Your Emergency Contact List
+            Your Emergency Contact List
           </h2>
           <p className="text-lg mb-6">
-            Keep these important numbers handy. Write them down and keep copies in multiple places:
+            Keep these important numbers handy. Download and print this contact list, then fill it out and keep copies in multiple places:
           </p>
+          
+          {/* Download Button */}
+          <div className="alert alert-info mb-6">
+            <Download className="w-5 h-5" />
+            <div>
+              <h3 className="font-bold">Download Your Emergency Contact List</h3>
+              <p className="text-sm">Print this form and fill it out with your important contact information. Keep copies by your phone, in your wallet, and with a trusted family member.</p>
+              <a 
+                href="/emergencyContactList.pdf" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="btn btn-primary btn-sm mt-2"
+              >
+                <Download className="w-4 h-4" />
+                Download PDF
+              </a>
+            </div>
+          </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="card bg-primary/10 border border-primary/20">
