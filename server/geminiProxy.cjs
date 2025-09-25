@@ -7,7 +7,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
+const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1/models/gemini-2.5-pro:generateContent';
 const API_KEY = process.env.GEMINI_API_KEY;
 
 app.post('/api/gemini', async (req, res) => {
@@ -18,7 +18,15 @@ app.post('/api/gemini', async (req, res) => {
     });
     res.json(response.data);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    if (error.response) {
+      console.error('Gemini API error:');
+      console.error('Status:', error.response.status);
+      console.error('Headers:', error.response.headers);
+      console.error('Data:', error.response.data);
+    } else {
+      console.error('Gemini API error:', error.message);
+    }
+    res.status(500).json({ error: error?.response?.data || error.message });
   }
 });
 
