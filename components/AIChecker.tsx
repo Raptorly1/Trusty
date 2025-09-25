@@ -574,7 +574,7 @@ const AIChecker: React.FC<AICheckerProps> = ({ onBack }) => {
                                     {typeof result.likelihood_score !== 'number' || !Array.isArray(result.observations) ? (
                                         <div className="text-center p-6 bg-red-50 border border-red-200 rounded-lg">
                                             <AlertTriangle className="h-10 w-10 mx-auto text-red-500 mb-2" />
-                                            <h3 className="text-lg font-semibold text-red-800 font-kalam">Unexpected response from AI service</h3>
+                                            <h3 className="text-lg font-semibold text-red-800 font-kalam">Unexpected response from API service</h3>
                                             <p className="text-red-700">Sorry, we couldn't analyze your text due to a service error. Please try again later.</p>
                                         </div>
                                     ) : (
