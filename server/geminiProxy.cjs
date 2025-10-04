@@ -70,7 +70,7 @@ app.post('/api/gemini', async (req, res) => {
         res.json(parsedResult);
         return;
       } catch (e) {
-        console.error("Failed to parse structured JSON response:", rawText);
+        console.error("Failed to parse structured JSON response:", rawText, e);
         // Try to extract JSON from the response if it's embedded in text
         const jsonMatch = /\{[\s\S]*\}/.exec(rawText);
         if (jsonMatch) {
@@ -80,9 +80,11 @@ app.post('/api/gemini', async (req, res) => {
             return;
           } catch (e2) {
             console.error("Failed to parse extracted JSON:", e2);
+            res.status(500).json({ error: "Failed to parse extracted JSON from fact-check response", details: e2.message });
+            return;
           }
         }
-        res.status(500).json({ error: "Failed to parse fact-check response" });
+        res.status(500).json({ error: "Failed to parse fact-check response", details: e.message });
         return;
       }
     }
