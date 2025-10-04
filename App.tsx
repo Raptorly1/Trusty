@@ -6,8 +6,9 @@ import CourseModule from './components/CourseModule';
 import Quiz from './components/Quiz';
 import Certificate from './components/Certificate';
 import FactChecker from './components/FactChecker';
+import { TeacherFeedback } from './components/TeacherFeedback';
 
-type View = 'home' | 'course' | 'quiz' | 'certificate' | 'ai_checker';
+type View = 'home' | 'course' | 'quiz' | 'certificate' | 'ai_checker' | 'teacher_feedback';
 
 const App: React.FC = () => {
   const [view, setView] = useState<View>('home');
@@ -26,6 +27,10 @@ const App: React.FC = () => {
 
   const handleGoToAIChecker = () => {
     setView('ai_checker');
+  };
+
+  const handleGoToTeacherFeedback = () => {
+    setView('teacher_feedback');
   };
 
   const handleNextModule = () => {
@@ -50,9 +55,11 @@ const App: React.FC = () => {
   const renderContent = () => {
     switch (view) {
       case 'home':
-        return <Homepage onStartCourse={handleStartCourse} onGoToAIChecker={handleGoToAIChecker} />;
+        return <Homepage onStartCourse={handleStartCourse} onGoToAIChecker={handleGoToAIChecker} onGoToTeacherFeedback={handleGoToTeacherFeedback} />;
       case 'ai_checker':
         return <FactChecker onBack={handleRestart} />;
+      case 'teacher_feedback':
+        return <TeacherFeedback onBack={handleRestart} />;
       case 'course':
         return (
           <div className="py-12 sm:py-16 lg:py-20">
