@@ -12,6 +12,7 @@ import FactCheckerPage from './pages/FactCheckerPage';
 import ServerStatusPopup from './components/common/ServerStatusPopup';
 import ServerStatusIndicator from './components/common/ServerStatusIndicator';
 import { useServerStatus } from './hooks/useServerStatus';
+import { Analytics } from '@vercel/analytics/react';
 
 const navLinks = [
   { path: '/', label: 'Home', icon: Home },
@@ -320,6 +321,9 @@ const App: React.FC = () => {
         </AnimatePresence>
       </main>
       <Footer />
+
+  {/* Vercel Web Analytics */}
+  <Analytics />
 
       {/* Server Status Popup - Informational only */}
       <ServerStatusPopup
