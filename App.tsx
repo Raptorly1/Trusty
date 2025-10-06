@@ -13,6 +13,7 @@ import ServerStatusPopup from './components/common/ServerStatusPopup';
 import ServerStatusIndicator from './components/common/ServerStatusIndicator';
 import { useServerStatus } from './hooks/useServerStatus';
 import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 
 const navLinks = [
   { path: '/', label: 'Home', icon: Home },
@@ -322,8 +323,11 @@ const App: React.FC = () => {
       </main>
       <Footer />
 
+
   {/* Vercel Web Analytics */}
   <Analytics />
+  {/* Vercel Speed Insights */}
+  <SpeedInsights />
 
       {/* Server Status Popup - Informational only */}
       <ServerStatusPopup
