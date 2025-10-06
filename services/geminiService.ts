@@ -2,11 +2,16 @@
 
 import { AnalysisResult, SourceCheckResult, HumanTextExplanationResult } from '../types';
 
-const GEMINI_PROXY_URL = import.meta.env.VITE_GEMINI_PROXY_URL || 'http://localhost:5001/api/gemini';
+// Use dynamic proxy URL based on environment - same pattern as other services
+const getProxyURL = (): string => {
+    return window.location.hostname === 'localhost' 
+        ? 'http://localhost:5001/api/gemini'
+        : 'https://trusty-ldqx.onrender.com/api/gemini';
+};
 
 export async function analyzeTextForAI(text: string): Promise<AnalysisResult> {
   try {
-    const response = await fetch(GEMINI_PROXY_URL, {
+    const response = await fetch(getProxyURL(), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -28,7 +33,7 @@ export async function analyzeTextForAI(text: string): Promise<AnalysisResult> {
 export async function findSourcesForText(text: string): Promise<SourceCheckResult> {
   try {
     const prompt = `Fact-check the following text. Return a JSON object with:\n- summary: a summary of your findings\n- sources: an array of objects with 'web.title' and 'web.uri' for each relevant web source you used.\nText: ${text}`;
-    const response = await fetch(GEMINI_PROXY_URL, {
+    const response = await fetch(getProxyURL(), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -52,7 +57,7 @@ export async function findSourcesForText(text: string): Promise<SourceCheckResul
 export async function explainHumanText(text: string): Promise<HumanTextExplanationResult> {
   try {
     const prompt = `Explain why the following text sounds like it was written by a human. Return a JSON object with:\n- explanation: a detailed explanation string.\nText: ${text}`;
-    const response = await fetch(GEMINI_PROXY_URL, {
+    const response = await fetch(getProxyURL(), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

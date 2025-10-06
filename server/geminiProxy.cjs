@@ -8,6 +8,7 @@ const corsOptions = {
   origin: [
     'https://trusty-rho.vercel.app', // Vercel production frontend
     'http://localhost:5173',         // Local dev
+    'http://localhost:5174',         // Local dev alternate port
   ],
   credentials: true,
   methods: ['GET', 'POST', 'OPTIONS'],
