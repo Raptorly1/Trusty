@@ -275,6 +275,9 @@ const App: React.FC = () => {
   const [showServerPopup, setShowServerPopup] = useState(false);
   const [hasShownWarmingPopup, setHasShownWarmingPopup] = useState(false);
   const { status, isWarming, estimatedWaitTime, startWarmUp, checkStatus } = useServerStatus(true);
+  
+  // Extract route from hash for Speed Insights tracking
+  const currentRoute = location.pathname === '/' ? '/' : location.pathname;
 
   // Warm up server on initial load (non-blocking)
   useEffect(() => {
@@ -324,10 +327,10 @@ const App: React.FC = () => {
       <Footer />
 
 
-  {/* Vercel Web Analytics */}
-  <Analytics mode="production" />
-  {/* Vercel Speed Insights */}
-  <SpeedInsights debug={false} />
+      {/* Vercel Web Analytics */}
+      <Analytics mode="production" />
+      {/* Vercel Speed Insights - with route tracking for HashRouter */}
+      <SpeedInsights debug={false} route={currentRoute} />
 
       {/* Server Status Popup - Informational only */}
       <ServerStatusPopup
