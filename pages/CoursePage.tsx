@@ -1,7 +1,8 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { courseModules, finalQuizQuestions } from '../constants/courseData';
+import { courseModules as originalCourseModules, finalQuizQuestions } from '../constants/courseData';
+import ReactMarkdown from 'react-markdown';
 import { CourseModule, ExerciseType, FinalQuizQuestion, QuizOption, ScamItem } from '../types';
 import { CheckCircle, XCircle, Star, ArrowRight, RotateCcw } from 'lucide-react';
 
@@ -15,7 +16,7 @@ const PasswordChecker: React.FC = () => {
         if (pw.length >= 12) { score++; feedback.push("Good length (12+ characters)."); } else { feedback.push("Too short. Aim for 12+ characters.");}
         if (/[A-Z]/.test(pw)) { score++; }
         if (/[a-z]/.test(pw)) { score++; }
-        if (/[0-9]/.test(pw)) { score++; }
+        if (/\d/.test(pw)) { score++; }
         if (/[^A-Za-z0-9]/.test(pw)) { score++; }
         
         if (score < 3) feedback.unshift("Weak password.");
@@ -235,7 +236,31 @@ const CoursePage: React.FC = () => {
         setQuizScore(null);
     }
 
-    const currentModule = courseModules[currentModuleIndex];
+    // Vite dynamic import for markdown modules
+    const [courseModules, setCourseModules] = useState<{
+        title: string;
+        description: string;
+        content: string;
+        exercise: any;
+    }[]>([]);
+    React.useEffect(() => {
+        const loadModules = async () => {
+            const modules = import.meta.glob('../modules/*.md', { as: 'raw' });
+            const moduleEntries = Object.entries(modules);
+            const loadedMarkdowns = await Promise.all(moduleEntries.map(async ([file, loader]) => {
+                const content = await loader();
+                return content;
+            }));
+            // Merge markdown content with original courseModules
+            const merged = originalCourseModules.map((mod, idx) => ({
+                ...mod,
+                content: loadedMarkdowns[idx] || '',
+            }));
+            setCourseModules(merged);
+        };
+        loadModules();
+    }, []);
+    const currentModule = courseModules[currentModuleIndex] || { title: '', description: '', content: '', exercise: null };
     const progress = (currentModuleIndex + (isExerciseMode ? 0.5 : 0)) / courseModules.length * 100;
     
     if (quizScore !== null) {
@@ -267,7 +292,7 @@ const CoursePage: React.FC = () => {
                         {!isExerciseMode ? (
                             <>
                                 <h2 className="card-title text-4xl mb-4">{currentModule.title}</h2>
-                                {currentModule.content}
+                                <ReactMarkdown>{currentModule.content}</ReactMarkdown>
                             </>
                         ) : (
                             <>
@@ -280,10 +305,18 @@ const CoursePage: React.FC = () => {
                         
                         <div className="card-actions justify-end mt-8">
                             {(!isExerciseMode || currentModule.exercise.type === ExerciseType.PASSWORD_CHECKER) && (
-                                <button onClick={handleNext} className="btn btn-primary btn-lg">
-                                    {isExerciseMode ? (currentModuleIndex < courseModules.length - 1 ? 'Next Module' : 'Take Final Quiz') : 'Continue to Exercise'}
-                                    <ArrowRight />
-                                </button>
+                                (() => {
+                                    let buttonLabel = 'Continue to Exercise';
+                                    if (isExerciseMode) {
+                                        buttonLabel = currentModuleIndex < courseModules.length - 1 ? 'Next Module' : 'Take Final Quiz';
+                                    }
+                                    return (
+                                        <button onClick={handleNext} className="btn btn-primary btn-lg">
+                                            {buttonLabel}
+                                            <ArrowRight />
+                                        </button>
+                                    );
+                                })()
                             )}
                         </div>
                     </div>
