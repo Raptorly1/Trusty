@@ -28,7 +28,7 @@ const AnnotatedImage: React.FC<{ src: string; result: AIImageAnalysisResult }> =
                 const { x, y, width, height } = anomaly.box;
                 return (
                     <div
-                        key={index}
+                        key={`${x}-${y}-${width}-${height}-${anomaly.reason}`}
                         className="absolute border-4 border-red-500 rounded-full tooltip tooltip-open tooltip-error"
                         data-tip={anomaly.reason}
                         style={{
@@ -123,7 +123,11 @@ const AIImageCheckerPage: React.FC = () => {
                                 <div className="card-body">
                                     <h3 className="card-title text-2xl">Identified Anomalies</h3>
                                     <ul className="list-disc list-inside space-y-2 text-lg">
-                                        {result.anomalies.map((a, i) => <li key={i}>{a.reason}</li>)}
+                                        {result.anomalies.map((a) => (
+                                            <li key={`${a.box.x}-${a.box.y}-${a.box.width}-${a.box.height}-${a.reason}`}>
+                                                {a.reason}
+                                            </li>
+                                        ))}
                                     </ul>
                                 </div>
                             </div>
