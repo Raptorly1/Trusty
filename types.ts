@@ -1,3 +1,4 @@
+import React from 'react';
 export enum ExerciseType {
   QUIZ = 'QUIZ',
   PASSWORD_CHECKER = 'PASSWORD_CHECKER',
@@ -105,6 +106,6 @@ export interface AIImageAnalysisResult {
 export interface SourceCredibility {
   url: string;
   title: string;
-  credibility: 'High' | 'Medium' | 'Low' | 'Unknown';
+  credibility: 'Very High' | 'High' | 'Medium High' | 'Medium' | 'Medium Low' | 'Low' | 'Very Low' | 'Unknown';
   explanation: string;
 }
