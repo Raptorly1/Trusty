@@ -1,5 +1,5 @@
 import { Type } from "@google/genai";
-import { AITextAnalysisResult, AnnotationType, FeedbackResult, AIImageAnalysisResult, SourceCredibility } from '../types';
+import { AITextAnalysisResult, AnnotationType, FeedbackResult, AIImageAnalysisResult } from '../types';
 
 const PROXY_URL = 'https://trusty-ldqx.onrender.com/api/gemini';
 
@@ -220,52 +220,140 @@ const factCheckProcessorSchema = {
   additionalProperties: false
 };
 
+type Credibility =
+  | 'Very High' | 'High' | 'Medium High' | 'Medium'
+  | 'Medium Low' | 'Low' | 'Very Low' | 'Unknown';
+
+export interface SourceCredibility {
+  url: string;
+  title: string;
+  credibility: Credibility;
+  explanation: string;
+}
+
+const CRED_ENUM: Credibility[] = [
+  'Very High','High','Medium High','Medium',
+  'Medium Low','Low','Very Low','Unknown'
+];
+
+const extractCitations = (text: string): number[] => {
+  const m = text.match(/\[(\d+)\]/g) ?? [];
+  return m.map(x => Number(x.slice(1, -1)));
+};
+
+const validateResponse = (
+  json: any,
+  sourceCount: number
+): { annotatedSummary: string; sourceDetails: SourceCredibility[] } => {
+  if (!json || typeof json !== 'object') throw new Error('Non-object JSON.');
+  const { annotatedSummary, sourceDetails } = json;
+
+  if (typeof annotatedSummary !== 'string') throw new Error('Missing annotatedSummary.');
+  if (!Array.isArray(sourceDetails) || sourceDetails.length !== sourceCount) {
+    throw new Error(`sourceDetails must have exactly ${sourceCount} items.`);
+  }
+
+  sourceDetails.forEach((s, i) => {
+    if (typeof s.url !== 'string') throw new Error(`sourceDetails[${i}].url missing.`);
+    if (typeof s.title !== 'string') throw new Error(`sourceDetails[${i}].title missing.`);
+    if (!CRED_ENUM.includes(s.credibility)) {
+      throw new Error(`Invalid credibility at index ${i}: ${s.credibility}`);
+    }
+    if (typeof s.explanation !== 'string' || !s.explanation.trim()) {
+      throw new Error(`sourceDetails[${i}].explanation missing.`);
+    }
+  });
+
+  // Citations must be within [1..N]
+  const cites = extractCitations(annotatedSummary);
+  if (cites.some(n => n < 1 || n > sourceCount)) {
+    throw new Error('Annotated summary contains out-of-range citations.');
+  }
+
+  return { annotatedSummary, sourceDetails };
+};
 
 export const processFactCheckResults = async (
-  summary: string, 
+  summary: string,
   sources: { uri: string; title: string }[]
-): Promise<{ annotatedSummary: string, sources: SourceCredibility[] }> => {
+): Promise<{ annotatedSummary: string; sources: SourceCredibility[] }> => {
   const sourceList = sources
     .map((s, i) => `[${i + 1}] ${s.title || 'Untitled'}\nURL: ${s.uri}`)
     .join('\n\n');
 
   const prompt = `
-    You are a helpful fact-checking assistant. You have been provided with an initial summary and a list of source URLs. Your task is to refine this into a final, user-friendly fact-check report.
+You are a fact-checking assistant. Produce a single JSON object ONLY (no prose).
+You will rewrite an initial summary and rate the credibility of each provided source.
 
-    Follow these instructions carefully:
-    1.  **Rewrite the Summary**: Read the initial summary and the list of sources. Write a comprehensive, clear summary of the findings. In your summary, you MUST embed citations in the format [1], [2], etc., to link statements to the source that backs them up.
-    2.  **Analyze Source Credibility**: For each source provided, analyze its credibility based on its URL and title. Assign a credibility rating of 'Very High', 'High', 'Medium High', 'Medium', 'Medium Low', 'Low', or 'Very Low'. Provide a brief, one-sentence explanation for your rating. For example, a major news organization or scientific journal is 'High', while a personal blog is 'Low'. If you cannot determine, use 'Unknown'.
-    3.  **Format Output**: Your entire response MUST be a single JSON object that strictly adheres to the provided schema.
+RULES (follow exactly):
+- Use inline numeric citations [1], [2], … that map to the sources below. Do not cite numbers outside 1..${sources.length}.
+- Do NOT invent sources. Rate EXACTLY ${sources.length} sources, in the SAME ORDER as provided.
+- For each source, include: url (use the exact URL given), title, credibility (one of ${CRED_ENUM.join(', ')}), and a one-sentence explanation.
+- Output must conform to the provided schema; no extra keys.
 
-    **Initial Summary:**
-    ---
-    ${summary}
-    ---
+Guidance for credibility (heuristic, not output):
+- Very High: peer-reviewed journals, official government/standards docs, top-tier reference works, authoritative datasets.
+- High: major reputable newsrooms with strong editorial standards; authoritative institutions.
+- Medium High: recognized outlets or NGOs with generally reliable records.
+- Medium or below: personal blogs, forums, SEO content farms, unverifiable or opaque sites, etc.
 
-    **Sources to Analyze:**
-    ---
-    ${sourceList}
-    ---
-  `;
+Initial Summary:
+---
+${summary}
+---
+
+Sources:
+---
+${sourceList}
+---
+
+Schema (shape, not instructions):
+{
+  "annotatedSummary": string,
+  "sourceDetails": [
+    {
+      "url": string,
+      "title": string,
+      "credibility": "${CRED_ENUM.join('" | "')}",
+      "explanation": string
+    }
+  ]
+}
+`;
 
   const params = {
     model: "gemini-2.5-flash",
     contents: prompt,
     config: {
-      responseMimeType: 'application/json',
-      responseSchema: factCheckProcessorSchema,
-      temperature: 0.2,
+      responseMimeType: "application/json",
+      responseSchema: factCheckProcessorSchema, // keep your strict schema
+      temperature: 0.0
     }
   };
-  
+
   const response = await callGeminiProxy('generateContent', params);
-  const jsonResponse = JSON.parse(response.text);
-  
-  return {
-    annotatedSummary: jsonResponse.annotatedSummary,
-    sources: jsonResponse.sourceDetails,
-  };
+
+  let parsed: any;
+  try {
+    parsed = JSON.parse(response.text);
+  } catch {
+    throw new Error('Model did not return valid JSON.');
+  }
+
+  // Validate and also enforce original URLs in case the model “fixes” them
+  const { annotatedSummary, sourceDetails } = validateResponse(parsed, sources.length);
+
+  // Ensure URLs/titles exactly match the provided list order
+  const normalizedDetails: SourceCredibility[] = sourceDetails.map((s, i) => ({
+    url: sources[i].uri,               // override with ground truth
+    title: sources[i].title || s.title,
+    credibility: s.credibility,
+    explanation: s.explanation
+  }));
+
+  return { annotatedSummary, sources: normalizedDetails };
 };
+
 
 export const analyzeImageForAI = async (base64Image: string, mimeType: string): Promise<AIImageAnalysisResult> => {
     const imagePart = { inlineData: { data: base64Image, mimeType } };
