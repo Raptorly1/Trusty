@@ -184,8 +184,7 @@ const factCheckProcessorSchema = {
         type: Type.OBJECT,
         properties: {
           url: { 
-            type: Type.STRING, 
-            format: "uri",
+            type: Type.STRING,
             description: "Direct link to the source." 
           },
           title: { 
