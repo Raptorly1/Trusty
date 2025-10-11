@@ -3,6 +3,13 @@ export enum ExerciseType {
   QUIZ = 'QUIZ',
   PASSWORD_CHECKER = 'PASSWORD_CHECKER',
   SCAM_IDENTIFICATION = 'SCAM_IDENTIFICATION',
+  CHECKLIST = 'CHECKLIST',
+}
+
+export interface ChecklistExerciseData {
+  type: ExerciseType.CHECKLIST;
+  instructions: string;
+  items: string[];
 }
 
 export interface QuizOption {
@@ -12,10 +19,15 @@ export interface QuizOption {
 
 export interface QuizExerciseData {
   type: ExerciseType.QUIZ;
-  question: string;
-  options: QuizOption[];
-  correctFeedback: string;
-  incorrectFeedback: string;
+  // For legacy support, allow both single-question and multi-question formats
+  question?: string;
+  options?: QuizOption[];
+  correctFeedback?: string;
+  incorrectFeedback?: string;
+  questions?: {
+    question: string;
+    options: QuizOption[];
+  }[];
 }
 
 export interface PasswordCheckerData {
@@ -34,7 +46,7 @@ export interface ScamIdentificationData {
   items: ScamItem[];
 }
 
-export type ExerciseData = QuizExerciseData | PasswordCheckerData | ScamIdentificationData;
+export type ExerciseData = QuizExerciseData | PasswordCheckerData | ScamIdentificationData | ChecklistExerciseData;
 
 export interface CourseModule {
   title:string;

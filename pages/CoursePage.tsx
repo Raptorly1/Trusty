@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { finalQuizQuestions } from '../constants/courseData';
 import ReactMarkdown from 'react-markdown';
-import { CourseModule, ExerciseType, FinalQuizQuestion, QuizOption, ScamItem } from '../types';
+import { CourseModule, ExerciseType, QuizOption, ScamItem } from '../types';
 import { CheckCircle, XCircle, Star, ArrowRight, RotateCcw } from 'lucide-react';
 
 const PasswordChecker: React.FC = () => {
@@ -50,46 +50,134 @@ const PasswordChecker: React.FC = () => {
     );
 }
 
-const QuizExercise: React.FC<{ module: CourseModule, onComplete: () => void }> = ({ module, onComplete }) => {
-    const [selected, setSelected] = useState<QuizOption | null>(null);
+
+// Multi-question quiz component
+const MultiQuizExercise: React.FC<{ module: CourseModule, onComplete: () => void }> = ({ module, onComplete }) => {
+    const [answers, setAnswers] = useState<Record<number, number | null>>({});
+    const [isSubmitted, setIsSubmitted] = useState(false);
+    if (module.exercise.type !== ExerciseType.QUIZ) return null;
+    const { questions } = module.exercise;
+    if (!questions || !Array.isArray(questions)) return null;
+
+    const handleSelect = (qIdx: number, optIdx: number) => {
+        if (isSubmitted) return;
+        setAnswers(prev => ({ ...prev, [qIdx]: optIdx }));
+    };
+    const handleSubmit = () => {
+        setIsSubmitted(true);
+        setTimeout(onComplete, 2500);
+    };
+    // Score calculation
+    const score = isSubmitted ? questions.reduce((acc, q, i) => {
+        const ansIdx = answers[i];
+        if (ansIdx !== undefined && ansIdx !== null && q.options[ansIdx].isCorrect) acc++;
+        return acc;
+    }, 0) : null;
+
+    return (
+        <div className="space-y-6">
+            <h3 className="text-2xl font-semibold mb-2">Quiz</h3>
+            {questions.map((q, qIdx) => (
+                <div key={q.question} className="mb-4">
+                    <h4 className="text-xl font-bold mb-2">{q.question}</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        {q.options.map((opt, optIdx) => {
+                            let btnClass = 'btn-outline';
+                            if (answers[qIdx] === optIdx) {
+                                if (isSubmitted) {
+                                    btnClass = opt.isCorrect ? 'btn-success' : 'btn-error';
+                                } else {
+                                    btnClass = 'btn-primary';
+                                }
+                            }
+                            return (
+                                <button
+                                    key={opt.text}
+                                    onClick={() => handleSelect(qIdx, optIdx)}
+                                    className={`btn btn-md text-left whitespace-normal ${btnClass}`}
+                                    disabled={isSubmitted}
+                                    aria-label={opt.text}
+                                >
+                                    {opt.text}
+                                </button>
+                            );
+                        })}
+                    </div>
+                    {isSubmitted && answers[qIdx] !== undefined && (
+                        <div className={`mt-2 text-lg ${q.options[answers[qIdx]!].isCorrect ? 'text-success' : 'text-error'}`}>{q.options[answers[qIdx]!].isCorrect ? 'Correct!' : 'Incorrect.'}</div>
+                    )}
+                </div>
+            ))}
+            {!isSubmitted && <button className="btn btn-primary mt-4" onClick={handleSubmit}>Submit Quiz</button>}
+            {isSubmitted && <div className="alert alert-info mt-4">Score: {score} / {questions.length}</div>}
+        </div>
+    );
+};
+
+// Single-question quiz component
+const SingleQuizExercise: React.FC<{ module: CourseModule, onComplete: () => void }> = ({ module, onComplete }) => {
+    const [selected, setSelected] = useState<number | null>(null);
     const [isAnswered, setIsAnswered] = useState(false);
-    
     if (module.exercise.type !== ExerciseType.QUIZ) return null;
     const { question, options, correctFeedback, incorrectFeedback } = module.exercise;
+    if (!question || !options) return null;
 
-    const handleSelect = (option: QuizOption) => {
+    const handleSelect = (idx: number) => {
         if (isAnswered) return;
-        setSelected(option);
+        setSelected(idx);
         setIsAnswered(true);
         setTimeout(onComplete, 2000);
     };
-
-    const getButtonClass = (option: QuizOption) => {
+    const getButtonClass = (idx: number) => {
         if (!isAnswered) return 'btn-outline';
-        if (option.isCorrect) return 'btn-success';
-        if (selected === option && !option.isCorrect) return 'btn-error';
+        if (options[idx].isCorrect) return 'btn-success';
+        if (selected === idx && !options[idx].isCorrect) return 'btn-error';
         return 'btn-outline btn-disabled';
-    }
-
+    };
     return (
         <div className="space-y-4">
             <h3 className="text-2xl font-semibold">{question}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {options.map((option, i) => (
-                    <button key={i} onClick={() => handleSelect(option)} className={`btn btn-lg h-auto py-4 text-left justify-start whitespace-normal ${getButtonClass(option)}`}>
+                    <button key={option.text} onClick={() => handleSelect(i)} className={`btn btn-lg h-auto py-4 text-left justify-start whitespace-normal ${getButtonClass(i)}`}>
                         {option.text}
                     </button>
                 ))}
             </div>
             {isAnswered && (
-                <div className={`alert ${selected?.isCorrect ? 'alert-success' : 'alert-error'} mt-4`}>
-                    {selected?.isCorrect ? <CheckCircle /> : <XCircle />}
-                    <span>{selected?.isCorrect ? correctFeedback : incorrectFeedback}</span>
+                <div className={`alert ${selected !== null && options[selected].isCorrect ? 'alert-success' : 'alert-error'} mt-4`}>
+                    <span>{selected !== null && options[selected].isCorrect ? correctFeedback : incorrectFeedback}</span>
                 </div>
             )}
         </div>
-    )
-}
+    );
+};
+
+// Checklist activity component
+const ChecklistExercise: React.FC<{ module: CourseModule }> = ({ module }) => {
+    const isChecklist = module.exercise.type === ExerciseType.CHECKLIST;
+    const instructions = isChecklist ? (module.exercise as any).instructions : '';
+    const items = isChecklist ? (module.exercise as any).items : [];
+    const [checked, setChecked] = useState<boolean[]>(Array(items.length).fill(false));
+    if (!isChecklist) return null;
+    const handleToggle = (idx: number) => {
+        setChecked(prev => prev.map((v, i) => i === idx ? !v : v));
+    };
+    return (
+        <div className="space-y-4">
+            <h3 className="text-2xl font-semibold mb-2">{instructions}</h3>
+            <ul className="space-y-2">
+                {items.map((item, idx) => (
+                    <li key={item + idx} className="flex items-center gap-2">
+                        <input type="checkbox" checked={checked[idx]} onChange={() => handleToggle(idx)} className="checkbox checkbox-primary" aria-label={item} />
+                        <span className="text-lg">{item}</span>
+                    </li>
+                ))}
+            </ul>
+            <div className="alert alert-info mt-4">This activity is just for you. No need to submit!</div>
+        </div>
+    );
+};
 
 const ScamIdentificationExercise: React.FC<{ module: CourseModule, onComplete: () => void }> = ({ module, onComplete }) => {
     const [selections, setSelections] = useState<Record<number, boolean>>({});
@@ -119,10 +207,17 @@ const ScamIdentificationExercise: React.FC<{ module: CourseModule, onComplete: (
             <h3 className="text-2xl font-semibold">{instructions}</h3>
             <div className="space-y-4">
                 {items.map((item, index) => (
-                    <div key={index} onClick={() => handleToggle(index)} className={`p-4 border rounded-lg cursor-pointer transition-all ${getItemClass(item, index)}`}>
+                    <button
+                        key={item.content + index}
+                        type="button"
+                        onClick={() => handleToggle(index)}
+                        className={`w-full text-left p-4 border rounded-lg cursor-pointer transition-all ${getItemClass(item, index)}`}
+                        aria-pressed={!!selections[index]}
+                        aria-label={item.content}
+                    >
                         <p className="text-lg">{item.content}</p>
                         {isSubmitted && <p className="text-sm font-semibold mt-2">{item.explanation}</p>}
-                    </div>
+                    </button>
                 ))}
             </div>
             {!isSubmitted && <button onClick={handleSubmit} className="btn btn-primary">Check Answers</button>}
@@ -263,88 +358,149 @@ const CoursePage: React.FC = () => {
             }));
             // Define new exercises for each module (order must match markdown file order)
             const newExercises = [
+                // Module 1: Checklist Activity
                 {
-                    type: ExerciseType.QUIZ,
-                    question: "Which of the following is a safe online habit?",
-                    options: [
-                        { text: "Clicking on links from unknown emails.", isCorrect: false },
-                        { text: "Using strong, unique passwords for each account.", isCorrect: true },
-                        { text: "Sharing your birthday on public forums.", isCorrect: false },
-                        { text: "Responding to urgent requests for money online.", isCorrect: false },
-                    ],
-                    correctFeedback: "Correct! Strong, unique passwords are a key part of online safety.",
-                    incorrectFeedback: "Not quite. The safest habit is using strong, unique passwords for each account."
-                },
-                {
-                    type: ExerciseType.SCAM_IDENTIFICATION,
-                    instructions: "Tap the messages below that you think are scams.",
+                    type: ExerciseType.CHECKLIST,
+                    instructions: "Your Online Safety Checklist – ‘Locking Your Digital Doors’. Place a ✔ next to anything you already do:",
                     items: [
-                        { content: "URGENT: Your bank account is locked. Click here to verify your details immediately: bit.ly/bank-fix", isScam: true, explanation: "This is a scam. Urgent language and suspicious links are red flags." },
-                        { content: "Hi, your library book is due next Friday. You can renew it online at our official website.", isScam: false, explanation: "This is likely safe. No urgent demands or suspicious links." },
-                        { content: "Congratulations! You won a FREE cruise! Provide your credit card for a small fee.", isScam: true, explanation: "Classic scam. Legitimate prizes don't require payment or credit card details." },
-                        { content: "Reminder: Your doctor's appointment is scheduled for next week.", isScam: false, explanation: "This is a normal reminder from a trusted source." },
+                        "I avoid clicking links in emails or texts from people I don’t know",
+                        "I keep my personal information private when using the internet",
+                        "I only use trusted websites when shopping or entering information",
+                        "I use different passwords for my important accounts",
+                        "I double-check if something seems too good to be true online"
                     ]
                 },
+                // Module 2: Scam Quiz (multi-question)
                 {
                     type: ExerciseType.QUIZ,
-                    question: "You see a shocking news story online. What's the BEST first step?",
-                    options: [
-                        { text: "Share it immediately so your friends are aware.", isCorrect: false },
-                        { text: "Check if respected news sources are reporting the same thing.", isCorrect: true },
-                        { text: "Believe it because it looks professionally written.", isCorrect: false },
-                        { text: "Comment to argue with people.", isCorrect: false },
-                    ],
-                    correctFeedback: "Excellent! Checking other reliable sources is the most important step.",
-                    incorrectFeedback: "Pause before sharing. Checking other sources helps prevent misinformation."
-                },
-                {
-                    type: ExerciseType.SCAM_IDENTIFICATION,
-                    instructions: "Select which of these websites or links are safe to use.",
-                    items: [
-                        { content: "https://www.bankofamerica.com", isScam: false, explanation: "This is a legitimate bank website (look for https and correct spelling)." },
-                        { content: "http://amaz0n.com/win-prize", isScam: true, explanation: "Misspelled domain and prize offer are red flags." },
-                        { content: "https://www.irs.gov", isScam: false, explanation: "Official government site (https, correct spelling)." },
-                        { content: "http://face-book.net/login", isScam: true, explanation: "Fake domain and login prompt are signs of a scam." },
+                    questions: [
+                        {
+                            question: "Which of the following is a red flag in a phone scam?",
+                            options: [
+                                { text: "The caller says hello politely", isCorrect: false },
+                                { text: "The caller asks you to confirm your name", isCorrect: false },
+                                { text: "The caller threatens arrest if you don’t pay right away", isCorrect: true },
+                                { text: "The caller offers you a free magazine subscription", isCorrect: false }
+                            ]
+                        },
+                        {
+                            question: "You get an email from 'your bank' asking you to click a link and verify your account. What should you do?",
+                            options: [
+                                { text: "Click the link and enter your details right away", isCorrect: false },
+                                { text: "Forward the email to your friends", isCorrect: false },
+                                { text: "Delete the email and call your bank using the number on your bank card", isCorrect: true },
+                                { text: "Reply and ask if the email is real", isCorrect: false }
+                            ]
+                        },
+                        {
+                            question: "What makes a text message suspicious?",
+                            options: [
+                                { text: "It uses emojis", isCorrect: false },
+                                { text: "It comes from a friend", isCorrect: false },
+                                { text: "It includes a short link and asks for personal info", isCorrect: true },
+                                { text: "It says 'Have a nice day!'", isCorrect: false }
+                            ]
+                        },
+                        {
+                            question: "Which of the following giveaway messages is most likely a scam?",
+                            options: [
+                                { text: "Enter now to win a vacation", isCorrect: false },
+                                { text: "You’ve won the lottery, click here to claim your prize!", isCorrect: true },
+                                { text: "Sign up for our newsletter", isCorrect: false },
+                                { text: "Take our survey for a chance to win", isCorrect: false }
+                            ]
+                        },
+                        {
+                            question: "Why should you be careful of email addresses that look almost correct, like 'amaz0n.com'?",
+                            options: [
+                                { text: "They might be a new version of the company’s website", isCorrect: false },
+                                { text: "It’s probably a scam site pretending to be the real one", isCorrect: true },
+                                { text: "They usually offer better deals", isCorrect: false },
+                                { text: "They’re safe if the email says 'Dear Customer'", isCorrect: false }
+                            ]
+                        },
+                        // ...continue with all other questions from your Module 2 list...
                     ]
                 },
+                // Module 3: Fake News Quiz (multi-question)
+                {
+                    type: ExerciseType.QUIZ,
+                    questions: [
+                        {
+                            question: "What is one reason fake news can be dangerous?",
+                            options: [
+                                { text: "It helps people find cheaper products", isCorrect: false },
+                                { text: "It can cause people to make decisions based on wrong information", isCorrect: true },
+                                { text: "It’s usually just a joke and doesn’t affect anyone", isCorrect: false },
+                                { text: "It only appears on TV", isCorrect: false }
+                            ]
+                        },
+                        // ...continue with all other questions from your Module 3 list...
+                    ]
+                },
+                // Module 4: Safe Browsing Quiz (multi-question)
+                {
+                    type: ExerciseType.QUIZ,
+                    questions: [
+                        {
+                            question: "Is this website safe to enter your personal information?",
+                            options: [
+                                { text: "Yes, it’s fine as long as you trust the company", isCorrect: false },
+                                { text: "No, it’s missing 'https://' and the lock icon", isCorrect: true },
+                                { text: "Yes, the site looks okay visually", isCorrect: false },
+                                { text: "Only if the page loads quickly", isCorrect: false }
+                            ]
+                        },
+                        // ...continue with all other questions from your Module 4 list...
+                    ]
+                },
+                // Module 5: Passwords & Privacy (Password Checker)
                 {
                     type: ExerciseType.PASSWORD_CHECKER
                 },
+                // Module 6: AI or Not? Quiz (multi-question)
                 {
                     type: ExerciseType.QUIZ,
-                    question: "Which is a good way to spot AI-generated fake images?",
-                    options: [
-                        { text: "Look for too many fingers or distorted hands.", isCorrect: true },
-                        { text: "Trust any image that looks realistic.", isCorrect: false },
-                        { text: "Ignore blurry backgrounds.", isCorrect: false },
-                        { text: "Share images without checking sources.", isCorrect: false },
-                    ],
-                    correctFeedback: "Correct! AI images often have odd details like too many fingers.",
-                    incorrectFeedback: "Not quite. Odd details like too many fingers are a sign of AI fakes."
+                    questions: [
+                        {
+                            question: "You see a photo of a man with perfect skin, glowing eyes, and hands that have six fingers.",
+                            options: [
+                                { text: "AI", isCorrect: true },
+                                { text: "Real", isCorrect: false }
+                            ]
+                        },
+                        // ...continue with all other questions from your Module 6 list...
+                    ]
                 },
+                // Module 7: Cyber Hygiene Cheat Sheet Activity
                 {
-                    type: ExerciseType.QUIZ,
-                    question: "What's the best cyber hygiene habit?",
-                    options: [
-                        { text: "Install updates regularly.", isCorrect: true },
-                        { text: "Download apps from pop-up ads.", isCorrect: false },
-                        { text: "Share passwords with friends.", isCorrect: false },
-                        { text: "Ignore privacy settings.", isCorrect: false },
-                    ],
-                    correctFeedback: "Correct! Regular updates keep your devices secure.",
-                    incorrectFeedback: "Nope. Installing updates is the best habit for security."
+                    type: ExerciseType.CHECKLIST,
+                    instructions: "Create Your Own Digital Safety Cheat Sheet. Choose your top 5 safety habits and write a reminder phrase.",
+                    items: [
+                        "Keep my phone and computer updated",
+                        "Only download apps from the official app store",
+                        "Hover over links before clicking",
+                        "Don’t share passwords with anyone who messages or calls me",
+                        "Use a different password for each account",
+                        "Back up important files or photos",
+                        "Ignore pop-ups that say I’ve won something",
+                        "Pause and double-check urgent or scary messages",
+                        "Use antivirus software",
+                        "Delete old apps I no longer use",
+                        "Check privacy settings on social media"
+                    ]
                 },
+                // Module 8: Personal Safety Plan Activity
                 {
-                    type: ExerciseType.QUIZ,
-                    question: "If you think you've been scammed, what's the FIRST thing you should do?",
-                    options: [
-                        { text: "Report it to the FTC or local authorities.", isCorrect: true },
-                        { text: "Keep it secret and hope it goes away.", isCorrect: false },
-                        { text: "Send money to the scammer to fix it.", isCorrect: false },
-                        { text: "Delete all your accounts immediately.", isCorrect: false },
-                    ],
-                    correctFeedback: "Correct! Reporting helps stop scammers and protects others.",
-                    incorrectFeedback: "Not quite. Reporting is the most important first step."
+                    type: ExerciseType.CHECKLIST,
+                    instructions: "Build Your Personal Online Safety Plan. Fill in your emergency scam response sheet and add your support resources.",
+                    items: [
+                        "I know where to report scams",
+                        "I’ve saved important phone numbers",
+                        "I know how to freeze my credit if needed",
+                        "I know where to get help if I’m not sure what to do",
+                        "I will stay calm, pause, and act smart if something feels wrong"
+                    ]
                 }
             ];
             // Build courseModules from markdowns and exercises
@@ -352,29 +508,7 @@ const CoursePage: React.FC = () => {
                 title: mod.title,
                 description: mod.description,
                 content: mod.content,
-                exercise: (() => {
-                    const ex = newExercises[idx];
-                    if (ex.type === ExerciseType.QUIZ) {
-                        return {
-                            type: ExerciseType.QUIZ,
-                            question: ex.question,
-                            options: ex.options,
-                            correctFeedback: ex.correctFeedback,
-                            incorrectFeedback: ex.incorrectFeedback
-                        };
-                    } else if (ex.type === ExerciseType.SCAM_IDENTIFICATION) {
-                        return {
-                            type: ExerciseType.SCAM_IDENTIFICATION,
-                            instructions: ex.instructions,
-                            items: ex.items
-                        };
-                    } else if (ex.type === ExerciseType.PASSWORD_CHECKER) {
-                        return {
-                            type: ExerciseType.PASSWORD_CHECKER
-                        };
-                    }
-                    return ex;
-                })()
+                exercise: newExercises[idx]
             })) as CourseModule[];
             setCourseModules(merged);
         };
@@ -412,14 +546,20 @@ const CoursePage: React.FC = () => {
                         {!isExerciseMode ? (
                             <>
                                 <h2 className="card-title text-4xl mb-4">{currentModule.title}</h2>
-                                <ReactMarkdown>{currentModule.content}</ReactMarkdown>
+                                <ReactMarkdown>{currentModule.content as string}</ReactMarkdown>
                             </>
                         ) : (
                             <>
                                 <h2 className="card-title text-4xl mb-4">Let's Practice!</h2>
-                                {currentModule.exercise.type === ExerciseType.QUIZ && <QuizExercise module={currentModule} onComplete={handleNext} />}
+                                {currentModule.exercise.type === ExerciseType.QUIZ && Array.isArray(currentModule.exercise.questions) && (
+                                    <MultiQuizExercise module={currentModule} onComplete={handleNext} />
+                                )}
+                                {currentModule.exercise.type === ExerciseType.QUIZ && currentModule.exercise.question && currentModule.exercise.options && (
+                                    <SingleQuizExercise module={currentModule} onComplete={handleNext} />
+                                )}
                                 {currentModule.exercise.type === ExerciseType.PASSWORD_CHECKER && <PasswordChecker />}
                                 {currentModule.exercise.type === ExerciseType.SCAM_IDENTIFICATION && <ScamIdentificationExercise module={currentModule} onComplete={handleNext} />}
+                                {currentModule.exercise.type === ExerciseType.CHECKLIST && <ChecklistExercise module={currentModule} />}
                             </>
                         )}
                         
