@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, RotateCcw, Star } from "lucide-react";
+import { ArrowRight, RotateCcw, Download, Printer, User, Star } from "lucide-react";
 
 export type FinalQuizQuestion = {
   question: string;
@@ -233,6 +233,90 @@ const FinalQuiz: React.FC<{ onComplete: (score: number) => void }> = ({ onComple
   const [showModal, setShowModal] = useState(false);
   const [showRetakeModal, setShowRetakeModal] = useState(false);
   const [certificateName, setCertificateName] = useState("");
+  const [generatedCertificate, setGeneratedCertificate] = useState<string | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  // Certificate generation function
+  const generateCertificate = useCallback(async (name: string) => {
+    if (!canvasRef.current) return;
+    
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Set canvas size to match certificate image
+    canvas.width = 1200;
+    canvas.height = 900;
+
+    // Load the certificate background image
+    const img = new Image();
+    img.onload = () => {
+      // Draw the certificate background
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      // Configure text styles for the name
+      ctx.font = 'bold 48px serif';
+      ctx.fillStyle = '#2c3e50';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+
+      // Add a subtle shadow effect
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.1)';
+      ctx.shadowBlur = 2;
+      ctx.shadowOffsetX = 1;
+      ctx.shadowOffsetY = 1;
+
+      // Draw the name in the center of the certificate
+      const centerX = canvas.width / 2;
+      const nameY = canvas.height * 0.55; // Position name roughly in the middle
+      ctx.fillText(name, centerX, nameY);
+
+      // Generate the final certificate as data URL
+      const dataUrl = canvas.toDataURL('image/png', 1.0);
+      setGeneratedCertificate(dataUrl);
+    };
+    
+    img.src = '/assets/images/FinalCertificate.png';
+  }, []);
+
+  // Download certificate function
+  const downloadCertificate = useCallback(() => {
+    if (!generatedCertificate) return;
+    
+    const link = document.createElement('a');
+    link.download = `${certificateName || 'Certificate'}_Trusty_Course_Completion.png`;
+    link.href = generatedCertificate;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }, [generatedCertificate, certificateName]);
+
+  // Print certificate function
+  const printCertificate = useCallback(() => {
+    if (!generatedCertificate) return;
+    
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
+    
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Certificate - ${certificateName}</title>
+          <style>
+            body { margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+            img { max-width: 100%; height: auto; }
+            @media print { body { margin: 0; } img { width: 100%; } }
+          </style>
+        </head>
+        <body>
+          <img src="${generatedCertificate}" alt="Certificate" />
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
+  }, [generatedCertificate, certificateName]);
 
   React.useEffect(() => {
     const score = answers.filter((a, i) => a === finalQuizQuestions[i].correctIndex).length;
@@ -346,42 +430,101 @@ const FinalQuiz: React.FC<{ onComplete: (score: number) => void }> = ({ onComple
           <div className="text-center">
             {passed ? (
               <div className="max-w-2xl mx-auto mb-12">
-                <div className="border-4 border-primary rounded-xl bg-base-100 p-8 shadow-lg relative">
-                  <div className="absolute top-4 right-4">
-                    <Star className="w-10 h-10 text-warning" />
-                  </div>
-                  <h2 className="text-4xl font-bold text-center mb-2">Digital Safety Certificate</h2>
-                  <p className="text-lg text-center mb-6">This certifies that</p>
-                  <div className="flex flex-col items-center mb-6">
-                    <input
-                      type="text"
-                      value={certificateName}
-                      onChange={e => setCertificateName(e.target.value)}
-                      placeholder="Enter your name"
-                      className="input input-bordered text-center text-2xl font-semibold mb-2 w-64"
-                      style={{ fontFamily: 'Pacifico, cursive' }}
-                      aria-label="Your Name"
-                    />
-                    <span className="text-base-content/70 text-sm">Your name will appear below in signature style</span>
-                  </div>
-                  <div className="mt-8 mb-4 text-center">
-                    <span className="block text-lg mb-2">has successfully completed the</span>
-                    <span className="block text-2xl font-bold mb-2">Trusty-powered Digital Safety Course</span>
-                    <span className="block text-base-content/70 mb-2">Date: {new Date().toLocaleDateString()}</span>
-                  </div>
-                  <div className="mt-8 flex flex-col items-center">
-                    <span className="text-lg mb-2">Signature:</span>
-                    <span
-                      className="text-3xl text-primary mt-2"
-                      style={{ fontFamily: 'Pacifico, cursive', minHeight: '2.5rem' }}
-                    >
-                      {certificateName || <span className="text-base-content/40">Your Name</span>}
-                    </span>
-                  </div>
-                  <div className="mt-8 text-center">
-                    <span className="badge badge-success badge-lg">Certificate Awarded</span>
-                  </div>
-                </div>
+                {/* Hidden canvas for certificate generation */}
+                <canvas ref={canvasRef} style={{ display: 'none' }} />
+                
+                {!generatedCertificate ? (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="border-4 border-primary rounded-xl bg-base-100 p-8 shadow-lg"
+                  >
+                    <div className="text-center mb-6">
+                      <div className="mb-4">
+                        <Star className="w-16 h-16 text-warning mx-auto" />
+                      </div>
+                      <h3 className="text-3xl font-bold text-primary mb-2">🎉 Congratulations!</h3>
+                      <p className="text-lg mb-4">You've successfully completed the Trusty Online Safety Course!</p>
+                      <p className="text-base text-base-content/70 mb-6">
+                        Enter your name below to generate your personalized certificate of completion.
+                      </p>
+                    </div>
+                    
+                    <div className="form-control w-full max-w-md mx-auto">
+                      <label className="label" htmlFor="certificate-name">
+                        <span className="label-text font-medium flex items-center gap-2">
+                          <User className="w-4 h-4" />
+                          Your Full Name
+                        </span>
+                      </label>
+                      <input
+                        id="certificate-name"
+                        type="text"
+                        placeholder="Enter your full name"
+                        className="input input-bordered input-primary w-full text-center text-lg"
+                        value={certificateName}
+                        onChange={(e) => setCertificateName(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && certificateName.trim()) {
+                            generateCertificate(certificateName.trim());
+                          }
+                        }}
+                      />
+                      <button
+                        className="btn btn-primary mt-4"
+                        onClick={() => generateCertificate(certificateName.trim())}
+                        disabled={!certificateName.trim()}
+                      >
+                        Generate Certificate
+                        <Star className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="border-4 border-primary rounded-xl bg-base-100 p-8 shadow-lg"
+                  >
+                    <h3 className="text-3xl font-bold text-primary mb-6 text-center">Your Certificate</h3>
+                    
+                    {/* Certificate Preview */}
+                    <div className="mb-6 rounded-lg overflow-hidden shadow-xl">
+                      <img 
+                        src={generatedCertificate} 
+                        alt="Certificate of Completion"
+                        className="w-full h-auto"
+                      />
+                    </div>
+                    
+                    {/* Action Buttons */}
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                      <button
+                        onClick={downloadCertificate}
+                        className="btn btn-success flex items-center gap-2"
+                      >
+                        <Download className="w-4 h-4" />
+                        Download Certificate
+                      </button>
+                      <button
+                        onClick={printCertificate}
+                        className="btn btn-outline btn-primary flex items-center gap-2"
+                      >
+                        <Printer className="w-4 h-4" />
+                        Print Certificate
+                      </button>
+                      <button
+                        onClick={() => {
+                          setGeneratedCertificate(null);
+                          setCertificateName("");
+                        }}
+                        className="btn btn-ghost flex items-center gap-2"
+                      >
+                        Generate New
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
               </div>
             ) : (
               <div className="mt-6">
