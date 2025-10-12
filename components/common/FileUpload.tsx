@@ -15,8 +15,8 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload, acceptedTypes, pr
   const handleFile = (file: File | null) => {
     if (file) {
       setError(null);
-      // Check file type
-      if (acceptedTypes.includes(file.type)) {
+  // Only allow image/jpeg and image/png
+  if (file.type === 'image/jpeg' || file.type === 'image/png') {
         // Check file size (max 20MB)
         if (file.size > 20 * 1024 * 1024) {
           setError('File is too large. Maximum allowed size is 20MB.');
@@ -47,7 +47,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload, acceptedTypes, pr
              reader.readAsDataURL(file);
         }
       } else {
-        setError(`Unsupported file type. Please upload one of: ${acceptedTypes.join(', ')}`);
+  setError('Unsupported file type. Only JPEG and PNG images are allowed.');
       }
     }
   };
