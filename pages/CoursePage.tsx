@@ -404,7 +404,10 @@ const CoursePage: React.FC = () => {
 
 	const currentModule = courseModules[currentModuleIndex] || { title: '', description: '', content: <div>Loading...</div>, exercise: { type: ExerciseType.QUIZ, question: '', options: [], correctFeedback: '', incorrectFeedback: '' } };
 	const progress = (currentModuleIndex + (isExerciseMode ? 0.5 : 0)) / courseModules.length * 100;
-    
+
+	// Animation key: changes for every module/exercise view
+	const animationKey = `${currentModuleIndex}-${isExerciseMode ? 'exercise' : 'module'}`;
+
 	if (quizScore !== null) {
 		return <div>Certificate goes here</div>; // Replace with your Certificate component
 	}
@@ -420,10 +423,10 @@ const CoursePage: React.FC = () => {
 				Module {currentModuleIndex + 1} of {courseModules.length}
 			</p>
 			<progress className="progress progress-primary w-full mb-8" value={progress} max="100"></progress>
-            
+
 			<AnimatePresence mode="wait">
 				<motion.div
-					key={currentModuleIndex + (isExerciseMode ? 1 : 0)}
+					key={animationKey}
 					initial={{ opacity: 0, x: 50 }}
 					animate={{ opacity: 1, x: 0 }}
 					exit={{ opacity: 0, x: -50 }}
@@ -442,7 +445,7 @@ const CoursePage: React.FC = () => {
 								{renderExercise()}
 							</>
 						)}
-                        
+
 						<div className="card-actions justify-end mt-8">
 							{(!isExerciseMode) && (
 								<button onClick={handleNext} className="btn btn-primary btn-lg">
