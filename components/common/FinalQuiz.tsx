@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle, ArrowRight, RotateCcw, Star } from "lucide-react";
+import { motion } from "framer-motion";
+import { ArrowRight, RotateCcw, Star } from "lucide-react";
 
 export type FinalQuizQuestion = {
   question: string;
@@ -113,71 +113,173 @@ const finalQuizQuestions: FinalQuizQuestion[] = [
 ];
 
 const FinalQuiz: React.FC<{ onComplete: (score: number) => void }> = ({ onComplete }) => {
-  const [current, setCurrent] = useState(0);
-  const [selected, setSelected] = useState<number | null>(null);
-  const [answers, setAnswers] = useState<number[]>([]);
-  const [showFeedback, setShowFeedback] = useState(false);
-  const [finished, setFinished] = useState(false);
+  const [answers, setAnswers] = useState<(number | null)[]>(Array(finalQuizQuestions.length).fill(null));
+  const [submitted, setSubmitted] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [showRetakeModal, setShowRetakeModal] = useState(false);
+  const [certificateName, setCertificateName] = useState("");
 
-  const question = finalQuizQuestions[current];
-  const progress = ((current + (showFeedback ? 1 : 0)) / finalQuizQuestions.length) * 100;
+  React.useEffect(() => {
+    const score = answers.filter((a, i) => a === finalQuizQuestions[i].correctIndex).length;
+    if (submitted && score >= 8) {
+      // Dynamically load Pacifico font for signature
+      const link = document.createElement('link');
+      link.href = 'https://fonts.googleapis.com/css2?family=Pacifico&display=swap';
+      link.rel = 'stylesheet';
+      document.head.appendChild(link);
+      return () => { document.head.removeChild(link); };
+    }
+  }, [submitted, answers]);
 
-  const handleSelect = (idx: number) => {
-    setSelected(idx);
-    setShowFeedback(true);
-    setAnswers((prev) => {
+  const progress = (answers.filter(a => a !== null).length / finalQuizQuestions.length) * 100;
+  const allAnswered = answers.every(a => a !== null);
+
+  const handleSelect = (qIdx: number, optIdx: number) => {
+    setAnswers(prev => {
       const copy = [...prev];
-      copy[current] = idx;
+      copy[qIdx] = optIdx;
       return copy;
     });
   };
 
-  const handleNext = () => {
-    setShowFeedback(false);
-    setSelected(null);
-    if (current < finalQuizQuestions.length - 1) {
-      setCurrent(current + 1);
-    } else {
-      setFinished(true);
-      const score = answers.filter((a, i) => a === finalQuizQuestions[i].correctIndex).length;
-      onComplete(score);
-    }
+  const handleSubmit = () => {
+    setSubmitted(true);
+    setShowModal(true);
+    const score = answers.filter((a, i) => a === finalQuizQuestions[i].correctIndex).length;
+    onComplete(score);
   };
 
-  if (finished) {
+  if (submitted) {
     const score = answers.filter((a, i) => a === finalQuizQuestions[i].correctIndex).length;
     const passed = score >= 8;
     return (
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="card bg-base-100 shadow-xl p-8 text-center"
-      >
-        <h2 className="text-4xl font-bold mb-4">Final Quiz Results</h2>
-        <div className="text-2xl mb-2">Score: {score} / {finalQuizQuestions.length}</div>
-        {passed ? (
-          <div className="mt-6">
-            <Star className="w-12 h-12 text-warning mx-auto mb-2" />
-            <h3 className="text-3xl font-bold text-success mb-2">Congratulations!</h3>
-            <p className="text-lg mb-4">You’ve earned your Trusty-powered Digital Safety Certificate.</p>
-            <div className="badge badge-success badge-lg mb-4">Certificate Awarded</div>
-          </div>
-        ) : (
-          <div className="mt-6">
-            <h3 className="text-2xl font-bold text-error mb-2">Try Again</h3>
-            <p className="text-lg mb-4">You need at least 8/10 to pass. Review the modules and try again!</p>
-            <button className="btn btn-primary btn-lg" onClick={() => {
-              setCurrent(0);
-              setAnswers([]);
-              setFinished(false);
-              setShowFeedback(false);
-              setSelected(null);
-            }}>
-              Retake Quiz <RotateCcw />
-            </button>
+      <>
+        {/* Modal Popup for Score and Cutoff */}
+        {showModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+            <div className="modal modal-open">
+              <div className="modal-box p-8 text-center">
+                <h2 className="text-3xl font-bold mb-4">Quiz Submitted</h2>
+                <div className="text-lg mb-2">Minimum score to pass: <span className="font-bold">8 / 10</span></div>
+                <div className="text-xl mb-4">Your score: <span className={passed ? 'text-success' : 'text-error'}>{score} / 10</span></div>
+                {passed ? (
+                  <div className="text-success font-semibold mb-2">You passed! 🎉</div>
+                ) : (
+                  <div className="text-error font-semibold mb-2">You did not reach the cutoff.</div>
+                )}
+                <button className="btn btn-primary mt-4" onClick={() => setShowModal(false)}>
+                  {passed ? 'View Certificate & Answers' : 'Review Answers'}
+                </button>
+              </div>
+            </div>
           </div>
         )}
-      </motion.div>
+        {/* Retake Modal for failed attempts */}
+        {showRetakeModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+            <div className="modal modal-open">
+              <div className="modal-box p-8 text-center">
+                <h2 className="text-2xl font-bold mb-4 text-error">Retake Required</h2>
+                <div className="text-lg mb-2">You answered <span className="font-bold text-error">{score} / 10</span> correctly.</div>
+                <div className="mb-4">You need at least <span className="font-bold">8 / 10</span> to pass. Please review your answers and try again.</div>
+                <button className="btn btn-primary" onClick={() => {
+                  setAnswers(Array(finalQuizQuestions.length).fill(null));
+                  setSubmitted(false);
+                  setShowRetakeModal(false);
+                  setShowModal(false);
+                }}>
+                  Retake Quiz <RotateCcw />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="card bg-base-100 shadow-xl p-8"
+        >
+          <h2 className="text-4xl font-bold mb-4 text-center">Final Quiz Results</h2>
+          <div className="text-2xl mb-6 text-center">Score: {score} / {finalQuizQuestions.length}</div>
+          <div className="mb-6">
+            <h3 className="text-xl font-semibold mb-2">Review Your Answers:</h3>
+            <div className="space-y-4">
+              {finalQuizQuestions.map((q, idx) => {
+                const userAnswer = answers[idx];
+                const isCorrect = userAnswer === q.correctIndex;
+                return (
+                  <div key={q.question} className={`p-4 rounded ${isCorrect ? 'bg-success/10' : 'bg-error/10'}`}>
+                    <div className="font-semibold mb-1">Q{idx + 1}: {q.question}</div>
+                    <div className="mb-1">
+                      <span className="font-medium">Your answer: </span>
+                      <span className={isCorrect ? 'text-success' : 'text-error'}>
+                        {userAnswer !== null ? q.options[userAnswer] : <span className="italic">No answer</span>}
+                      </span>
+                    </div>
+                    {/* Do NOT show correct answer if user was wrong */}
+                    {!isCorrect && (
+                      <div className="text-sm text-error font-medium">Incorrect</div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          <div className="text-center">
+            {passed ? (
+              <div className="max-w-2xl mx-auto mb-12">
+                <div className="border-4 border-primary rounded-xl bg-base-100 p-8 shadow-lg relative">
+                  <div className="absolute top-4 right-4">
+                    <Star className="w-10 h-10 text-warning" />
+                  </div>
+                  <h2 className="text-4xl font-bold text-center mb-2">Digital Safety Certificate</h2>
+                  <p className="text-lg text-center mb-6">This certifies that</p>
+                  <div className="flex flex-col items-center mb-6">
+                    <input
+                      type="text"
+                      value={certificateName}
+                      onChange={e => setCertificateName(e.target.value)}
+                      placeholder="Enter your name"
+                      className="input input-bordered text-center text-2xl font-semibold mb-2 w-64"
+                      style={{ fontFamily: 'Pacifico, cursive' }}
+                      aria-label="Your Name"
+                    />
+                    <span className="text-base-content/70 text-sm">Your name will appear below in signature style</span>
+                  </div>
+                  <div className="mt-8 mb-4 text-center">
+                    <span className="block text-lg mb-2">has successfully completed the</span>
+                    <span className="block text-2xl font-bold mb-2">Trusty-powered Digital Safety Course</span>
+                    <span className="block text-base-content/70 mb-2">Date: {new Date().toLocaleDateString()}</span>
+                  </div>
+                  <div className="mt-8 flex flex-col items-center">
+                    <span className="text-lg mb-2">Signature:</span>
+                    <span
+                      className="text-3xl text-primary mt-2"
+                      style={{ fontFamily: 'Pacifico, cursive', minHeight: '2.5rem' }}
+                    >
+                      {certificateName || <span className="text-base-content/40">Your Name</span>}
+                    </span>
+                  </div>
+                  <div className="mt-8 text-center">
+                    <span className="badge badge-success badge-lg">Certificate Awarded</span>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="mt-6">
+                <h3 className="text-2xl font-bold text-error mb-2">Try Again</h3>
+                <p className="text-lg mb-4">You need at least 8/10 to pass. Review the questions you missed and try again!</p>
+                <button className="btn btn-primary btn-lg" onClick={() => {
+                  setShowRetakeModal(true);
+                  setShowModal(false);
+                }}>
+                  Retake Quiz <RotateCcw />
+                </button>
+              </div>
+            )}
+          </div>
+        </motion.div>
+      </>
     );
   }
 
@@ -185,63 +287,45 @@ const FinalQuiz: React.FC<{ onComplete: (score: number) => void }> = ({ onComple
     <div className="max-w-2xl mx-auto">
       <h2 className="text-3xl font-bold text-center mb-4">Final Quiz</h2>
       <progress className="progress progress-primary w-full mb-8" value={progress} max="100"></progress>
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={current}
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -50 }}
-          transition={{ duration: 0.4 }}
-          className="card bg-base-100 shadow-xl"
-        >
-          <div className="card-body p-8">
-            <h3 className="text-xl font-semibold mb-4">{question.question}</h3>
-            <div className="space-y-2 mb-4">
-              {question.options.map((opt, idx) => {
-                const isSelected = selected === idx;
-                let btnClass = "btn btn-outline w-full justify-start";
-                if (showFeedback && isSelected) {
-                  btnClass =
-                    idx === question.correctIndex
-                      ? "btn btn-success w-full justify-start"
-                      : "btn btn-error w-full justify-start";
-                }
-                return (
-                  <button
-                    key={opt}
-                    className={btnClass}
-                    disabled={showFeedback}
-                    onClick={() => handleSelect(idx)}
-                  >
-                    {opt}
-                  </button>
-                );
-              })}
+      <form onSubmit={e => { e.preventDefault(); handleSubmit(); }}>
+        <div className="space-y-8">
+          {finalQuizQuestions.map((q, qIdx) => (
+            <div key={q.question} className="card bg-base-100 shadow">
+              <div className="card-body">
+                <h3 className="text-xl font-semibold mb-2">Q{qIdx + 1}: {q.question}</h3>
+                <div className="space-y-2">
+                  {q.options.map((opt, oIdx) => {
+                    const isSelected = answers[qIdx] === oIdx;
+                    return (
+                      <button
+                        type="button"
+                        key={opt}
+                        className={`btn w-full justify-start ${isSelected ? 'btn-primary' : 'btn-outline'}`}
+                        onClick={() => handleSelect(qIdx, oIdx)}
+                      >
+                        {opt}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
-            {showFeedback && (
-              <div className={`mt-4 p-4 rounded ${selected === question.correctIndex ? "bg-success/20 text-success-content" : "bg-error/20 text-error-content"}`}>
-                {selected === question.correctIndex ? (
-                  <span>
-                    <CheckCircle className="inline-block w-5 h-5 mr-2" /> Correct! Well done.
-                  </span>
-                ) : (
-                  <span>
-                    Incorrect. The correct answer is: <b>{question.options[question.correctIndex]}</b>
-                  </span>
-                )}
-              </div>
-            )}
-            {showFeedback && (
-              <div className="card-actions justify-end mt-8">
-                <button className="btn btn-primary btn-lg" onClick={handleNext}>
-                  {current < finalQuizQuestions.length - 1 ? "Next Question" : "See Results"}
-                  <ArrowRight />
-                </button>
-              </div>
-            )}
-          </div>
-        </motion.div>
-      </AnimatePresence>
+          ))}
+        </div>
+        <div className="text-center mt-8">
+          <button
+            type="submit"
+            className="btn btn-success btn-lg"
+            disabled={!allAnswered}
+          >
+            Submit Quiz
+            <ArrowRight />
+          </button>
+          {!allAnswered && (
+            <div className="mt-2 text-error text-sm">Please answer all questions before submitting.</div>
+          )}
+        </div>
+      </form>
     </div>
   );
 };
