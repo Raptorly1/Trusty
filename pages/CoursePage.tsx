@@ -13,6 +13,342 @@ import Module6 from '../components/course/Module6';
 import Module7 from '../components/course/Module7';
 import Module8 from '../components/course/Module8';
 
+// Extra questions for Module 4
+const module4ExtraQuestions = [
+	{
+		question: "Which of these is a suspicious domain name?",
+		options: [
+			{ text: "www.target.com", isCorrect: false },
+			{ text: "www.target-shopping.net", isCorrect: true },
+			{ text: "www.target.com/sale", isCorrect: false },
+			{ text: "shop.target.com", isCorrect: false }
+		]
+	},
+	{
+		question: "A banner ad says, \"Your IP address has been selected to receive an iPhone X.\" What should you do?",
+		options: [
+			{ text: "Click it and follow the instructions", isCorrect: false },
+			{ text: "Share it with a friend", isCorrect: false },
+			{ text: "Ignore or close the ad immediately", isCorrect: true },
+			{ text: "Enter your phone number just in case", isCorrect: false }
+		]
+	},
+	{
+		question: "What should you avoid when downloading software on your computer?",
+		options: [
+			{ text: "The company's official website", isCorrect: false },
+			{ text: "The app store", isCorrect: false },
+			{ text: "A pop-up ad or unknown site offering free downloads", isCorrect: true },
+			{ text: "A trusted tech site", isCorrect: false }
+		]
+	},
+	{
+		question: "Which of these is the safest way to visit your bank's website?",
+		options: [
+			{ text: "Search for \"my bank login\" on Google", isCorrect: false },
+			{ text: "Click a link from an email", isCorrect: false },
+			{ text: "Type the address directly into your browser", isCorrect: true },
+			{ text: "Use a third-party app", isCorrect: false }
+		]
+	},
+	{
+		question: "Why are pop-ups that claim your device is infected usually fake?",
+		options: [
+			{ text: "They never appear", isCorrect: false },
+			{ text: "Only tech support sends pop-ups", isCorrect: false },
+			{ text: "Legitimate antivirus tools don't use pop-up ads", isCorrect: true },
+			{ text: "All pop-ups are viruses", isCorrect: false }
+		]
+	},
+	{
+		question: "What does the \"S\" in \"https://\" stand for?",
+		options: [
+			{ text: "Simple", isCorrect: false },
+			{ text: "Safe", isCorrect: false },
+			{ text: "Secure", isCorrect: true },
+			{ text: "Software", isCorrect: false }
+		]
+	},
+	{
+		question: "A website looks like Amazon but the address says www.amaz0n-sale.com. What's wrong?",
+		options: [
+			{ text: "The name is spelled incorrectly with a zero instead of 'o'", isCorrect: true },
+			{ text: "The layout is too simple", isCorrect: false },
+			{ text: "It uses https://", isCorrect: false },
+			{ text: "Nothing — it's a special version", isCorrect: false }
+		]
+	},
+	{
+		question: "What should you do before entering personal information on any website?",
+		options: [
+			{ text: "Check that the website uses https:// and has a lock icon", isCorrect: true },
+			{ text: "Make sure the website has bright colors", isCorrect: false },
+			{ text: "Ensure the page loads quickly", isCorrect: false },
+			{ text: "Look for lots of advertisements", isCorrect: false }
+		]
+	},
+	{
+		question: "If you accidentally click on a suspicious link, what should you do immediately?",
+		options: [
+			{ text: "Continue browsing to see what happens", isCorrect: false },
+			{ text: "Close your browser and run a security scan", isCorrect: true },
+			{ text: "Enter fake information to test the site", isCorrect: false },
+			{ text: "Share the link with friends to warn them", isCorrect: false }
+		]
+	},
+	{
+		question: "What's the best way to verify if a website is legitimate?",
+		options: [
+			{ text: "Check if it has professional-looking design", isCorrect: false },
+			{ text: "Look for contact information, privacy policy, and secure connection", isCorrect: true },
+			{ text: "See if it loads without errors", isCorrect: false },
+			{ text: "Count the number of images on the page", isCorrect: false }
+		]
+	},
+	{
+		question: "A pop-up appears claiming you've won a prize and asks for your credit card to pay shipping. What should you do?",
+		options: [
+			{ text: "Pay the small shipping fee to get your prize", isCorrect: false },
+			{ text: "Provide your credit card information since it's just for shipping", isCorrect: false },
+			{ text: "Close the pop-up immediately - this is a common scam", isCorrect: true },
+			{ text: "Share the \"opportunity\" with family members", isCorrect: false }
+		]
+	},
+	{
+		question: "How can you tell if an online shopping site is trustworthy?",
+		options: [
+			{ text: "It has the lowest prices", isCorrect: false },
+			{ text: "It has customer reviews, secure payment options, and clear return policies", isCorrect: true },
+			{ text: "It has flashy animations and graphics", isCorrect: false },
+			{ text: "It promises immediate delivery", isCorrect: false }
+		]
+	}
+];
+
+// Extra questions for Module 5
+const module5ExtraQuestions = [
+	{
+		question: "What makes a password strong?",
+		options: [
+			{ text: "Using your name and birthday", isCorrect: false },
+			{ text: "Using common words like \"password\"", isCorrect: false },
+			{ text: "A mix of upper and lowercase letters, numbers, and symbols", isCorrect: true },
+			{ text: "Making it exactly 8 characters long", isCorrect: false }
+		]
+	},
+	{
+		question: "Why should you use different passwords for different accounts?",
+		options: [
+			{ text: "It's more confusing for you", isCorrect: false },
+			{ text: "If one account is hacked, others remain safe", isCorrect: true },
+			{ text: "It's required by law", isCorrect: false },
+			{ text: "Websites won't accept the same password", isCorrect: false }
+		]
+	},
+	{
+		question: "What should you do if you think someone knows your password?",
+		options: [
+			{ text: "Wait and see if anything bad happens", isCorrect: false },
+			{ text: "Change your password immediately", isCorrect: true },
+			{ text: "Add numbers to your existing password", isCorrect: false },
+			{ text: "Use that password for less important accounts", isCorrect: false }
+		]
+	},
+	{
+		question: "Where is the safest place to store your passwords?",
+		options: [
+			{ text: "Written on a sticky note on your computer", isCorrect: false },
+			{ text: "In a text file on your desktop", isCorrect: false },
+			{ text: "In a reputable password manager", isCorrect: true },
+			{ text: "In your email drafts", isCorrect: false }
+		]
+	},
+	{
+		question: "What is a passphrase?",
+		options: [
+			{ text: "A very short password", isCorrect: false },
+			{ text: "A longer password made of multiple words or a memorable sentence", isCorrect: true },
+			{ text: "A password shared with family", isCorrect: false },
+			{ text: "A password that never changes", isCorrect: false }
+		]
+	},
+	{
+		question: "If a website gets hacked and your password is stolen, what should you do?",
+		options: [
+			{ text: "Change passwords for that site and any other sites using the same password", isCorrect: true },
+			{ text: "Nothing, since you weren't directly targeted", isCorrect: false },
+			{ text: "Just change the password for that one site", isCorrect: false },
+			{ text: "Stop using that website forever", isCorrect: false }
+		]
+	},
+	{
+		question: "What's the purpose of two-factor authentication (2FA)?",
+		options: [
+			{ text: "To make logging in faster", isCorrect: false },
+			{ text: "To add an extra layer of security beyond just your password", isCorrect: true },
+			{ text: "To share your account with family", isCorrect: false },
+			{ text: "To remember your password for you", isCorrect: false }
+		]
+	},
+	{
+		question: "Which of these is NOT a good practice for password security?",
+		options: [
+			{ text: "Using a password manager", isCorrect: false },
+			{ text: "Enabling two-factor authentication", isCorrect: false },
+			{ text: "Sharing your password with tech support over the phone", isCorrect: true },
+			{ text: "Using unique passwords for each account", isCorrect: false }
+		]
+	},
+	{
+		question: "How often should you update your passwords?",
+		options: [
+			{ text: "Every week", isCorrect: false },
+			{ text: "When there's been a security breach or you suspect compromise", isCorrect: true },
+			{ text: "Never", isCorrect: false },
+			{ text: "Every day", isCorrect: false }
+		]
+	},
+	{
+		question: "What should you do if you forget a password?",
+		options: [
+			{ text: "Try guessing common passwords", isCorrect: false },
+			{ text: "Use the official \"forgot password\" or \"reset password\" option", isCorrect: true },
+			{ text: "Create a new account", isCorrect: false },
+			{ text: "Call customer service and give them personal information", isCorrect: false }
+		]
+	},
+	{
+		question: "Why shouldn't you use the same password everywhere?",
+		options: [
+			{ text: "It's too easy to remember", isCorrect: false },
+			{ text: "If one service is compromised, all your accounts are at risk", isCorrect: true },
+			{ text: "Companies require different passwords", isCorrect: false },
+			{ text: "It's against the law", isCorrect: false }
+		]
+	},
+	{
+		question: "What makes a good security question answer?",
+		options: [
+			{ text: "Something everyone knows about you", isCorrect: false },
+			{ text: "Something that's easy to guess from your social media", isCorrect: false },
+			{ text: "Something only you would know and that doesn't change", isCorrect: true },
+			{ text: "Your actual mother's maiden name", isCorrect: false }
+		]
+	}
+];
+
+// Extra questions for Module 6
+const module6ExtraQuestions = [
+	{
+		question: "A news article has perfect grammar, but it's full of vague phrases and no sources are listed. What should you suspect?",
+		options: [
+			{ text: "It's definitely real news", isCorrect: false },
+			{ text: "It might be AI-generated content", isCorrect: true },
+			{ text: "It's from a professional journalist", isCorrect: false },
+			{ text: "Grammar doesn't matter for credibility", isCorrect: false }
+		]
+	},
+	{
+		question: "A friend posts a blurry photo of her new cat on Facebook with a caption full of typos. Is this likely AI or real?",
+		options: [
+			{ text: "AI - because it's on social media", isCorrect: false },
+			{ text: "Real - imperfections and typos suggest human authenticity", isCorrect: true },
+			{ text: "AI - because it mentions a pet", isCorrect: false },
+			{ text: "Impossible to tell", isCorrect: false }
+		]
+	},
+	{
+		question: "A video call shows your cousin asking for money, but his lip movements are slightly off. What should you do?",
+		options: [
+			{ text: "Send the money immediately since it's family", isCorrect: false },
+			{ text: "Be suspicious - this could be a deepfake or AI-generated video", isCorrect: true },
+			{ text: "Ask for the money amount again", isCorrect: false },
+			{ text: "Ignore the technical glitch and help", isCorrect: false }
+		]
+	},
+	{
+		question: "You find a blog post that repeats the same idea over and over in slightly different ways. What might this suggest?",
+		options: [
+			{ text: "The author really wants to emphasize the point", isCorrect: false },
+			{ text: "It could be AI-generated content trying to reach a word count", isCorrect: true },
+			{ text: "It's definitely written by a professional", isCorrect: false },
+			{ text: "Repetition always means quality content", isCorrect: false }
+		]
+	},
+	{
+		question: "A new online \"influencer\" has stunning photos, but none of them show real places or events. What red flag is this?",
+		options: [
+			{ text: "They value their privacy", isCorrect: false },
+			{ text: "They might be an AI-generated persona", isCorrect: true },
+			{ text: "They're very artistic", isCorrect: false },
+			{ text: "They travel to exotic locations", isCorrect: false }
+		]
+	},
+	{
+		question: "An email from your grandchild has an odd tone and mentions things they've never talked about before. What should you do?",
+		options: [
+			{ text: "Respond normally since emails can sound different", isCorrect: false },
+			{ text: "Call them directly to verify it's really them", isCorrect: true },
+			{ text: "Assume they're just growing and changing", isCorrect: false },
+			{ text: "Reply asking about the unusual topics", isCorrect: false }
+		]
+	},
+	{
+		question: "A podcast sounds smooth, but the host talks in a slightly robotic tone and never makes mistakes. What might this indicate?",
+		options: [
+			{ text: "It's a very professional host", isCorrect: false },
+			{ text: "It could be AI-generated audio", isCorrect: true },
+			{ text: "The host is just well-prepared", isCorrect: false },
+			{ text: "High-quality recording equipment", isCorrect: false }
+		]
+	},
+	{
+		question: "How can you verify if a shocking video of a celebrity is real?",
+		options: [
+			{ text: "Check if it looks professional", isCorrect: false },
+			{ text: "See if reputable news sources are reporting the same story", isCorrect: true },
+			{ text: "Count how many people have shared it", isCorrect: false },
+			{ text: "Look for high video quality", isCorrect: false }
+		]
+	},
+	{
+		question: "What's a good sign that online content is human-generated rather than AI?",
+		options: [
+			{ text: "Perfect grammar and spelling", isCorrect: false },
+			{ text: "Personal details, mistakes, and authentic imperfections", isCorrect: true },
+			{ text: "Very formal language", isCorrect: false },
+			{ text: "Repetitive phrasing", isCorrect: false }
+		]
+	},
+	{
+		question: "A comment under a news article feels overly emotional and extreme, but includes personal details. Is it likely AI or real?",
+		options: [
+			{ text: "AI - because it's emotional", isCorrect: false },
+			{ text: "Real - personal stories often reflect genuine human emotion", isCorrect: true },
+			{ text: "AI - because it's under a news article", isCorrect: false },
+			{ text: "Always impossible to tell", isCorrect: false }
+		]
+	},
+	{
+		question: "You see a shared image of a celebrity at a strange event, but it's not covered in any news outlets. What should you think?",
+		options: [
+			{ text: "News outlets are slow to report", isCorrect: false },
+			{ text: "It could be an AI-generated or manipulated image", isCorrect: true },
+			{ text: "It's definitely real if it looks clear", isCorrect: false },
+			{ text: "Celebrity events aren't always newsworthy", isCorrect: false }
+		]
+	},
+	{
+		question: "What's the best way to stay informed about AI-generated content?",
+		options: [
+			{ text: "Assume everything online is fake", isCorrect: false },
+			{ text: "Learn to recognize common signs and verify through multiple sources", isCorrect: true },
+			{ text: "Only trust content from social media", isCorrect: false },
+			{ text: "Avoid all digital media", isCorrect: false }
+		]
+	}
+];
+
 // Extra questions for Module 2
 const module2ExtraQuestions = [
 	{
@@ -399,6 +735,51 @@ const courseModules: CourseModule[] = [
 						{ text: "Pop-ups saying the site is secure", isCorrect: false },
 						{ text: "The website loads very quickly", isCorrect: false }
 					]
+				},
+				{
+					question: "What should you do when you see an ad offering big prizes or sounding urgent?",
+					options: [
+						{ text: "Click quickly before the timer runs out", isCorrect: false },
+						{ text: "Ignore it or close the page — it's likely a scam", isCorrect: true },
+						{ text: "Share it with a friend to double your chances", isCorrect: false },
+						{ text: "Refresh the page to see if it's real", isCorrect: false }
+					]
+				},
+				{
+					question: "You visit a website that begins with 'http://' instead of 'https://'. What should you do?",
+					options: [
+						{ text: "Keep browsing, it's probably fine", isCorrect: false },
+						{ text: "Avoid entering any personal information", isCorrect: true },
+						{ text: "Only use it if the images look professional", isCorrect: false },
+						{ text: "Refresh the page to make it secure", isCorrect: false }
+					]
+				},
+				{
+					question: "What should you do when a pop-up claims your device is infected?",
+					options: [
+						{ text: "Click the button to remove the virus", isCorrect: false },
+						{ text: "Restart your computer right away", isCorrect: false },
+						{ text: "Click the X or close your browser completely", isCorrect: true },
+						{ text: "Call the number listed in the pop-up", isCorrect: false }
+					]
+				},
+				{
+					question: "Why is it smart to hover over a link before clicking it?",
+					options: [
+						{ text: "It highlights the link", isCorrect: false },
+						{ text: "It shows the link's true destination", isCorrect: true },
+						{ text: "It makes the page load faster", isCorrect: false },
+						{ text: "It copies the link to your clipboard", isCorrect: false }
+					]
+				},
+				{
+					question: "Which of the following is a red flag for a fake website?",
+					options: [
+						{ text: "It uses a simple layout", isCorrect: false },
+						{ text: "It has spelling errors and strange grammar", isCorrect: true },
+						{ text: "It loads slowly", isCorrect: false },
+						{ text: "It shows product reviews", isCorrect: false }
+					]
 				}
 			]
 		}
@@ -408,7 +789,63 @@ const courseModules: CourseModule[] = [
 		description: "Creating and managing secure passwords",
 		content: <Module5 />,
 		exercise: {
-			type: ExerciseType.PASSWORD_CHECKER
+			type: ExerciseType.QUIZ,
+			questions: [
+				{
+					question: "Which of these passwords is the strongest?",
+					options: [
+						{ text: "password123", isCorrect: false },
+						{ text: "12345678", isCorrect: false },
+						{ text: "MyD0g&C@t!2024", isCorrect: true },
+						{ text: "your name + birthday", isCorrect: false }
+					]
+				},
+				{
+					question: "What's the best way to remember multiple strong passwords?",
+					options: [
+						{ text: "Write them all down on paper", isCorrect: false },
+						{ text: "Use the same password for everything", isCorrect: false },
+						{ text: "Use a password manager", isCorrect: true },
+						{ text: "Make them all similar but slightly different", isCorrect: false }
+					]
+				},
+				{
+					question: "How often should you change your passwords?",
+					options: [
+						{ text: "Every day", isCorrect: false },
+						{ text: "Only when there's a security breach or you suspect your account is compromised", isCorrect: true },
+						{ text: "Never", isCorrect: false },
+						{ text: "Every week", isCorrect: false }
+					]
+				},
+				{
+					question: "What should you do if a website asks you to create a password that's at least 8 characters?",
+					options: [
+						{ text: "Use exactly 8 characters to meet the minimum", isCorrect: false },
+						{ text: "Use a longer password with a mix of letters, numbers, and symbols", isCorrect: true },
+						{ text: "Use your name plus some numbers", isCorrect: false },
+						{ text: "Use a common word that's easy to remember", isCorrect: false }
+					]
+				},
+				{
+					question: "Someone calls you claiming to be from tech support and asks for your password. What should you do?",
+					options: [
+						{ text: "Give them the password since they're helping you", isCorrect: false },
+						{ text: "Give them just part of the password", isCorrect: false },
+						{ text: "Never give your password to anyone who calls or emails you", isCorrect: true },
+						{ text: "Ask them to verify their identity first", isCorrect: false }
+					]
+				},
+				{
+					question: "What is two-factor authentication (2FA)?",
+					options: [
+						{ text: "Using two different passwords", isCorrect: false },
+						{ text: "An extra security step that requires something you know AND something you have", isCorrect: true },
+						{ text: "A way to share passwords safely", isCorrect: false },
+						{ text: "A type of password manager", isCorrect: false }
+					]
+				}
+			]
 		}
 	},
 	{
@@ -419,10 +856,55 @@ const courseModules: CourseModule[] = [
 			type: ExerciseType.QUIZ,
 			questions: [
 				{
-					question: "You see a photo of a person with perfect skin, glowing eyes, and hands that have six fingers.",
+					question: "You see a photo of a person with perfect skin, glowing eyes, and hands that have six fingers. What is this likely to be?",
 					options: [
-						{ text: "AI", isCorrect: true },
-						{ text: "Real", isCorrect: false }
+						{ text: "AI-generated", isCorrect: true },
+						{ text: "Real photo", isCorrect: false }
+					]
+				},
+				{
+					question: "A news article has perfect grammar, but it's full of vague phrases and no sources are listed. What should you suspect?",
+					options: [
+						{ text: "It's definitely real news", isCorrect: false },
+						{ text: "It might be AI-generated content", isCorrect: true },
+						{ text: "It's from a professional journalist", isCorrect: false },
+						{ text: "Grammar doesn't matter for credibility", isCorrect: false }
+					]
+				},
+				{
+					question: "A video shows a well-known politician saying something shocking, but it's not reported anywhere else. What should you do?",
+					options: [
+						{ text: "Share it immediately since it's shocking", isCorrect: false },
+						{ text: "Check multiple reliable news sources before believing it", isCorrect: true },
+						{ text: "Assume it's real because it's a video", isCorrect: false },
+						{ text: "Post it on social media to get opinions", isCorrect: false }
+					]
+				},
+				{
+					question: "An email asks you to confirm your password due to 'suspicious activity,' but the wording feels robotic. What's your best response?",
+					options: [
+						{ text: "Click the link and update your password immediately", isCorrect: false },
+						{ text: "Reply with your password to confirm it's you", isCorrect: false },
+						{ text: "Be suspicious - this could be an AI-generated phishing attempt", isCorrect: true },
+						{ text: "Forward it to friends to check if they got the same email", isCorrect: false }
+					]
+				},
+				{
+					question: "A voice message from your friend asks for money, but the tone sounds slightly off. What should you do?",
+					options: [
+						{ text: "Send the money right away since it's your friend", isCorrect: false },
+						{ text: "Call your friend directly to confirm they actually sent the message", isCorrect: true },
+						{ text: "Ignore it completely", isCorrect: false },
+						{ text: "Ask for more details in the same chat", isCorrect: false }
+					]
+				},
+				{
+					question: "What's a good sign that an article is real and not AI-generated?",
+					options: [
+						{ text: "It has perfect grammar with no typos", isCorrect: false },
+						{ text: "It includes specific details, named sources, and verifiable facts", isCorrect: true },
+						{ text: "It's very emotional and dramatic", isCorrect: false },
+						{ text: "It repeats the same point multiple times", isCorrect: false }
 					]
 				}
 			]
@@ -520,7 +1002,26 @@ const CoursePage: React.FC = () => {
 	}
 
 	const renderExtraQuestions = () => {
-		const extraQuestions = currentModuleIndex === 1 ? module2ExtraQuestions : module3ExtraQuestions;
+		let extraQuestions;
+		switch (currentModuleIndex) {
+			case 1:
+				extraQuestions = module2ExtraQuestions;
+				break;
+			case 2:
+				extraQuestions = module3ExtraQuestions;
+				break;
+			case 3:
+				extraQuestions = module4ExtraQuestions;
+				break;
+			case 4:
+				extraQuestions = module5ExtraQuestions;
+				break;
+			case 5:
+				extraQuestions = module6ExtraQuestions;
+				break;
+			default:
+				return null;
+		}
 		
 		return (
 			<motion.div
@@ -761,30 +1262,97 @@ const CoursePage: React.FC = () => {
 							</motion.div>
 						)}
 						
-						{/* Show extra questions button for Module 3 only */}
-						{currentModuleIndex === 2 && !showExtraQuestions && (
-							<motion.div 
-								initial={{ opacity: 0, y: 20 }}
-								animate={{ opacity: 1, y: 0 }}
-								transition={{ delay: 0.5, duration: 0.3 }}
-								className="mt-8 text-center"
-							>
-								<div className="divider">Want more practice?</div>
-								<button 
-									onClick={() => setShowExtraQuestions(true)}
-									className="btn btn-outline btn-lg gap-2"
-								>
-									<Star className="h-5 w-5" />
-									Try Extra Questions
-									<ArrowRight className="h-4 w-4" />
-								</button>
-								<p className="text-sm text-base-content/70 mt-2">
-									11 additional questions to test your fake news detection skills
-								</p>
-							</motion.div>
-						)}
-						
-						{/* Render extra questions if enabled for Module 2 */}
+								{/* Show extra questions button for Module 3 only */}
+								{currentModuleIndex === 2 && !showExtraQuestions && (
+									<motion.div 
+										initial={{ opacity: 0, y: 20 }}
+										animate={{ opacity: 1, y: 0 }}
+										transition={{ delay: 0.5, duration: 0.3 }}
+										className="mt-8 text-center"
+									>
+										<div className="divider">Want more practice?</div>
+										<button 
+											onClick={() => setShowExtraQuestions(true)}
+											className="btn btn-outline btn-lg gap-2"
+										>
+											<Star className="h-5 w-5" />
+											Try Extra Questions
+											<ArrowRight className="h-4 w-4" />
+										</button>
+										<p className="text-sm text-base-content/70 mt-2">
+											12 additional questions to test your fake news detection skills
+										</p>
+									</motion.div>
+								)}
+
+								{/* Show extra questions button for Module 4 only */}
+								{currentModuleIndex === 3 && !showExtraQuestions && (
+									<motion.div 
+										initial={{ opacity: 0, y: 20 }}
+										animate={{ opacity: 1, y: 0 }}
+										transition={{ delay: 0.5, duration: 0.3 }}
+										className="mt-8 text-center"
+									>
+										<div className="divider">Want more practice?</div>
+										<button 
+											onClick={() => setShowExtraQuestions(true)}
+											className="btn btn-outline btn-lg gap-2"
+										>
+											<Star className="h-5 w-5" />
+											Try Extra Questions
+											<ArrowRight className="h-4 w-4" />
+										</button>
+										<p className="text-sm text-base-content/70 mt-2">
+											12 additional questions to test your safe browsing skills
+										</p>
+									</motion.div>
+								)}
+
+								{/* Show extra questions button for Module 5 only */}
+								{currentModuleIndex === 4 && !showExtraQuestions && (
+									<motion.div 
+										initial={{ opacity: 0, y: 20 }}
+										animate={{ opacity: 1, y: 0 }}
+										transition={{ delay: 0.5, duration: 0.3 }}
+										className="mt-8 text-center"
+									>
+										<div className="divider">Want more practice?</div>
+										<button 
+											onClick={() => setShowExtraQuestions(true)}
+											className="btn btn-outline btn-lg gap-2"
+										>
+											<Star className="h-5 w-5" />
+											Try Extra Questions
+											<ArrowRight className="h-4 w-4" />
+										</button>
+										<p className="text-sm text-base-content/70 mt-2">
+											12 additional questions to test your password security knowledge
+										</p>
+									</motion.div>
+								)}
+
+								{/* Show extra questions button for Module 6 only */}
+								{currentModuleIndex === 5 && !showExtraQuestions && (
+									<motion.div 
+										initial={{ opacity: 0, y: 20 }}
+										animate={{ opacity: 1, y: 0 }}
+										transition={{ delay: 0.5, duration: 0.3 }}
+										className="mt-8 text-center"
+									>
+										<div className="divider">Want more practice?</div>
+										<button 
+											onClick={() => setShowExtraQuestions(true)}
+											className="btn btn-outline btn-lg gap-2"
+										>
+											<Star className="h-5 w-5" />
+											Try Extra Questions
+											<ArrowRight className="h-4 w-4" />
+										</button>
+										<p className="text-sm text-base-content/70 mt-2">
+											12 additional questions to test your AI detection skills
+										</p>
+									</motion.div>
+								)}						{/* Render extra questions if enabled for Module 2 */}
 						{currentModuleIndex === 1 && showExtraQuestions && renderExtraQuestions()}
 						
 						{/* Render extra questions if enabled for Module 3 */}
