@@ -134,7 +134,13 @@ const FactCheckerPage: React.FC = () => {
             setSources(processedSources.map(s => ({...s, url: cleanUrl(s.url)})));
 
         } catch (e: any) {
-            setError(`An error occurred while fact-checking: ${e.message}`);
+            if (e.message === 'SERVER_WARMING') {
+                setError('Our server is starting up. Please wait a moment and try again.');
+            } else if (e.message === 'SERVER_ERROR') {
+                setError('Our server is temporarily unavailable. Please try again in a few minutes.');
+            } else {
+                setError(`An error occurred while fact-checking: ${e.message}`);
+            }
             console.error(e);
         } finally {
             setIsLoading(false);

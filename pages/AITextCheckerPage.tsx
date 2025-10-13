@@ -178,7 +178,13 @@ const AITextCheckerPage: React.FC = () => {
             const analysisResult = await analyzeTextForAI(text);
             setResult(analysisResult);
         } catch (e: any) {
-            setError(`An error occurred during analysis: ${e.message}`);
+            if (e.message === 'SERVER_WARMING') {
+                setError('Our server is starting up. Please wait a moment and try again.');
+            } else if (e.message === 'SERVER_ERROR') {
+                setError('Our server is temporarily unavailable. Please try again in a few minutes.');
+            } else {
+                setError(`An error occurred during analysis: ${e.message}`);
+            }
             console.error(e);
         } finally {
             setIsLoading(false);
