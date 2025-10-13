@@ -36,7 +36,7 @@ const Header: React.FC = () => {
             </ul>
           </div>
           <NavLink to="/" className="inline-flex items-center gap-3 px-4 py-2 text-2xl font-bold text-primary normal-case rounded-full border border-transparent hover:border-primary hover:bg-primary/10 focus:border-primary focus:bg-primary/20 transition">
-                          <img src="/assets/images/Logo.png" alt="Trusty Logo" className="h-12 w-12 object-contain" /> Trusty
+                          <img src="/Logo.png" alt="Trusty Logo" className="h-12 w-12 object-contain" /> Trusty
           </NavLink>
         </div>
         <div className="navbar-center hidden lg:flex">
