@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Server, Clock, AlertCircle, CheckCircle } from 'lucide-react';
 
@@ -19,6 +19,20 @@ const ServerStatusPopup: React.FC<ServerStatusPopupProps> = ({
   onClose,
   onRetry
 }) => {
+  const modalRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!isVisible) return;
+    const handleClickOutside = (event: MouseEvent) => {
+      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+        onClose();
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isVisible, onClose]);
+
   const getStatusContent = () => {
     switch (status) {
       case 'warming':
@@ -69,6 +83,7 @@ const ServerStatusPopup: React.FC<ServerStatusPopupProps> = ({
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.9, opacity: 0, y: 20 }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            ref={modalRef}
             className="bg-base-100 rounded-xl shadow-2xl p-8 max-w-md w-full mx-4 border border-base-300"
           >
             <div className="text-center space-y-6">
