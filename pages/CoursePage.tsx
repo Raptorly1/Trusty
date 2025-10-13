@@ -125,6 +125,120 @@ const module2ExtraQuestions = [
 	}
 ];
 
+// Extra questions for Module 3
+const module3ExtraQuestions = [
+	{
+		question: "An article claims a celebrity has been arrested but doesn't mention where it happened or any sources. What's missing?",
+		options: [
+			{ text: "A dramatic headline", isCorrect: false },
+			{ text: "Source details and evidence", isCorrect: true },
+			{ text: "Emojis", isCorrect: false },
+			{ text: "Ads", isCorrect: false }
+		]
+	},
+	{
+		question: "Which of the following is a sign a website may be untrustworthy?",
+		options: [
+			{ text: "Clean layout and clear sources", isCorrect: false },
+			{ text: "A real author with credentials", isCorrect: false },
+			{ text: "Lots of pop-ups and flashy ads", isCorrect: true },
+			{ text: "A recent publication date", isCorrect: false }
+		]
+	},
+	{
+		question: "What should you do before sharing an article that made you angry or shocked?",
+		options: [
+			{ text: "Comment your opinion first", isCorrect: false },
+			{ text: "Read only the headline", isCorrect: false },
+			{ text: "Check other trusted news sources", isCorrect: true },
+			{ text: "Assume it's true if it matches your beliefs", isCorrect: false }
+		]
+	},
+	{
+		question: "If an article has no author listed and no sources mentioned, what should you do?",
+		options: [
+			{ text: "Trust it if it agrees with you", isCorrect: false },
+			{ text: "Share it anyway", isCorrect: false },
+			{ text: "Treat it with caution—it may not be credible", isCorrect: true },
+			{ text: "Post it on every platform", isCorrect: false }
+		]
+	},
+	{
+		question: "Why is it important to check the date of an article?",
+		options: [
+			{ text: "Older news is always more reliable", isCorrect: false },
+			{ text: "The date doesn't matter if the story is interesting", isCorrect: false },
+			{ text: "Old articles can be real but no longer relevant", isCorrect: true },
+			{ text: "All websites automatically update dates", isCorrect: false }
+		]
+	},
+	{
+		question: "Which tool would best help you verify a viral rumor?",
+		options: [
+			{ text: "A meme generator", isCorrect: false },
+			{ text: "Snopes.com", isCorrect: true },
+			{ text: "A celebrity fan site", isCorrect: false },
+			{ text: "TikTok comments", isCorrect: false }
+		]
+	},
+	{
+		question: "An article starts with: \"SHOCKING DISCOVERY! Scientists EXPOSE the TRUTH!\" What's a red flag here?",
+		options: [
+			{ text: "All caps and emotional language", isCorrect: true },
+			{ text: "It mentions scientists", isCorrect: false },
+			{ text: "It's short", isCorrect: false },
+			{ text: "It talks about science", isCorrect: false }
+		]
+	},
+	{
+		question: "What's a common trick fake news uses to seem real?",
+		options: [
+			{ text: "Listing lots of sources", isCorrect: false },
+			{ text: "Quoting well-known journalists", isCorrect: false },
+			{ text: "Copying the look of real news websites", isCorrect: true },
+			{ text: "Posting only verified content", isCorrect: false }
+		]
+	},
+	{
+		question: "You're unsure if a political article is real. What's the best first step?",
+		options: [
+			{ text: "Google the headline to see if it's on other trusted sites", isCorrect: true },
+			{ text: "Ask a friend", isCorrect: false },
+			{ text: "Share it with your family", isCorrect: false },
+			{ text: "Assume it's true—it sounds believable", isCorrect: false }
+		]
+	},
+	{
+		question: "Why should you be cautious with articles that \"feel right\" or match your opinions exactly?",
+		options: [
+			{ text: "They're often boring", isCorrect: false },
+			{ text: "They might be long", isCorrect: false },
+			{ text: "They could be written to manipulate you", isCorrect: true },
+			{ text: "They always tell the truth", isCorrect: false }
+		]
+	},
+	{
+		question: "Which of these is not a reliable fact-checking source?",
+		options: [
+			{ text: "Snopes.com", isCorrect: false },
+			{ text: "FactCheck.org", isCorrect: false },
+			{ text: "BBC News", isCorrect: false },
+			{ text: "Random Reddit thread", isCorrect: true }
+		]
+	}
+// 12th extra practice question for Module 3
+,
+{
+	question: "Which of these is not a reliable fact-checking source?",
+	options: [
+		{ text: "Snopes.com", isCorrect: false },
+		{ text: "FactCheck.org", isCorrect: false },
+		{ text: "BBC News", isCorrect: false },
+		{ text: "Random Reddit thread", isCorrect: true }
+	]
+}
+];
+
 // Course modules configuration
 const courseModules: CourseModule[] = [
 	{
@@ -214,12 +328,57 @@ const courseModules: CourseModule[] = [
 			type: ExerciseType.QUIZ,
 			questions: [
 				{
-					question: "What's the first thing you should do when you see a shocking news story?",
+					question: "What is one reason fake news can be dangerous?",
 					options: [
-						{ text: "Share it immediately with friends", isCorrect: false },
-						{ text: "Pause and check if it's from a trusted source", isCorrect: true },
-						{ text: "Believe it if it confirms what I already think", isCorrect: false },
-						{ text: "Read only the headline to save time", isCorrect: false }
+						{ text: "It helps people find cheaper products", isCorrect: false },
+						{ text: "It can cause people to make decisions based on wrong information", isCorrect: true },
+						{ text: "It's usually just a joke and doesn't affect anyone", isCorrect: false },
+						{ text: "It only appears on TV", isCorrect: false }
+					]
+				},
+				{
+					question: "Which of the following is a warning sign that a news article might be fake?",
+					options: [
+						{ text: "It includes quotes from experts", isCorrect: false },
+						{ text: "It has a clean, professional website layout", isCorrect: false },
+						{ text: "The web address is slightly different from a well-known site (like cnn-news.co)", isCorrect: true },
+						{ text: "It was published today", isCorrect: false }
+					]
+				},
+				{
+					question: "Why should you read more than just the headline of an article?",
+					options: [
+						{ text: "Headlines are always fake", isCorrect: false },
+						{ text: "Headlines might not tell the whole story", isCorrect: true },
+						{ text: "Headlines contain grammar errors", isCorrect: false },
+						{ text: "Headlines are written by bots", isCorrect: false }
+					]
+				},
+				{
+					question: "Which of these tools can help you check if a story is true?",
+					options: [
+						{ text: "Google Translate", isCorrect: false },
+						{ text: "FactCheck.org", isCorrect: true },
+						{ text: "YouTube", isCorrect: false },
+						{ text: "Microsoft Word", isCorrect: false }
+					]
+				},
+				{
+					question: "Why is it important to check the date on a news article?",
+					options: [
+						{ text: "Older news is always false", isCorrect: false },
+						{ text: "Dates show who wrote the article", isCorrect: false },
+						{ text: "Old stories can resurface and confuse people if shared as new", isCorrect: true },
+						{ text: "The date tells you which country it's from", isCorrect: false }
+					]
+				},
+				{
+					question: "What should you be extra careful about when reading something that matches your own opinions exactly?",
+					options: [
+						{ text: "It's definitely true", isCorrect: false },
+						{ text: "It might be biased or fake, and made to get your attention", isCorrect: true },
+						{ text: "It's written just for you", isCorrect: false },
+						{ text: "It doesn't need checking", isCorrect: false }
 					]
 				}
 			]
@@ -361,6 +520,8 @@ const CoursePage: React.FC = () => {
 	}
 
 	const renderExtraQuestions = () => {
+		const extraQuestions = currentModuleIndex === 1 ? module2ExtraQuestions : module3ExtraQuestions;
+		
 		return (
 			<motion.div
 				initial={{ opacity: 0, y: 20 }}
@@ -372,7 +533,7 @@ const CoursePage: React.FC = () => {
 					<span className="text-lg font-semibold">Extra Practice Questions</span>
 				</div>
 				
-				{module2ExtraQuestions.map((question, qIndex) => (
+				{extraQuestions.map((question, qIndex) => (
 					<div key={`extra-question-${qIndex}`} className="card bg-base-200 shadow-lg">
 						<div className="card-body">
 							<h4 className="text-lg font-semibold mb-4">
@@ -431,7 +592,7 @@ const CoursePage: React.FC = () => {
 						<div className="stat">
 							<div className="stat-title">Progress</div>
 							<div className="stat-value text-2xl">
-								{extraQuestionAnswers.length}/{module2ExtraQuestions.length}
+								{extraQuestionAnswers.length}/{extraQuestions.length}
 							</div>
 							<div className="stat-desc">Questions completed</div>
 						</div>
@@ -439,7 +600,7 @@ const CoursePage: React.FC = () => {
 							<div className="stat-title">Score</div>
 							<div className="stat-value text-2xl">
 								{extraQuestionAnswers.filter(qIndex => 
-									module2ExtraQuestions[qIndex].options[extraExerciseAnswers[qIndex]]?.isCorrect
+									extraQuestions[qIndex].options[extraExerciseAnswers[qIndex]]?.isCorrect
 								).length}/{extraQuestionAnswers.length || 1}
 							</div>
 							<div className="stat-desc">Correct answers</div>
@@ -600,8 +761,34 @@ const CoursePage: React.FC = () => {
 							</motion.div>
 						)}
 						
+						{/* Show extra questions button for Module 3 only */}
+						{currentModuleIndex === 2 && !showExtraQuestions && (
+							<motion.div 
+								initial={{ opacity: 0, y: 20 }}
+								animate={{ opacity: 1, y: 0 }}
+								transition={{ delay: 0.5, duration: 0.3 }}
+								className="mt-8 text-center"
+							>
+								<div className="divider">Want more practice?</div>
+								<button 
+									onClick={() => setShowExtraQuestions(true)}
+									className="btn btn-outline btn-lg gap-2"
+								>
+									<Star className="h-5 w-5" />
+									Try Extra Questions
+									<ArrowRight className="h-4 w-4" />
+								</button>
+								<p className="text-sm text-base-content/70 mt-2">
+									11 additional questions to test your fake news detection skills
+								</p>
+							</motion.div>
+						)}
+						
 						{/* Render extra questions if enabled for Module 2 */}
 						{currentModuleIndex === 1 && showExtraQuestions && renderExtraQuestions()}
+						
+						{/* Render extra questions if enabled for Module 3 */}
+						{currentModuleIndex === 2 && showExtraQuestions && renderExtraQuestions()}
 						
 						<div className="mt-8">
 							<button onClick={handleExerciseComplete} className="btn btn-primary btn-lg">
