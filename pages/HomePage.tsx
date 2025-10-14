@@ -23,8 +23,8 @@ function useCountUp({ end, duration = 1, format }: { end: number, duration?: num
   }, [end, duration]);
   return format ? format(count) : count;
 }
-import { BookOpen, Shield, DollarSign, CheckCircle, User } from 'lucide-react';
 
+import { BookOpen, Shield, DollarSign, CheckCircle, User } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import TestimonialCarousel from '../components/common/TestimonialCarousel';
@@ -58,14 +58,14 @@ const HomePage: React.FC = () => {
 // NOTE: Ensure mobile-first responsive design. Use Tailwind breakpoints (sm:, md:, lg:) so mobile styles apply by default and desktop styles only at larger widths.
   return (
     <div className="space-y-16 relative">
-  {/* Hero & Clara's Story */}
-  <motion.section
-    initial={{ opacity: 0, y: 40 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true, amount: 0.3 }}
-    transition={{ duration: 0.7 }}
-    className="hero min-h-[60vh] bg-base-200 rounded-box flex flex-col justify-center items-center py-8"
-  >
+      {/* 1. Hero Section */}
+      <motion.section
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.7 }}
+        className="hero min-h-[60vh] bg-base-200 rounded-box flex flex-col justify-center items-center py-8"
+      >
         <div className="max-w-3xl w-full text-center space-y-10">
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
@@ -94,22 +94,6 @@ const HomePage: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="bg-base-100 rounded-xl shadow p-6 text-left text-xl md:text-2xl mx-auto max-w-2xl border border-base-300 flex flex-col gap-4"
-          >
-            <div className="flex items-center gap-3 mb-2">
-              <User className="h-10 w-10 text-primary" />
-              <span className="font-semibold text-primary">Story from Clara, 72 &mdash; Santa Ana, California</span>
-            </div>
-            <p className="mb-2">“One morning, I got an email that looked like it came from my bank. It asked me to click a link and update my information.</p>
-            <p className="mb-2">It looked real, but something felt a little off. So I showed it to my son, Mason. He told me it was a scam, and I’m glad I didn’t click it.</p>
-            <p className="mb-2">That’s when I realized: the internet is helpful, but it’s also important to be careful. I wanted to learn more, and that’s how I found Trusty.”</p>
-            <div className="my-4 text-3xl font-bold text-primary text-center">“I feel more confident now.”</div>
-            <p className="mt-2 italic text-base-content/70 text-center">And I know Trusty will always be by my side.<br/>— Clara, Trusty user</p>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}>
             <motion.div
               whileHover={{ scale: 1.05 }}
@@ -127,89 +111,16 @@ const HomePage: React.FC = () => {
             </motion.div>
           </motion.div>
         </div>
-  </motion.section>
+      </motion.section>
 
-  {/* Testimonials Section - Counter-rotating carousels */}
-  <motion.section
-    initial={{ opacity: 0, y: 40 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true, amount: 0.3 }}
-    transition={{ duration: 0.7, delay: 0.1 }}
-    className="py-16 bg-gradient-to-br from-base-200 to-base-300 rounded-xl overflow-hidden relative"
-  >
-    {/* Background pattern */}
-    <div className="absolute inset-0 opacity-5">
-      <svg className="w-full h-full" viewBox="0 0 100 100" fill="none">
-        <defs>
-          <pattern id="testimonial-pattern" patternUnits="userSpaceOnUse" width="20" height="20">
-            <circle cx="10" cy="10" r="1" fill="currentColor" />
-          </pattern>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#testimonial-pattern)" />
-      </svg>
-    </div>
-    
-    <div className="text-center mb-12 relative z-10">
-      <motion.h2 
-        initial={{ opacity: 0, y: 20 }}
+      {/* 2. Why Trusty Matters */}
+      <motion.section
+        initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-        className="text-5xl font-bold text-primary mb-4"
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.7, delay: 0.1 }}
+        className="max-w-4xl mx-auto text-center py-12 bg-base-100 rounded-xl"
       >
-        Join Others Who Feel Safer Online
-      </motion.h2>
-      <motion.p 
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6, delay: 0.2 }}
-        className="text-xl text-base-content/80 max-w-2xl mx-auto"
-      >
-        Real stories from real people who've taken control of their digital safety
-      </motion.p>
-    </div>
-    
-    {/* Top carousel - moving left */}
-    <motion.div 
-      className="mb-8"
-      initial={{ opacity: 0, x: -100 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.8, delay: 0.3 }}
-    >
-      <TestimonialCarousel 
-        testimonials={topCarouselTestimonials} 
-        direction="left" 
-        speed={20}
-        className="py-4"
-      />
-    </motion.div>
-    
-    {/* Bottom carousel - moving right */}
-    <motion.div
-      initial={{ opacity: 0, x: 100 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.8, delay: 0.5 }}
-    >
-      <TestimonialCarousel 
-        testimonials={bottomCarouselTestimonials} 
-        direction="right" 
-        speed={25}
-        className="py-4"
-      />
-    </motion.div>
-  </motion.section>
-
-  {/* Why Trusty Matters */}
-  <motion.section
-    initial={{ opacity: 0, y: 40 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true, amount: 0.3 }}
-    transition={{ duration: 0.7, delay: 0.1 }}
-    className="max-w-4xl mx-auto text-center py-12 bg-base-100 rounded-xl"
-  >
         <h2 className="text-5xl font-bold mb-12">Why Trusty Matters</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           {/* 1 in 4 Counter */}
@@ -250,21 +161,48 @@ const HomePage: React.FC = () => {
           >
             <BookOpen className="h-10 w-10 text-primary mb-2" />
             <p className="font-bold text-primary text-3xl mb-2">It's Getting Harder</p>
-            <p>With AI, fake websites, and scam calls, it’s harder to tell what’s real</p>
+            <p>With AI, fake websites, and scam calls, it's harder to tell what's real</p>
           </motion.div>
         </div>
-        <p className="text-2xl text-base-content/80 max-w-2xl mx-auto">But don’t worry! You don’t need to be a tech expert. Trusty will guide you, one simple step at a time. Trusty is always here for you.</p>
-  </motion.section>
+        <p className="text-2xl text-base-content/80 max-w-2xl mx-auto">But don't worry! You don't need to be a tech expert. Trusty will guide you, one simple step at a time. Trusty is always here for you.</p>
+      </motion.section>
 
-  {/* What You'll Learn */}
-  <motion.section
-    initial={{ opacity: 0, y: 40 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true, amount: 0.3 }}
-    transition={{ duration: 0.7, delay: 0.2 }}
-    className="max-w-4xl mx-auto py-12 bg-base-200 rounded-xl"
-  >
-        <h2 className="text-5xl font-bold text-center mb-10">What You’ll Learn</h2>
+      {/* 3. Clara's Story */}
+      <motion.section
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.7, delay: 0.2 }}
+        className="max-w-4xl mx-auto py-12"
+      >
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, delay: 0.3 }}
+          className="bg-base-100 rounded-xl shadow p-8 text-left text-xl md:text-2xl border border-base-300"
+        >
+          <div className="flex items-center gap-3 mb-6">
+            <User className="h-12 w-12 text-primary" />
+            <span className="font-semibold text-primary text-2xl">Story from Clara, 72 — Santa Ana, California</span>
+          </div>
+          <p className="mb-4">"One morning, I got an email that looked like it came from my bank. It asked me to click a link and update my information.</p>
+          <p className="mb-4">It looked real, but something felt a little off. So I showed it to my son, Mason. He told me it was a scam, and I'm glad I didn't click it.</p>
+          <p className="mb-6">That's when I realized: the internet is helpful, but it's also important to be careful. I wanted to learn more, and that's how I found Trusty."</p>
+          <div className="my-6 text-4xl font-bold text-primary text-center">"I feel more confident now."</div>
+          <p className="text-center italic text-base-content/70 text-lg">And I know Trusty will always be by my side.<br/>— Clara, Trusty user</p>
+        </motion.div>
+      </motion.section>
+
+      {/* 4. What You'll Learn */}
+      <motion.section
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.7, delay: 0.2 }}
+        className="max-w-4xl mx-auto py-12 bg-base-200 rounded-xl"
+      >
+        <h2 className="text-5xl font-bold text-center mb-10">What You'll Learn</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-2xl mx-auto">
           <div className="flex items-start gap-4">
             <CheckCircle className="h-8 w-8 text-success mt-1" />
@@ -296,16 +234,16 @@ const HomePage: React.FC = () => {
           </div>
         </div>
         <p className="text-xl text-center text-base-content/70 mt-10">All explained in a calm, friendly way, with big text, short lessons, and helpful examples!</p>
-  </motion.section>
+      </motion.section>
 
-  {/* Curriculum Overview */}
-  <motion.section
-    initial={{ opacity: 0, y: 40 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true, amount: 0.3 }}
-    transition={{ duration: 0.7, delay: 0.3 }}
-    className="max-w-4xl mx-auto py-12 bg-base-100 rounded-xl"
-  >
+      {/* 5. Curriculum Overview */}
+      <motion.section
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.7, delay: 0.3 }}
+        className="max-w-4xl mx-auto py-12 bg-base-100 rounded-xl"
+      >
         <h2 className="text-5xl font-bold text-center mb-12">TRUSTY Digital Safety Course</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {[
@@ -343,7 +281,7 @@ const HomePage: React.FC = () => {
             },
             {
               title: "Final Quiz & Certificate",
-              desc: "Review what you’ve learned and earn your Trusty certificate!"
+              desc: "Review what you've learned and earn your Trusty certificate!"
             }
           ].map((mod, idx) => (
             <div
@@ -351,23 +289,25 @@ const HomePage: React.FC = () => {
               className={`bg-base-100 rounded-xl shadow p-6 border ${idx === 8 ? 'border-primary' : 'border-base-300'} flex flex-col items-start gap-4 transition hover:scale-105 hover:border-primary cursor-pointer`}
             >
               <div className="flex items-center gap-3 mb-2">
-                <div className={`rounded-full bg-primary text-white font-bold text-xl w-10 h-10 flex items-center justify-center ${idx === 8 ? 'bg-primary/80' : ''}`}>{(idx+1).toString().padStart(2, '0')}</div>
+                <div className={`rounded-full bg-primary text-white font-bold text-xl w-10 h-10 flex items-center justify-center ${idx === 8 ? 'bg-primary/80' : ''}`}>
+                  {(idx+1).toString().padStart(2, '0')}
+                </div>
                 <span className={`text-2xl font-bold ${idx === 8 ? 'text-primary' : ''}`}>{mod.title}</span>
               </div>
               <p className="text-lg">{mod.desc}</p>
             </div>
           ))}
         </div>
-  </motion.section>
+      </motion.section>
 
-  {/* Free Tools You Can Try Right Now */}
-  <motion.section
-    initial={{ opacity: 0, y: 40 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true, amount: 0.3 }}
-    transition={{ duration: 0.7, delay: 0.4 }}
-    className="max-w-4xl mx-auto py-12 bg-base-200 rounded-xl"
-  >
+      {/* 6. Free Tools You Can Try Right Now */}
+      <motion.section
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.7, delay: 0.4 }}
+        className="max-w-4xl mx-auto py-12 bg-base-200 rounded-xl"
+      >
         <h2 className="text-4xl font-bold text-center mb-10 text-primary">Free Tools You Can Try Right Now</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <FeatureCard 
@@ -395,7 +335,81 @@ const HomePage: React.FC = () => {
             link="/fact-checker" 
           />
         </div>
-  </motion.section>
+      </motion.section>
+
+      {/* 7. Testimonials Section - Counter-rotating carousels */}
+      <motion.section
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.7, delay: 0.1 }}
+        className="py-16 bg-gradient-to-br from-base-200 to-base-300 rounded-xl overflow-hidden relative"
+      >
+        {/* Background pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <svg className="w-full h-full" viewBox="0 0 100 100" fill="none">
+            <defs>
+              <pattern id="testimonial-pattern" patternUnits="userSpaceOnUse" width="20" height="20">
+                <circle cx="10" cy="10" r="1" fill="currentColor" />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#testimonial-pattern)" />
+          </svg>
+        </div>
+        
+        <div className="text-center mb-12 relative z-10">
+          <motion.h2 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-5xl font-bold text-primary mb-4"
+          >
+            Join Others Who Feel Safer Online
+          </motion.h2>
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="text-xl text-base-content/80 max-w-2xl mx-auto"
+          >
+            Real stories from real people who've taken control of their digital safety
+          </motion.p>
+        </div>
+        
+        {/* Top carousel - moving left */}
+        <motion.div 
+          className="mb-8"
+          initial={{ opacity: 0, x: -100 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, delay: 0.3 }}
+        >
+          <TestimonialCarousel 
+            testimonials={topCarouselTestimonials} 
+            direction="left" 
+            speed={20}
+            className="py-4"
+          />
+        </motion.div>
+        
+        {/* Bottom carousel - moving right */}
+        <motion.div
+          initial={{ opacity: 0, x: 100 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, delay: 0.5 }}
+        >
+          <TestimonialCarousel 
+            testimonials={bottomCarouselTestimonials} 
+            direction="right" 
+            speed={25}
+            className="py-4"
+          />
+        </motion.div>
+      </motion.section>
+
       {/* Floating Sticky CTA Button */}
       <motion.div
         initial={{ opacity: 0, y: 40 }}
