@@ -2,6 +2,8 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Search, AlertCircle, CheckCircle, HelpCircle, XCircle } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { factCheckClaim, processFactCheckResults } from '../services/geminiService';
 import { SourceCredibility } from '../types';
 import LoadingSpinner from '../components/common/LoadingSpinner';
@@ -124,34 +126,62 @@ const CredibilityBadge: React.FC<{ credibility: SourceCredibility['credibility']
 };
 
 const RenderedSummary: React.FC<{ summary: string; sources: SourceCredibility[] }> = ({ summary, sources }) => {
-    // Extract verdict from first sentence and rest of content
-    const sentences = summary.split(/(?<=[.!?])\s+/);
-    const verdict = sentences[0];
-    const restOfSummary = sentences.slice(1).join(' ');
+    // Extract only the first sentence for verdict, keep rest intact with all markdown formatting
+    const firstSentenceMatch = summary.match(/^[^.!?]+[.!?]/);
+    const verdict = firstSentenceMatch ? firstSentenceMatch[0].trim() : summary.split('\n')[0];
+    const restOfSummary = firstSentenceMatch ? summary.slice(firstSentenceMatch[0].length).trim() : '';
     
-    const renderTextWithCitations = (text: string) => {
-        const parts = text.split(/(\[\d+\])/g);
-        return parts.filter(Boolean).map((part, i) => {
-            const match = RegExp(/\[(\d+)\]/).exec(part);
-            if (match) {
-                const sourceIndex = parseInt(match[1], 10) - 1;
+    // Custom component to render citations as clickable superscript badges
+    const components = {
+        // Handle inline code (which includes citation markers like [1])
+        code: ({ node, inline, children, ...props }: any) => {
+            const text = String(children);
+            const citationMatch = /^\[(\d+)\]$/.exec(text);
+            
+            if (citationMatch) {
+                const sourceIndex = parseInt(citationMatch[1], 10) - 1;
                 if (sources[sourceIndex]) {
                     return (
                         <a 
-                            key={`${part}-${i}`} 
                             href={`#source-${sourceIndex}`} 
                             className="inline-flex items-center text-primary hover:text-primary-focus transition-colors duration-200 no-underline font-medium text-sm ml-0.5"
                             title={`Source: ${sources[sourceIndex].title}`}
                         >
                             <sup className="bg-primary text-primary-content px-1.5 py-0.5 rounded-full text-xs font-bold hover:bg-primary-focus transition-all duration-200">
-                                {match[1]}
+                                {citationMatch[1]}
                             </sup>
                         </a>
                     );
                 }
             }
-            return <span key={`${part}-${i}`}>{part}</span>;
-        });
+            return inline ? <code {...props}>{children}</code> : <code {...props}>{children}</code>;
+        },
+        // Style headings for content organization
+        h3: ({ children }: any) => <h3 className="text-xl font-bold text-gray-900 mt-6 mb-3">{children}</h3>,
+        h4: ({ children }: any) => <h4 className="text-lg font-semibold text-gray-800 mt-4 mb-2">{children}</h4>,
+        // Ensure paragraphs maintain proper spacing
+        p: ({ children }: any) => <p className="mb-4">{children}</p>,
+        // Style links
+        a: ({ href, children }: any) => (
+            <a href={href} className="text-primary hover:text-primary-focus underline" target="_blank" rel="noopener noreferrer">
+                {children}
+            </a>
+        ),
+        // Style strong/bold text
+        strong: ({ children }: any) => <strong className="font-bold text-gray-900">{children}</strong>,
+        // Style emphasis/italic text  
+        em: ({ children }: any) => <em className="italic">{children}</em>,
+        // Style unordered lists
+        ul: ({ children }: any) => <ul className="list-disc list-inside space-y-2 my-4">{children}</ul>,
+        // Style ordered lists
+        ol: ({ children }: any) => <ol className="list-decimal list-inside space-y-2 my-4">{children}</ol>,
+        // Style list items
+        li: ({ children }: any) => <li className="ml-4">{children}</li>,
+    };
+    
+    // Replace citation markers [1] with backticks for markdown processing
+    const processTextForMarkdown = (text: string) => {
+        return text.replace(/\[(\d+)\]/g, '`[$1]`');
     };
 
     return (
@@ -160,25 +190,31 @@ const RenderedSummary: React.FC<{ summary: string; sources: SourceCredibility[] 
             <div className="bg-gradient-to-r from-primary/10 to-secondary/10 border border-primary/20 rounded-xl p-6">
                 <div className="flex items-start gap-3">
                     <CheckCircle className="w-6 h-6 text-primary mt-1 flex-shrink-0" />
-                    <div>
+                    <div className="w-full">
                         <h3 className="text-lg font-bold text-gray-900 mb-2">Quick Verdict</h3>
-                        <p className="text-xl leading-relaxed text-gray-800 font-medium">
-                            {renderTextWithCitations(verdict)}
-                        </p>
+                        <div className="text-xl leading-relaxed text-gray-800 font-medium prose prose-xl max-w-none">
+                            <ReactMarkdown 
+                                remarkPlugins={[remarkGfm]}
+                                components={components}
+                            >
+                                {processTextForMarkdown(verdict)}
+                            </ReactMarkdown>
+                        </div>
                     </div>
                 </div>
             </div>
 
             {/* Detailed Analysis */}
             {restOfSummary && (
-                <div className="prose prose-lg max-w-none">
+                <div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-3">Detailed Analysis</h3>
-                    <div className="text-lg leading-relaxed text-gray-700 space-y-4">
-                        {restOfSummary.split('\n\n').map((paragraph) => (
-                            <p key={paragraph.substring(0, 50)} className="mb-4">
-                                {renderTextWithCitations(paragraph)}
-                            </p>
-                        ))}
+                    <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed">
+                        <ReactMarkdown 
+                            remarkPlugins={[remarkGfm]}
+                            components={components}
+                        >
+                            {processTextForMarkdown(restOfSummary)}
+                        </ReactMarkdown>
                     </div>
                 </div>
             )}
