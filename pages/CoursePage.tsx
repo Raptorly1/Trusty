@@ -917,7 +917,7 @@ const courseModules: CourseModule[] = [
 		exercise: {
 			type: ExerciseType.PDF_VIEWER,
 			instructions: "Review this Digital Safety Cheat Sheet to reinforce your cyber hygiene habits:",
-			pdfPath: "/assets/documents/mod7CheatSheet.pdf"
+			pdfPath: "/mod7CheatSheet.pdf"
 		}
 	},
 	{
