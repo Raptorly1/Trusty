@@ -310,18 +310,12 @@ const HomePage: React.FC = () => {
   className="max-w-4xl mx-auto py-12 rounded-xl" style={{ backgroundColor: '#F3F0F8' }}
       >
   <h2 className="text-5xl font-bold text-center mb-10" style={{ color: '#6C1BA0' }}>Free Tools to Use</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           <FeatureCard 
             icon={<BookOpen size={48} style={{ color: '#6C1BA0' }} />} 
             title="AI Text Checker" 
             description="Quickly find out if that email or article was written by a computer." 
             link="/text-checker" 
-          />
-          <FeatureCard 
-            icon={<CheckCircle size={48} style={{ color: '#22C55E' }} />} 
-            title="Feedback Tool" 
-            description="Get friendly, helpful feedback on your own writing." 
-            link="/feedback-tool" 
           />
           <FeatureCard 
             icon={<Shield size={48} style={{ color: '#6C1BA0' }} />} 

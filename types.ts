@@ -84,31 +84,6 @@ export interface AITextAnalysisResult {
   complexWords: number;
 }
 
-// Feedback Tool
-export enum AnnotationType {
-  CLARITY = 'Clarity',
-  LOGIC = 'Logic',
-  EVIDENCE = 'Evidence',
-  TONE = 'Tone',
-  AI_WARNING = 'AI Warning',
-  FACT_CLAIM = 'Fact Claim',
-}
-
-export interface Annotation {
-  snippet: string;
-  feedback: string;
-  suggestion?: string;
-  type: AnnotationType;
-}
-
-export interface FeedbackResult {
-  summary: {
-    strengths: string;
-    improvements: string;
-  };
-  annotations: Annotation[];
-}
-
 // AI Image Checker
 export interface ImageAnomaly {
     reason: string;
