@@ -209,7 +209,9 @@ const Header: React.FC = () => {
                                 onClick={() => setCoursePanelOpen(false)}
                                 aria-label="Final Quiz"
                               >
-                                Final Quiz
+                                <div className="flex items-baseline gap-2">
+                                  <span className="font-semibold flex-shrink-0" style={{ color: '#6C1BA0' }}>Final Quiz</span>
+                                </div>
                               </NavLink>
                             </li>
                           </ul>
