@@ -224,12 +224,15 @@ const getCredibilityClass = (credibility: SourceCredibility['credibility']) => {
 };
 
 
+type SourceCredibilityWithOriginal = SourceCredibility & { originalUrl: string };
+
 const FactCheckerPage: React.FC = () => {
     const [claim, setClaim] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [summary, setSummary] = useState<string | null>(null);
-    const [sources, setSources] = useState<SourceCredibility[]>([]);
+    // Store both cleaned and original URLs
+    const [sources, setSources] = useState<SourceCredibilityWithOriginal[]>([]);
     const [sortOrder, setSortOrder] = useState<'default' | 'high-to-low' | 'low-to-high'>('default');
     const [progressStage, setProgressStage] = useState<string>('');
     const [progressPercentage, setProgressPercentage] = useState<number>(0);
@@ -286,7 +289,11 @@ const FactCheckerPage: React.FC = () => {
             setProgressPercentage(100);
             
             setSummary(annotatedSummary);
-            setSources(processedSources.map(s => ({...s, url: cleanUrl(s.url)})));
+            setSources(processedSources.map(s => ({
+                ...s,
+                originalUrl: s.url, // keep the original
+                url: cleanUrl(s.url) // cleaned for navigation
+            })));
 
         } catch (e: any) {
             if (e.message === 'SERVER_WARMING') {
@@ -314,7 +321,7 @@ const FactCheckerPage: React.FC = () => {
             'Unknown': -1
         };
 
-        const sourceWithOriginalIndex = sources.map((s, i) => ({ ...s, originalIndex: i }));
+    const sourceWithOriginalIndex = sources.map((s, i) => ({ ...s, originalIndex: i }));
 
         if (sortOrder === 'default') {
             return sourceWithOriginalIndex;
@@ -509,7 +516,7 @@ const FactCheckerPage: React.FC = () => {
 
                                     <div className="grid gap-4">
                                         {sortedSources.map((source) => (
-                                            <div key={source.url} id={`source-${source.originalIndex}`} className={getCredibilityClass(source.credibility)}>
+                                            <div key={source.url + source.originalUrl} id={`source-${source.originalIndex}`} className={getCredibilityClass(source.credibility)}>
                                                 <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-4">
                                                     <div className="flex-grow space-y-3">
                                                         <div className="flex items-start gap-3">
@@ -522,13 +529,11 @@ const FactCheckerPage: React.FC = () => {
                                                                     target="_blank" 
                                                                     rel="noopener noreferrer" 
                                                                     className="text-primary hover:text-primary-focus font-semibold text-lg leading-tight transition-colors duration-200 block"
-                                                                    title={source.url}
+                                                                    title={source.originalUrl}
                                                                 >
                                                                     {source.title}
                                                                 </a>
-                                                                <p className="text-gray-600 text-sm mt-1 break-all">
-                                                                    {new URL(source.url).hostname}
-                                                                </p>
+                                                                {/* Subtitle removed for cleaner UI */}
                                                             </div>
                                                         </div>
                                                         <p className="text-gray-700 leading-relaxed pl-9">
