@@ -131,14 +131,14 @@ const Header: React.FC = () => {
 
   // simple modules list (keeps code local and avoids extra imports)
   const modules = [
-    { id: '1', title: 'Module 1 - The Basics' },
-    { id: '2', title: 'Module 2 - Common Scams Explained' },
-    { id: '3', title: 'Module 3 - Spotting Fake News' },
-    { id: '4', title: 'Module 4 - Safe Browsing & Websites' },
-    { id: '5', title: 'Module 5 - Strong Passwords & Privacy' },
-    { id: '6', title: 'Module 6 - AI & Misinformation' },
-    { id: '7', title: 'Module 7 - Cyber Hygiene Habits' },
-    { id: '8', title: 'Module 8 - Reporting & Getting Help' },
+    { id: '1', number: '1', title: 'The Basics' },
+    { id: '2', number: '2', title: 'Common Scams Explained' },
+    { id: '3', number: '3', title: 'Spotting Fake News' },
+    { id: '4', number: '4', title: 'Safe Browsing & Websites' },
+    { id: '5', number: '5', title: 'Strong Passwords & Privacy' },
+    { id: '6', number: '6', title: 'AI & Misinformation' },
+    { id: '7', number: '7', title: 'Cyber Hygiene Habits' },
+    { id: '8', number: '8', title: 'Reporting & Getting Help' },
   ];
 
   const isCourseActive = location.pathname.startsWith('/course');
@@ -195,7 +195,10 @@ const Header: React.FC = () => {
                                   className={({ isActive }) => `block w-full text-left px-3 py-2 rounded-lg transition-colors ${isActive ? 'bg-base-200 font-bold text-[#6C1BA0]' : 'hover:bg-base-200'}`}
                                   onClick={() => setCoursePanelOpen(false)}
                                 >
-                                  {m.title}
+                                  <div className="flex items-baseline gap-2">
+                                    <span className="font-semibold flex-shrink-0" style={{ color: '#6C1BA0' }}>Module {m.number}</span>
+                                    <span className="text-sm opacity-80">{m.title}</span>
+                                  </div>
                                 </NavLink>
                               </li>
                             ))}
