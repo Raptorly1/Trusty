@@ -67,7 +67,10 @@ const MobileDropdown: React.FC<{
                         ? "text-[#6C1BA0] font-bold"
                         : "text-black hover:text-[#6C1BA0] hover:bg-base-200"
                     }`}
-                  onClick={() => setDropdownOpen(false)}
+                  onClick={(e) => {
+                    // Allow the navigation to process first, then close dropdown
+                    setTimeout(() => setDropdownOpen(false), 100);
+                  }}
                 >
                   <Icon className="h-5 w-5 flex-shrink-0 mx-auto" />
                   <span className="w-full text-center">{label}</span>
