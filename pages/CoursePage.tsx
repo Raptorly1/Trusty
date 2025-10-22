@@ -1032,14 +1032,13 @@ const CoursePage: React.FC = () => {
 				</div>
 				
 				{extraQuestions.map((question, qIndex) => (
-					<div key={`extra-question-${qIndex}`} className="card bg-base-200 shadow-lg">
+					<div key={`extra-question-${question.question}`} className="card bg-base-200 shadow-lg">
 						<div className="card-body">
 							<h4 className="text-lg font-semibold mb-4">
 								Question {qIndex + 1}: {question.question}
 							</h4>
 							<div className="space-y-2">
 								{question.options.map((option, oIndex) => {
-									const answerKey = `${qIndex}-${oIndex}`;
 									const isSelected = extraQuestionAnswers.includes(qIndex) && extraExerciseAnswers[qIndex] === oIndex;
 									const hasAnswered = extraQuestionAnswers.includes(qIndex);
 									const buttonClass = hasAnswered ? 
