@@ -944,6 +944,15 @@ const courseModules: CourseModule[] = [
 					]
 				},
 				{
+					question: "What are the benefits of using a password manager?",
+					options: [
+						{ text: "You only need to remember one master password", isCorrect: false },
+						{ text: "It can create strong passwords for you", isCorrect: false },
+						{ text: "Your information stays encrypted (scrambled for safety)", isCorrect: false },
+						{ text: "All of the above", isCorrect: true }
+               		]
+        		},
+				{
 					question: "What should you do if a website asks you to create a password that's at least 8 characters?",
 					options: [
 						{ text: "Use exactly 8 characters to meet the minimum", isCorrect: false },
