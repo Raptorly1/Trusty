@@ -418,7 +418,7 @@ const FinalQuiz: React.FC<{ onComplete: (score: number) => void }> = ({ onComple
                 const isCorrect = userAnswer === q.correctIndex;
                 return (
                   <div key={q.question} className={`p-4 rounded ${isCorrect ? 'bg-success/10' : 'bg-error/10'}`}>
-                    <div className="font-semibold mb-1">Q{idx + 1}: {q.question}</div>
+                    <div className="font-semibold mb-1">Question {idx + 1}: {q.question}</div>
                     <div className="mb-1">
                       <span className="font-medium">Your answer: </span>
                       <span className={isCorrect ? 'text-success' : 'text-error'}>
@@ -560,7 +560,7 @@ const FinalQuiz: React.FC<{ onComplete: (score: number) => void }> = ({ onComple
           {finalQuizQuestions.map((q, qIdx) => (
             <div key={q.question} className="card bg-base-100 shadow">
               <div className="card-body">
-                <h3 className="text-xl font-semibold mb-2">Q{qIdx + 1}: {q.question}</h3>
+                <h3 className="text-xl font-semibold mb-2">Question {qIdx + 1}: {q.question}</h3>
                 <div className="space-y-2">
                   {q.options.map((opt, oIdx) => {
                     const isSelected = answers[qIdx] === oIdx;
