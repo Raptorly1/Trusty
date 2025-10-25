@@ -349,6 +349,82 @@ const module6ExtraQuestions = [
 	}
 ];
 
+// Extra questions for Module 1
+const module1ExtraQuestions = [
+	{
+		question: "Why should older adults care about online safety?",
+		options: [
+			{ text: "It helps them save money on their phone bill", isCorrect: false },
+			{ text: "It prevents viruses from damaging their printer", isCorrect: false },
+			{ text: "It protects their identity and personal information online", isCorrect: true },
+			{ text: "It makes the internet faster", isCorrect: false }
+		]
+	},
+	{
+		question: "Which of the following is a basic example of staying safe online?",
+		options: [
+			{ text: "Ignoring any emails from friends", isCorrect: false },
+			{ text: "Never using the internet", isCorrect: false },
+			{ text: "Being careful about what information you share", isCorrect: true },
+			{ text: "Using the same password everywhere", isCorrect: false }
+		]
+	},
+	{
+		question: "What is a scammer most likely trying to get from you?",
+		options: [
+			{ text: "A restaurant recommendation", isCorrect: false },
+			{ text: "Personal or financial information", isCorrect: true },
+			{ text: "Help with their homework", isCorrect: false },
+			{ text: "Your favorite TV shows", isCorrect: false }
+		]
+	},
+	{
+		question: "What's one reason scammers may target older adults?",
+		options: [
+			{ text: "They often play too many games", isCorrect: false },
+			{ text: "They usually have the latest technology", isCorrect: false },
+			{ text: "They may be more trusting and less familiar with online tricks", isCorrect: true },
+			{ text: "They don't own a phone", isCorrect: false }
+		]
+	},
+	{
+		question: "What is one risk of sharing too much personal information online?",
+		options: [
+			{ text: "You might get more internet ads", isCorrect: false },
+			{ text: "It makes it easier for scammers to target you", isCorrect: true },
+			{ text: "You lose your internet connection", isCorrect: false },
+			{ text: "Your screen will turn off", isCorrect: false }
+		]
+	},
+	{
+		question: "If something online seems too good to be true, it probably is. This is a sign of:",
+		options: [
+			{ text: "A good deal", isCorrect: false },
+			{ text: "A system update", isCorrect: false },
+			{ text: "An internet scam", isCorrect: true },
+			{ text: "A birthday greeting", isCorrect: false }
+		]
+	},
+	{
+		question: "If you feel confused or unsure about something online, you should:",
+		options: [
+			{ text: "Guess and click anyway", isCorrect: false },
+			{ text: "Ask a trusted family member or tech helper", isCorrect: true },
+			{ text: "Call the number in the message right away", isCorrect: false },
+			{ text: "Post about it on social media", isCorrect: false }
+		]
+	},
+	{
+		question: "What is the first step to staying safe online?",
+		options: [
+			{ text: "Buying the newest computer", isCorrect: false },
+			{ text: "Installing games", isCorrect: false },
+			{ text: "Learning how to recognize common online threats", isCorrect: true },
+			{ text: "Watching more videos", isCorrect: false }
+		]
+	}
+];
+
 // Extra questions for Module 2
 const module2ExtraQuestions = [
 	{
@@ -581,16 +657,65 @@ const courseModules: CourseModule[] = [
 		title: "Digital World Basics",
 		description: "Understanding the basics of being online safely",
 		content: <Module1 />,
-		exercise: {
-			type: ExerciseType.CHECKLIST,
-			instructions: "Your Online Safety Checklist – 'Locking Your Digital Doors'. Place a ✔ next to anything you already do:",
-			items: [
-				"I avoid clicking links in emails or texts from people I don't know",
-				"I keep my personal information private when using the internet",
-				"I double-check website addresses before entering passwords",
-				"I pause when someone asks for money or personal details urgently"
-			]
-		}
+                exercise: {
+                        type: ExerciseType.QUIZ,
+                        questions: [
+                                {
+                                        question: "What does being safe online mean?",
+                                        options: [
+                                                { text: "Turning off your device every night", isCorrect: false },
+                                                { text: "Only using the internet at home", isCorrect: false },
+                                                { text: "Protecting yourself while using the internet", isCorrect: true },
+                                                { text: "Deleting all your apps regularly", isCorrect: false }
+                                        ]
+                                },
+                                {
+                                        question: "Which of the following is an example of a scam?",
+                                        options: [
+                                                { text: "A message from a friend asking how you are", isCorrect: false },
+                                                { text: "A website asking for your name before a quiz", isCorrect: false },
+                                                { text: "An email that says you've won money and asks for your bank info", isCorrect: true },
+                                                { text: "A reminder to update your phone", isCorrect: false }
+                                        ]
+                                },
+                                {
+                                        question: "Why is it important to keep your personal details private?",
+                                        options: [
+                                                { text: "So your friends don't know too much about you", isCorrect: false },
+                                                { text: "To stop hackers from stealing your identity", isCorrect: true },
+                                                { text: "To use less internet data", isCorrect: false },
+                                                { text: "Because websites don't like personal details", isCorrect: false }
+                                        ]
+                                },
+                                {
+                                        question: "What can happen if you fall for an online scam?",
+                                        options: [
+                                                { text: "You win a real prize", isCorrect: false },
+                                                { text: "Your computer will start working faster", isCorrect: false },
+                                                { text: "You might lose money or have your identity stolen", isCorrect: true },
+                                                { text: "You'll get more likes on social media", isCorrect: false }
+                                        ]
+                                },
+                                {
+                                        question: "Which of these is a sign of an online scammer?",
+                                        options: [
+                                                { text: "A site with strong security and privacy settings", isCorrect: false },
+                                                { text: "Someone pretending to be a trusted person", isCorrect: true },
+                                                { text: "A teacher giving a homework assignment", isCorrect: false },
+                                                { text: "A friend sending a game link", isCorrect: false }
+                                        ]
+                                },
+                                {
+                                        question: "How can online safety help you feel?",
+                                        options: [
+                                                { text: "Confused and nervous", isCorrect: false },
+                                                { text: "Confident and in control", isCorrect: true },
+                                                { text: "Annoyed by safety tips", isCorrect: false },
+                                                { text: "Tired of using the internet", isCorrect: false }
+                                        ]
+                                }
+                        ]
+                }
 	},
  {
  	title: "Common Scams",
@@ -1022,6 +1147,9 @@ const CoursePage: React.FC = () => {
 	const renderExtraQuestions = () => {
 		let extraQuestions;
 		switch (currentModuleIndex) {
+			case 0:
+				extraQuestions = module1ExtraQuestions;
+				break;
 			case 1:
 				extraQuestions = module2ExtraQuestions;
 				break;
@@ -1257,6 +1385,28 @@ const CoursePage: React.FC = () => {
 							</div>
 						))}
 						
+                                                {/* Show extra questions button for Module 1 only */}
+                                                {currentModuleIndex === 0 && !showExtraQuestions && (
+                                                        <motion.div 
+                                                                initial={{ opacity: 0, y: 20 }}
+                                                                animate={{ opacity: 1, y: 0 }}
+                                                                transition={{ delay: 0.5, duration: 0.3 }}
+                                                                className="mt-8 text-center"
+                                                        >
+                                                                <div className="divider">Want more practice?</div>
+                                                                <button 
+                                                                        onClick={() => setShowExtraQuestions(true)}
+                                                                        className="btn btn-outline btn-lg gap-2"
+                                                                >
+                                                                        <Star className="h-5 w-5" />
+                                                                        Try Extra Questions
+                                                                        <ArrowRight className="h-4 w-4" />
+                                                                </button>
+                                                                <p className="text-sm text-base-content/70 mt-2">
+                                                                        8 additional questions to test your online safety knowledge
+                                                                </p>
+                                                        </motion.div>
+                                                )}
 						{/* Show extra questions button for Module 2 only */}
 						{currentModuleIndex === 1 && !showExtraQuestions && (
 							<motion.div 
@@ -1371,6 +1521,8 @@ const CoursePage: React.FC = () => {
 										</p>
 									</motion.div>
 								)}						{/* Render extra questions if enabled for Module 2 */}
+                                                {/* Render extra questions if enabled for Module 1 */}
+                                                {currentModuleIndex === 0 && showExtraQuestions && renderExtraQuestions()}
 						{currentModuleIndex === 1 && showExtraQuestions && renderExtraQuestions()}
 						
 						{/* Render extra questions if enabled for Module 3 */}
