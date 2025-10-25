@@ -80,7 +80,7 @@ const HomePage: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
               className="text-2xl md:text-3xl text-base-content/80 mb-6">
-              Trusty is a FREE online guide designed to help seniors recognize online threats, avoid scams, and stay safe, confident, and in control in today's digital world—one simple step at a time.
+              <span style={{ color: '#6C1BA0' }}>Trusty</span> is a <span style={{ color: '#6C1BA0' }}>FREE online guide</span> designed to help seniors recognize online threats, avoid scams, and stay safe, confident, and in control in today's digital world—one simple step at a time.
             </motion.p>
             <motion.p
               initial={{ opacity: 0, y: 20 }}
