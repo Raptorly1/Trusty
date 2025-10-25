@@ -412,7 +412,7 @@ const HomePage: React.FC = () => {
         transition={{ duration: 0.5, delay: 0.2 }}
         className="fixed bottom-4 right-4 left-4 md:left-auto md:right-8 z-50 flex justify-center md:justify-end pointer-events-none"
       >
-        <NavLink
+        {/* <NavLink
           to="/course"
           className="btn btn-lg text-lg shadow-lg pointer-events-auto flex items-center gap-2"
           aria-label="Start Free Course"
@@ -420,7 +420,7 @@ const HomePage: React.FC = () => {
         >
           <BookOpen className="h-6 w-6" style={{ color: '#fff' }} />
           Start Free Course
-        </NavLink>
+        </NavLink> */}
       </motion.div>
     </div>
   );
