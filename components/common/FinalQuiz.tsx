@@ -115,9 +115,9 @@ const allQuizQuestions: FinalQuizQuestion[] = [
     question: "What does practicing online safety involve?",
     options: [
       "Sharing your password with friends",
-      "Keeping your information private and making smart choices while on the internet",
-      "Only watching videos on safe websites",
-      "Never going online at all",
+      "Keeping your information private and making smart choices online",
+      "Clicking on pop-ups and ads to explore more content",
+      "Ignoring warnings and using the internet freely",
     ],
     correctIndex: 1,
   },
