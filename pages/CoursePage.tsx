@@ -990,22 +990,6 @@ const courseModules: CourseModule[] = [
 			type: ExerciseType.QUIZ,
 			questions: [
 				{
-					question: "You see a photo of a person with perfect skin, glowing eyes, and hands that have six fingers. What is this likely to be?",
-					options: [
-						{ text: "AI-generated", isCorrect: true },
-						{ text: "Real photo", isCorrect: false }
-					]
-				},
-				{
-					question: "A news article has perfect grammar, but it's full of vague phrases and no sources are listed. What should you suspect?",
-					options: [
-						{ text: "It's definitely real news", isCorrect: false },
-						{ text: "It might be AI-generated content", isCorrect: true },
-						{ text: "It's from a professional journalist", isCorrect: false },
-						{ text: "Grammar doesn't matter for credibility", isCorrect: false }
-					]
-				},
-				{
 					question: "A video shows a well-known politician saying something shocking, but it's not reported anywhere else. What should you do?",
 					options: [
 						{ text: "Share it immediately since it's shocking", isCorrect: false },
