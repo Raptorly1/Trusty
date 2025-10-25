@@ -22,15 +22,14 @@ const allQuizQuestions: FinalQuizQuestion[] = [
     correctIndex: 1,
   },
   {
-    question:
-      "A caller says you must pay the IRS immediately with a gift card or be arrested. What should you do?",
+    question: "Which of the following statements about reporting scams is true?",
     options: [
-      "Pay quickly to avoid trouble",
-      "Hang up and call the IRS using the official number",
-      "Ask for more details",
-      "Give them your bank account",
+      "You can report internet crimes to the FBI’s Internet Crime Complaint Center (ic3.gov)",
+      "You should contact your bank and the credit bureaus if you shared financial information with a scammer",
+      "You should call the Social Security Administration if your SSN is compromised",
+      "All of the above",
     ],
-    correctIndex: 1,
+    correctIndex: 3,
   },
   {
     question: "Why should you read beyond the headline before sharing an article?",
