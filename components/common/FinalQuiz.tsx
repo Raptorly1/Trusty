@@ -277,10 +277,11 @@ const FinalQuiz: React.FC<{ onComplete: (score: number) => void }> = ({ onComple
   ctx.textAlign = 'left';
   // Use alphabetic baseline so numbers sit nicely on the printed DATE underline
   ctx.textBaseline = 'alphabetic';
-  const dateStr = new Date().toLocaleDateString();
-  // Coordinates tuned for a 1200x900 canvas to align with the DATE line
-  const dateX = 220; // moved right to align with DATE label
-  const dateY = canvas.height - 180; // moved up to sit above the DATE underline
+  // Use a clearer date format and position it relative to canvas size so it lines up
+  const dateStr = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  // Position relative to canvas width/height so it scales correctly across resolutions
+  const dateX = Math.round(canvas.width * 0.22); // ~22% from the left edge
+  const dateY = Math.round(canvas.height * 0.76); // ~76% down the canvas (above the DATE underline)
   ctx.fillText(dateStr, dateX, dateY);
 
       // Generate the final certificate as data URL
