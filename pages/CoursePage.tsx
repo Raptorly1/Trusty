@@ -937,10 +937,10 @@ const courseModules: CourseModule[] = [
 				{
 					question: "How often should you change your passwords?",
 					options: [
-						{ text: "Every day", isCorrect: false },
-						{ text: "Only when there's a security breach or you suspect your account is compromised", isCorrect: true },
-						{ text: "Never", isCorrect: false },
-						{ text: "Every week", isCorrect: false }
+						{ text: "Every 6 to 12 months", isCorrect: false },
+						{ text: "When there is a security breach of your account", isCorrect: false },
+						{ text: "When you suspect your account is compromised", isCorrect: false },
+						{ text: "All of the above", isCorrect: true }
 					]
 				},
 				{
