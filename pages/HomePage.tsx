@@ -80,18 +80,16 @@ const HomePage: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
               className="text-2xl md:text-3xl text-base-content/80 mb-6">
-              One simple step at a time, Trusty helps seniors stay safe, confident, and in control online. Backed by a vibrant group of volunteers, we share your goal of staying secure.
+              Trusty is a FREE online guide designed to help seniors recognize online threats, avoid scams, and stay safe, confident, and in control in today's digital world—one simple step at a time.
             </motion.p>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="text-xl md:text-2xl text-base-content/90 mb-4"
-          >
-            {`We know scams can be tricky to spot, and with technology changing so fast, it's hard to keep up. But Trusty's here to guide you every step of the way… and it's `}
-            <span style={{ color: '#6C1BA0', fontWeight: 'bold' }}>completely free</span>
-            {`!`}
-          </motion.p>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="text-xl md:text-2xl text-base-content/90 mb-4"
+            >
+              We understand that scams can be difficult to spot, and with technology changing so quickly, keeping up can feel overwhelming. Backed by a dedicated team of volunteers, Trusty shares your goal of staying secure. Through simple lessons and easy-to-use tools, you'll learn how to protect yourself and navigate the digital world with greater confidence and peace of mind.
+            </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
