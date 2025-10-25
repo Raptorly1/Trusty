@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import FinalQuiz from '../components/common/FinalQuiz';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CourseModule, ExerciseType } from '../types';
-import { CheckCircle, Star, ArrowRight } from 'lucide-react';
+import { CheckCircle, Star, ArrowRight, ArrowLeft } from 'lucide-react';
 import Module1 from '../components/course/Module1';
 import Module2 from '../components/course/Module2';
 import Module3 from '../components/course/Module3';
@@ -968,23 +968,44 @@ const CoursePage: React.FC = () => {
 		}
 	}, [currentModuleIndex, courseModules.length, navigate]);
 
-	const handleNext = () => {
-		if (!isExerciseMode) {
-			setIsExerciseMode(true);
-			return;
-		}
-		if (currentModuleIndex < courseModules.length - 1) {
-			setCurrentModuleIndex(prev => prev + 1);
-			setIsExerciseMode(false);
-			setExerciseAnswers({});
-			setShowExtraQuestions(false);
-			setExtraQuestionAnswers([]);
-			setExtraExerciseAnswers({});
-			return;
-		}
-		setIsQuizMode(true);
-	}
+        const handleNext = () => {
+                if (!isExerciseMode) {
+                        setIsExerciseMode(true);
+                        return;
+                }
+                if (currentModuleIndex < courseModules.length - 1) {
+                        setCurrentModuleIndex(prev => prev + 1);
+                        setIsExerciseMode(false);
+                        setExerciseAnswers({});
+                        setShowExtraQuestions(false);
+                        setExtraQuestionAnswers([]);
+                        setExtraExerciseAnswers({});
+                        return;
+                }
+                setIsQuizMode(true);
+        }
 
+        const handleBack = () => {
+                if (isExerciseMode) {
+                        // If in exercise mode, go back to module content
+                        setIsExerciseMode(false);
+                        setExerciseAnswers({});
+                        setShowExtraQuestions(false);
+                        setExtraQuestionAnswers([]);
+                        setExtraExerciseAnswers({});
+                } else if (currentModuleIndex > 0) {
+                        // If not in exercise mode and not first module, go to previous module
+                        setCurrentModuleIndex(prev => prev - 1);
+                        setIsExerciseMode(false);
+                        setExerciseAnswers({});
+                        setShowExtraQuestions(false);
+                        setExtraQuestionAnswers([]);
+                        setExtraExerciseAnswers({});
+                } else {
+                        // If on first module and not in exercise mode, go back to course overview (home)
+                        navigate('/');
+                }
+        }
 	const handleExerciseComplete = () => {
 		if (currentModuleIndex < courseModules.length - 1) {
 			setCurrentModuleIndex(prev => prev + 1);
@@ -1564,20 +1585,30 @@ const CoursePage: React.FC = () => {
 					transition={{ duration: 0.4 }}
 					className="card bg-base-100 shadow-xl"
 				>
-					<div className="card-body p-8 md:p-12">
-						{!isExerciseMode ? (
-							<>
-								<h2 className="card-title text-4xl mb-4">{currentModule.title}</h2>
-								{currentModule.content}
-							</>
-						) : (
-							<>
-								<h2 className="card-title text-4xl mb-4">Let's Practice!</h2>
-								{renderExercise()}
-							</>
-						)}
+                                        <div className="card-body p-8 md:p-12">
+                                                {/* Back button - show when not on first module or when in exercise mode */}
+                                                {(currentModuleIndex > 0 || isExerciseMode) && (
+                                                        <button
+                                                                onClick={handleBack}
+                                                                className="btn btn-ghost btn-sm mb-4 gap-2"
+                                                                aria-label="Go back"
+                                                        >
+                                                                <ArrowLeft className="h-4 w-4" />
+                                                                Back
+                                                        </button>
+                                                )}
 
-						<div className="card-actions justify-end mt-8">
+                                                {!isExerciseMode ? (
+                                                        <>
+                                                                <h2 className="card-title text-4xl mb-4">{currentModule.title}</h2>
+                                                                {currentModule.content}
+                                                        </>
+                                                ) : (
+                                                        <>
+                                                                <h2 className="card-title text-4xl mb-4">Let's Practice!</h2>
+                                                                {renderExercise()}
+                                                        </>
+                                                )}						<div className="card-actions justify-end mt-8">
 							{(!isExerciseMode) && (
 								<button onClick={handleNext} className="btn btn-primary btn-lg">
 									Continue to Exercise
