@@ -86,11 +86,14 @@ const Header: React.FC = () => {
   const { status } = useServerStatus(true);
   const [isScrolled, setIsScrolled] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [coursePanelOpen, setCoursePanelOpen] = useState(false);
   const location = useLocation();
+  const panelRef = React.useRef<HTMLDivElement | null>(null);
 
   // Close dropdown when location changes (mobile navigation fix)
   useEffect(() => {
     setDropdownOpen(false);
+    setCoursePanelOpen(false);
   }, [location.pathname]);
 
   useEffect(() => {
@@ -103,6 +106,30 @@ const Header: React.FC = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Close course panel on outside click or Escape
+  useEffect(() => {
+    const onDocClick = (e: MouseEvent) => {
+      if (!coursePanelOpen) return;
+      if (panelRef.current && !panelRef.current.contains(e.target as Node)) {
+        setCoursePanelOpen(false);
+      }
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setCoursePanelOpen(false);
+    };
+    document.addEventListener('mousedown', onDocClick);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onDocClick);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [coursePanelOpen]);
+
+  // simple modules list (keeps code local and avoids extra imports)
+  const modules = Array.from({ length: 8 }, (_, i) => ({ id: `${i + 1}`, title: `Module ${i + 1}` }));
+
+  const isCourseActive = location.pathname.startsWith('/course');
 
   return (
     <header id="trusty-header" className="bg-base-200/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
@@ -121,24 +148,65 @@ const Header: React.FC = () => {
         </div>
         {/* Desktop nav links - spread out */}
         <nav className="hidden lg:flex flex-1 justify-center ml-8">
-          <ul className="flex gap-6 xl:gap-10 text-base font-medium w-full justify-center">
+          <ul className="flex gap-6 xl:gap-10 text-base font-medium w-full justify-center items-center">
             {navLinks.map(({ path, label }) => (
-              <li key={path} className="w-full flex justify-center">
-                <NavLink
-                  to={path}
-                  // Apply purple color only when active; otherwise use default text color.
-                  // Add a subtle hover animation (lift + scale) without changing color on hover.
-                  className={({ isActive }) =>
-                    isActive
-                      ? "font-bold border-b-2 px-3 py-2 transform transition duration-200 ease-in-out text-[#6C1BA0] hover:-translate-y-1 hover:scale-105"
-                      : "px-3 py-2 transform transition duration-200 ease-in-out text-base-content hover:-translate-y-1 hover:scale-105"
-                  }
-                  style={({ isActive }) => ({
-                    borderBottomColor: isActive ? '#6C1BA0' : undefined,
-                  })}
-                >
-                  {label}
-                </NavLink>
+              <li key={path} className="w-full flex justify-center relative">
+                {path === '/course' ? (
+                  <div ref={panelRef} className="relative">
+                    <button
+                      aria-haspopup="menu"
+                      aria-expanded={coursePanelOpen}
+                      onClick={() => setCoursePanelOpen(open => !open)}
+                      className={`px-3 py-2 transform transition duration-200 ease-in-out flex items-center gap-2 ${isCourseActive ? 'font-bold text-[#6C1BA0] border-b-2' : 'text-base-content hover:-translate-y-1 hover:scale-105'}`}
+                    >
+                      {label}
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+
+                    <AnimatePresence>
+                      {coursePanelOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -6 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -6 }}
+                          transition={{ duration: 0.18 }}
+                          className="absolute left-1/2 -translate-x-1/2 mt-3 z-50 w-64 bg-base-100 rounded-2xl shadow-lg border border-base-300 p-3"
+                          style={{ touchAction: 'manipulation' }}
+                        >
+                          <ul className="flex flex-col gap-1">
+                            {modules.map(m => (
+                              <li key={m.id}>
+                                <NavLink
+                                  to={`/course/${m.id}`}
+                                  className={({ isActive }) => `block w-full text-left px-3 py-2 rounded-lg transition-colors ${isActive ? 'bg-base-200 font-bold text-[#6C1BA0]' : 'hover:bg-base-200'}`}
+                                  onClick={() => setCoursePanelOpen(false)}
+                                >
+                                  {m.title}
+                                </NavLink>
+                              </li>
+                            ))}
+                          </ul>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                ) : (
+                  <NavLink
+                    to={path}
+                    className={({ isActive }) =>
+                      isActive
+                        ? "font-bold border-b-2 px-3 py-2 transform transition duration-200 ease-in-out text-[#6C1BA0] hover:-translate-y-1 hover:scale-105"
+                        : "px-3 py-2 transform transition duration-200 ease-in-out text-base-content hover:-translate-y-1 hover:scale-105"
+                    }
+                    style={({ isActive }) => ({
+                      borderBottomColor: isActive ? '#6C1BA0' : undefined,
+                    })}
+                  >
+                    {label}
+                  </NavLink>
+                )}
               </li>
             ))}
           </ul>
