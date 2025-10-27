@@ -32,9 +32,13 @@ const Module4: React.FC = () => {
                 </h3>
                 <div className="mockup-browser border border-success">
                   <div className="mockup-browser-toolbar">
-                    <div className="input border border-success flex items-center space-x-2">
+                    <div className="flex items-center gap-2 w-full">
                       <Lock className="w-4 h-4 text-success" />
-                      <span className="text-sm">https://secure-website.com</span>
+                      <input
+                        readOnly
+                        value="https://secure-website.com"
+                        className="input input-bordered border-success w-full text-sm"
+                      />
                     </div>
                   </div>
                   <div className="flex justify-center px-4 py-8 bg-success/5">
@@ -56,9 +60,13 @@ const Module4: React.FC = () => {
                 </h3>
                 <div className="mockup-browser border border-error">
                   <div className="mockup-browser-toolbar">
-                    <div className="input border border-error flex items-center space-x-2">
+                    <div className="flex items-center gap-2 w-full">
                       <AlertTriangle className="w-4 h-4 text-error" />
-                      <span className="text-sm">http://suspicious-site.com</span>
+                      <input
+                        readOnly
+                        value="http://suspicious-site.com"
+                        className="input input-bordered border-error w-full text-sm"
+                      />
                     </div>
                   </div>
                   <div className="flex justify-center px-4 py-8 bg-error/5">
