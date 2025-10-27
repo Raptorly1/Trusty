@@ -754,10 +754,11 @@ const courseModules: CourseModule[] = [
  			{
  				question: "Which of the following giveaway messages is most likely a scam?",
  				options: [
- 					{ text: "Enter now to win a vacation", isCorrect: false },
- 					{ text: "You’ve won the lottery, click here to claim your prize!", isCorrect: true },
- 					{ text: "Sign up for our newsletter", isCorrect: false },
- 					{ text: "Take our survey for a chance to win", isCorrect: false }
+ 					{ text: "You are our lucky winner! Pay a small processing fee to unlock your prize.", isCorrect: false },
+ 					{ text: "Click this special link right now to claim your free vacation.", isCorrect: false },
+ 					{ text: "Reply with your credit card number so we can ship your free prize immediately!", isCorrect: false },
+ 					{ text: "Reply with your credit card number so we can ship your free prize immediately!", isCorrect: false },
+					{ text: "All of the above", isCorrect: true }
  				]
  			},
  			{
