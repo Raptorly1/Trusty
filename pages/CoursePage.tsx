@@ -1667,10 +1667,10 @@ const CoursePage: React.FC = () => {
 	const currentModule = courseModules[currentModuleIndex] || { title: '', description: '', content: <div>Loading...</div>, exercise: { type: ExerciseType.QUIZ, question: '', options: [], correctFeedback: '', incorrectFeedback: '' } };
 	const progress = (currentModuleIndex + (isExerciseMode ? 0.5 : 0)) / courseModules.length * 100;
 
-	// Animation key: changes for every module/exercise view
-	const animationKey = `${currentModuleIndex}-${isExerciseMode ? 'exercise' : 'module'}`;
+	// Animation key: changes for every module/exercise view and quiz mode
+	const animationKey = `${currentModuleIndex}-${isExerciseMode ? 'exercise' : 'module'}-${isQuizMode ? 'quiz' : 'regular'}`;
 
-	// Auto-scroll to top whenever the visible module or exercise changes
+	// Auto-scroll to top whenever the visible module, exercise, or quiz mode changes
 	useEffect(() => {
 		if (typeof window === 'undefined') return;
 		try {
