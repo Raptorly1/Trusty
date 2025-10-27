@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bot, Eye, AlertTriangle, Search, CheckCircle, Zap, Image as ImageIcon } from 'lucide-react';
+import { Bot, Eye, AlertTriangle, Search, CheckCircle, Zap, Image as ImageIcon, Circle, Triangle, Cpu, Camera } from 'lucide-react';
 import SourcesButton from '../common/SourcesButton';
 
 const Module6: React.FC = () => {
@@ -141,7 +141,10 @@ const Module6: React.FC = () => {
           
           {/* Example 1: Easy - Tourist Couple */}
           <div className="mb-8">
-            <h3 className="text-xl font-bold mb-4 text-warning">🟡 Example 1: Easy Level</h3>
+            <h3 className="text-xl font-bold mb-4 text-warning flex items-center gap-2">
+              <Circle className="w-5 h-5 fill-current" />
+              Example 1:
+            </h3>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="card bg-error/10 border border-error/20">
                 <div className="card-body">
@@ -155,7 +158,10 @@ const Module6: React.FC = () => {
                     <p className="text-sm mt-2 italic">A couple posing in front of the Golden Gate Bridge</p>
                   </div>
                   <div className="mt-4">
-                    <h5 className="font-bold text-error mb-2">🤖 This is AI-Generated</h5>
+                    <h5 className="font-bold text-error mb-2 flex items-center gap-2">
+                      <Cpu className="w-4 h-4" />
+                      This is AI-Generated
+                    </h5>
                     <p className="text-sm mb-2">Key detection clues:</p>
                     <ul className="text-sm space-y-1">
                       <li>• Problems with backpack strap textures</li>
@@ -179,7 +185,10 @@ const Module6: React.FC = () => {
                     <p className="text-sm mt-2 italic">Crowd at Classixx show, Outside Lands 2015</p>
                   </div>
                   <div className="mt-4">
-                    <h5 className="font-bold text-success mb-2">📸 This is a Real Photograph</h5>
+                    <h5 className="font-bold text-success mb-2 flex items-center gap-2">
+                      <Camera className="w-4 h-4" />
+                      This is a Real Photograph
+                    </h5>
                     <p className="text-sm mb-2">Signs of authenticity:</p>
                     <ul className="text-sm space-y-1">
                       <li>• Natural variations in facial features</li>
@@ -195,7 +204,10 @@ const Module6: React.FC = () => {
 
           {/* Example 2: Medium - Product Photography */}
           <div className="mb-8">
-            <h3 className="text-xl font-bold mb-4 text-orange-500">🟠 Example 2: Medium Level</h3>
+            <h3 className="text-xl font-bold mb-4 text-orange-500 flex items-center gap-2">
+              <Triangle className="w-5 h-5 fill-current" />
+              Example 2:
+            </h3>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="card bg-error/10 border border-error/20">
                 <div className="card-body">
@@ -209,7 +221,10 @@ const Module6: React.FC = () => {
                     <p className="text-sm mt-2 italic">Wooden wireless headphones on textured surface</p>
                   </div>
                   <div className="mt-4">
-                    <h5 className="font-bold text-error mb-2">🤖 This is AI-Generated</h5>
+                    <h5 className="font-bold text-error mb-2 flex items-center gap-2">
+                      <Cpu className="w-4 h-4" />
+                      This is AI-Generated
+                    </h5>
                     <p className="text-sm mb-2">Subtle detection clues:</p>
                     <ul className="text-sm space-y-1">
                       <li>• Flat, lifeless wood textures</li>
@@ -233,7 +248,10 @@ const Module6: React.FC = () => {
                     <p className="text-sm mt-2 italic">Real avocado toast with natural imperfections</p>
                   </div>
                   <div className="mt-4">
-                    <h5 className="font-bold text-success mb-2">📸 This is a Real Photograph</h5>
+                    <h5 className="font-bold text-success mb-2 flex items-center gap-2">
+                      <Camera className="w-4 h-4" />
+                      This is a Real Photograph
+                    </h5>
                     <p className="text-sm mb-2">Signs of authenticity:</p>
                     <ul className="text-sm space-y-1">
                       <li>• Natural food textures and colors</li>
@@ -249,7 +267,10 @@ const Module6: React.FC = () => {
 
           {/* Example 3: Hard - Very Convincing AI */}
           <div className="mb-6">
-            <h3 className="text-xl font-bold mb-4 text-red-500">🔴 Example 3: Hard Level</h3>
+            <h3 className="text-xl font-bold mb-4 text-red-500 flex items-center gap-2">
+              <AlertTriangle className="w-5 h-5 fill-current" />
+              Example 3:
+            </h3>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="card bg-error/10 border border-error/20">
                 <div className="card-body">
@@ -263,7 +284,10 @@ const Module6: React.FC = () => {
                     <p className="text-sm mt-2 italic">Professional-looking metallic headphones</p>
                   </div>
                   <div className="mt-4">
-                    <h5 className="font-bold text-error mb-2">🤖 This is AI-Generated</h5>
+                    <h5 className="font-bold text-error mb-2 flex items-center gap-2">
+                      <Cpu className="w-4 h-4" />
+                      This is AI-Generated
+                    </h5>
                     <p className="text-sm mb-2">Very subtle clues (experts needed!):</p>
                     <ul className="text-sm space-y-1">
                       <li>• Slightly off band proportions</li>
@@ -287,7 +311,10 @@ const Module6: React.FC = () => {
                     <p className="text-sm mt-2 italic">Lake Tahoe shoreline, Incline Village, Nevada</p>
                   </div>
                   <div className="mt-4">
-                    <h5 className="font-bold text-success mb-2">📸 This is a Real Photograph</h5>
+                    <h5 className="font-bold text-success mb-2 flex items-center gap-2">
+                      <Camera className="w-4 h-4" />
+                      This is a Real Photograph
+                    </h5>
                     <p className="text-sm mb-2">Signs of authenticity:</p>
                     <ul className="text-sm space-y-1">
                       <li>• Natural water movement patterns</li>
