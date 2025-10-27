@@ -188,6 +188,16 @@ const Header: React.FC = () => {
                                 </NavLink>
                               </li>
                             ))}
+                            <li>
+                              <NavLink
+                                to="/course/quiz"
+                                className={({ isActive }) => `block w-full text-left px-3 py-2 rounded-lg transition-colors ${isActive ? 'bg-base-200 font-bold text-[#6C1BA0]' : 'hover:bg-base-200'}`}
+                                onClick={() => setCoursePanelOpen(false)}
+                                aria-label="Final Quiz"
+                              >
+                                Final Quiz
+                              </NavLink>
+                            </li>
                           </ul>
                         </motion.div>
                       )}
