@@ -211,17 +211,14 @@ const allQuizQuestions: FinalQuizQuestion[] = [
   },
 ];
 
-// Function to randomly select 10 questions from the bank
+// Split into two sets of 10 questions each
+const firstSet: FinalQuizQuestion[] = allQuizQuestions.slice(0, 10);
+const secondSet: FinalQuizQuestion[] = allQuizQuestions.slice(10, 20);
+
+// Function to randomly select one of the two sets
 const getRandomQuestions = (): FinalQuizQuestion[] => {
-  const questions = [...allQuizQuestions];
-  
-  // Use Fisher-Yates shuffle for true randomization
-  for (let i = questions.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [questions[i], questions[j]] = [questions[j], questions[i]];
-  }
-  
-  return questions.slice(0, 10);
+  // Randomly choose between first set or second set
+  return Math.random() < 0.5 ? firstSet : secondSet;
 };
 
 const FinalQuiz: React.FC<{ onComplete: (score: number) => void }> = ({ onComplete }) => {
