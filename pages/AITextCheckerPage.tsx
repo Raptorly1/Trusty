@@ -219,7 +219,7 @@ const AITextCheckerPage: React.FC = () => {
     return (
         <div>
             <div className="text-center">
-                <h1 className="text-5xl font-bold">AI Text Checker</h1>
+                <h1 className="text-5xl font-bold">Trusty Text Checker</h1>
                 <p className="text-2xl mt-4 text-base-content/70">Find out if text was written by a human or an AI.</p>
             </div>
 

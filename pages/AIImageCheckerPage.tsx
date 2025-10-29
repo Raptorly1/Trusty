@@ -102,7 +102,7 @@ const AIImageCheckerPage: React.FC = () => {
     return (
         <div>
             <div className="text-center">
-                <h1 className="text-5xl font-bold">AI Image Checker</h1>
+                <h1 className="text-5xl font-bold">Trusty Image Checker</h1>
                 <p className="text-2xl mt-4 text-base-content/70">Check if an image was created by AI.</p>
             </div>
 

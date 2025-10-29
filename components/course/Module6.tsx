@@ -370,13 +370,13 @@ const Module6: React.FC = () => {
               <div className="space-y-3">
                 <div className="card bg-accent/10 border border-accent/20">
                   <div className="card-body p-4">
-                    <h5 className="font-bold">AI Text Checker</h5>
+                    <h5 className="font-bold">Trusty Text Checker</h5>
                     <p className="text-sm">Analyze text to see if it might be AI-generated</p>
                   </div>
                 </div>
                 <div className="card bg-accent/10 border border-accent/20">
                   <div className="card-body p-4">
-                    <h5 className="font-bold">AI Image Checker</h5>
+                    <h5 className="font-bold">Trusty Image Checker</h5>
                     <p className="text-sm">Upload images to check for AI generation signs</p>
                   </div>
                 </div>
