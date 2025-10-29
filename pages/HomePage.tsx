@@ -247,11 +247,11 @@ const HomePage: React.FC = () => {
           {[
             {
               title: "The Basics",
-              desc: "What is Online Safety?"
+              desc: "Introduction to online safety"
             },
             {
               title: "Common Scams Explained",
-              desc: "Internet Scams & How to Spot Them"
+              desc: "Internet scams & how to spot them"
             },
             {
               title: "Spotting Fake News & Deepfakes",
