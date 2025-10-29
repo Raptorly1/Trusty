@@ -144,7 +144,7 @@ const Header: React.FC = () => {
           </div>
           <NavLink to="/" className="inline-flex items-center gap-2 px-2 py-2 text-xl sm:text-2xl font-bold text-primary normal-case rounded-full border border-transparent hover:border-primary hover:bg-primary/10 focus:border-primary focus:bg-primary/20 transition">
             <img src="/Logo.png" alt="Trusty Logo" className="h-8 w-8 sm:h-12 sm:w-12 object-contain" />
-            <span className="hidden xs:inline sm:inline">Trusty</span>
+            <span className="hidden xs:inline sm:inline" style={{ color: '#6c1ba0' }}>Trusty</span>
           </NavLink>
         </div>
         {/* Desktop nav links - spread out */}
