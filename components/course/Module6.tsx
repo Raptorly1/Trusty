@@ -274,26 +274,25 @@ const Module6: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="card bg-error/10 border border-error/20">
                 <div className="card-body">
-                  <h4 className="card-title text-error">Gray Headphones</h4>
+                  <h4 className="card-title text-error">Rugged Man Camping with Dog</h4>
                   <div className="bg-base-200 p-4 rounded-lg">
                     <img 
-                      src="https://www.cnet.com/a/img/resize/6f874b13cfc24f248a5f57cf90f44607d236d917/hub/2023/11/14/1a1b95d6-1700-41cb-96c4-90d9235cffd5/firefly-brand-new-wireless-headphones-made-out-of-metallic-material-laid-out-neatly-on-a-black-tabl-1.jpg?auto=webp&width=768"
-                      alt="Gray metallic headphones on black table"
+                      src="https://www.cnet.com/a/img/resize/4e6c6d8f966600768b353658fe1ff13885c955b3/hub/2023/11/08/f6b1337a-b8b9-4814-8650-87cf4e7c21ac/firefly-a-portrait-of-a-rugged-man-in-his-30s-camping-out-in-the-woods-and-his-dog-enjoying-nature.jpg?auto=webp&width=768"
+                      alt="Portrait of a rugged man in his 30s camping in the woods with his dog"
                       className="w-full h-48 object-cover rounded"
                     />
-                    <p className="text-sm mt-2 italic">Professional-looking metallic headphones</p>
+                    <p className="text-sm mt-2 italic">A man and his dog enjoying nature at a campsite</p>
                   </div>
                   <div className="mt-4">
                     <h5 className="font-bold text-error mb-2 flex items-center gap-2">
                       <Cpu className="w-4 h-4" />
                       This is AI-Generated
                     </h5>
-                    <p className="text-sm mb-2">Very subtle clues (experts needed!):</p>
+                    <p className="text-sm mb-2">Detection clues:</p>
                     <ul className="text-sm space-y-1">
-                      <li>• Slightly off band proportions</li>
-                      <li>• Too-perfect lighting consistency</li>
-                      <li>• Subtle geometric inconsistencies</li>
-                      <li>• Even CNET said "very hard to discern"!</li>
+                      <li>• Problems with the man's fingers and watch</li>
+                      <li>• Issues around the dog's tongue</li>
+                      <li>• Subtle inconsistencies in textures</li>
                     </ul>
                   </div>
                 </div>
@@ -301,14 +300,14 @@ const Module6: React.FC = () => {
 
               <div className="card bg-success/10 border border-success/20">
                 <div className="card-body">
-                  <h4 className="card-title text-success">Lake Tahoe Landscape</h4>
+                  <h4 className="card-title text-success">Mother and Son at Refugee Camp</h4>
                   <div className="bg-base-200 p-4 rounded-lg">
                     <img 
-                      src="https://www.cnet.com/a/img/resize/1cd43dfe590e67911ddae7ba96430b2a7c58aa9a/hub/2023/11/14/08214bb4-4e19-4f98-9445-b297eae97ff2/img-9842.jpg?auto=webp&width=768"
-                      alt="Lake Tahoe shoreline in Incline Village, Nevada"
+                      src="https://www.cnet.com/a/img/resize/5a1553047b3a0c492861830421e6dfed84718f42/hub/2023/11/14/30479be4-9d5e-49ee-99d9-c65d8f2b08aa/storied-greece-photos-0640.jpg?auto=webp&width=768"
+                      alt="Mother and son at a refugee camp in Thessaloniki, Greece"
                       className="w-full h-48 object-cover rounded"
                     />
-                    <p className="text-sm mt-2 italic">Lake Tahoe shoreline, Incline Village, Nevada</p>
+                    <p className="text-sm mt-2 italic">Mother and son at a refugee camp in Thessaloniki, Greece</p>
                   </div>
                   <div className="mt-4">
                     <h5 className="font-bold text-success mb-2 flex items-center gap-2">
@@ -317,10 +316,9 @@ const Module6: React.FC = () => {
                     </h5>
                     <p className="text-sm mb-2">Signs of authenticity:</p>
                     <ul className="text-sm space-y-1">
-                      <li>• Natural water movement patterns</li>
-                      <li>• Realistic rock formations</li>
-                      <li>• Authentic atmospheric perspective</li>
-                      <li>• Genuine photographic depth of field</li>
+                      <li>• Genuine human expressions and interactions</li>
+                      <li>• Realistic environmental details</li>
+                      <li>• Authentic documentary photography style</li>
                     </ul>
                   </div>
                 </div>
