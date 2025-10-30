@@ -324,7 +324,7 @@ const module6ExtraQuestions = [
 		question: "A comment under a news article feels overly emotional and extreme, but includes personal details. Is it likely AI or real?",
 		options: [
 			{ text: "AI - because it's emotional", isCorrect: false },
-			{ text: "LIKELY REAL: PERSONAL STORY….", isCorrect: true },
+			{ text: "Likely real - because its a personal story", isCorrect: true },
 			{ text: "AI - because it's under a news article", isCorrect: false },
 			{ text: "Always impossible to tell", isCorrect: false }
 		]
