@@ -40,15 +40,11 @@ const AnnotatedImage: React.FC<{ src: string; result: AIImageAnalysisResult }> =
                         maxWidth={220}
                     >
                         <div
-                            className="absolute border-4 border-red-500 rounded-full"
+                            className="absolute w-3 h-3 bg-red-500 rounded-full border-2 border-white"
                             style={{
-                                left: `${x * dimensions.width}px`,
-                                top: `${y * dimensions.height}px`,
-                                width: `${width * dimensions.width}px`,
-                                height: `${height * dimensions.height}px`,
-                                boxShadow: '0 0 15px rgba(255,0,0,0.7)',
-                                backgroundColor: 'rgba(255,0,0,0.13)',
-                                transition: 'background-color 0.2s',
+                                left: `${(x + width/2) * dimensions.width - 6}px`,
+                                top: `${(y + height/2) * dimensions.height - 6}px`,
+                                boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
                                 cursor: 'pointer',
                             }}
                         />
