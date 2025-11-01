@@ -86,19 +86,10 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload, acceptedTypes, pr
   return (
       <div
         className={`relative border-2 border-dashed rounded-2xl p-8 text-center transition-all duration-300 w-full ${isDragging ? 'border-primary bg-primary/10' : 'border-base-300 bg-base-200'}`}
-        role="button"
-        tabIndex={0}
-        aria-label="File upload dropzone"
         onDragEnter={handleDragEnter}
         onDragLeave={handleDragLeave}
         onDragOver={handleDragOver}
         onDrop={handleDrop}
-        onClick={() => document.getElementById('file-upload')?.click()}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            document.getElementById('file-upload')?.click();
-          }
-        }}
       >
         <input
           type="file"
@@ -110,7 +101,8 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload, acceptedTypes, pr
         <label htmlFor="file-upload" className="cursor-pointer flex flex-col items-center justify-center">
           <UploadCloud className="h-16 w-16 text-primary/70 mb-4" />
           <p className="text-xl font-semibold text-base-content">{prompt}</p>
-          <p className="text-base text-base-content/70">or drag and drop</p>
+          <p className="text-base text-base-content/70 md:inline hidden">or drag and drop</p>
+          <p className="text-base text-base-content/70 md:hidden">Tap to select file</p>
         </label>
         {error && (
           <div className="alert alert-error mt-4">
