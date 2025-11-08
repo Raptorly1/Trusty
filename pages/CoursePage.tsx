@@ -1043,15 +1043,9 @@ const courseModules: CourseModule[] = [
 		description: "What to do when something goes wrong and where to get help",
 		content: <Module8 />,
 		exercise: {
-			type: ExerciseType.CHECKLIST,
-			instructions: "Build Your Personal Online Safety Plan. Fill in your emergency scam response sheet and add your support resources.",
-			items: [
-				"I know where to report scams",
-				"I've saved important phone numbers",
-				"I know how to freeze my credit if needed",
-				"I know where to get help if I'm not sure what to do",
-				"I will stay calm, pause, and act smart if something feels wrong"
-			]
+			type: ExerciseType.PDF_VIEWER,
+			instructions: "Download and fill out this Emergency Contact List to keep important phone numbers handy for when you need help:",
+			pdfPath: "/emergencyContactList.pdf"
 		}
 	}
 ];
