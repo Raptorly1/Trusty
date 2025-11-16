@@ -327,7 +327,7 @@ const App: React.FC = () => {
   {/* Vercel Web Analytics */}
   <Analytics mode="production" />
   {/* Vercel Speed Insights */}
-  <SpeedInsights />
+  <SpeedInsights debug={false} />
 
       {/* Server Status Popup - Informational only */}
       <ServerStatusPopup
