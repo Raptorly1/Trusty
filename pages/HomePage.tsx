@@ -57,13 +57,28 @@ const FeatureCard: React.FC<{ icon: React.ReactNode, title: string, description:
 
 const HomePage: React.FC = () => {
 // NOTE: Ensure mobile-first responsive design. Use Tailwind breakpoints (sm:, md:, lg:) so mobile styles apply by default and desktop styles only at larger widths.
+  
+  // Force layout recalculation on mount to fix iOS Safari Intersection Observer issues
+  useEffect(() => {
+    // Trigger a reflow to ensure IntersectionObserver works correctly on iOS
+    const forceReflow = () => {
+      document.body.offsetHeight;
+      window.scrollTo(0, 0);
+    };
+    
+    // Run immediately and after a short delay to ensure animations initialize
+    forceReflow();
+    const timer = setTimeout(forceReflow, 100);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className="space-y-16 relative">
       {/* 1. Hero Section */}
       <motion.section
         initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.3 }}
+        animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7 }}
   className="hero min-h-[60vh] rounded-box flex flex-col justify-center items-center py-8" style={{ backgroundColor: '#F3F0F8' }}
       >
@@ -71,21 +86,21 @@ const HomePage: React.FC = () => {
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
             className="text-6xl md:text-7xl font-bold mb-4" style={{ color: '#6C1BA0' }}>
             Trusty: Your Guide to Digital Safety
           </motion.h1>
             <motion.p 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
               className="text-2xl md:text-3xl text-base-content/80 mb-6">
               <span style={{ color: '#6C1BA0' }}>Trusty</span> is a <span style={{ color: '#6C1BA0' }}>FREE online guide</span> designed to help seniors recognize online threats, avoid scams, and stay safe, confident, and in control in today's digital world—one simple step at a time.
             </motion.p>
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
+              transition={{ duration: 0.6, delay: 0.5 }}
               className="text-xl md:text-2xl text-base-content/90 mb-4"
             >
               We understand that scams can be difficult to spot, and with technology changing so quickly, keeping up can feel overwhelming. Backed by a dedicated team of volunteers, Trusty shares your goal of staying secure. Through simple lessons and easy-to-use tools, you'll learn how to protect yourself and navigate the digital world with greater confidence and peace of mind.
@@ -93,7 +108,7 @@ const HomePage: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}>
+            transition={{ duration: 0.5, delay: 0.7 }}>
             <motion.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.98 }}
@@ -117,7 +132,7 @@ const HomePage: React.FC = () => {
       <motion.section
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.3 }}
+        viewport={{ once: true, amount: 0.1, margin: "0px 0px -100px 0px" }}
         transition={{ duration: 0.7, delay: 0.1 }}
   className="max-w-4xl mx-auto text-center py-12 rounded-xl" style={{ backgroundColor: '#fff' }}
       >
@@ -127,7 +142,7 @@ const HomePage: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.7 }}
+            viewport={{ once: true, amount: 0.3, margin: "0px 0px -50px 0px" }}
             transition={{ duration: 0.7 }}
             className="bg-base-100 rounded-xl shadow p-6 text-xl border border-base-300 transition hover:scale-105 hover:border-primary cursor-pointer flex flex-col items-center gap-2"
           >
@@ -139,7 +154,7 @@ const HomePage: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.7 }}
+            viewport={{ once: true, amount: 0.3, margin: "0px 0px -50px 0px" }}
             transition={{ duration: 0.7, delay: 0.1 }}
             className="bg-base-100 rounded-xl shadow p-6 text-xl border border-base-300 transition hover:scale-105 hover:border-primary cursor-pointer flex flex-col items-center gap-2"
           >
@@ -151,7 +166,7 @@ const HomePage: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.7 }}
+            viewport={{ once: true, amount: 0.3, margin: "0px 0px -50px 0px" }}
             transition={{ duration: 0.7, delay: 0.2 }}
             className="bg-base-100 rounded-xl shadow p-6 text-xl border border-base-300 transition hover:scale-105 hover:border-primary cursor-pointer flex flex-col items-center gap-2"
           >
@@ -167,7 +182,7 @@ const HomePage: React.FC = () => {
       <motion.section
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.3 }}
+        viewport={{ once: true, amount: 0.1, margin: "0px 0px -100px 0px" }}
         transition={{ duration: 0.7, delay: 0.2 }}
   className="max-w-4xl mx-auto py-12"
       >
@@ -196,7 +211,7 @@ const HomePage: React.FC = () => {
       <motion.section
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.3 }}
+        viewport={{ once: true, amount: 0.1, margin: "0px 0px -100px 0px" }}
         transition={{ duration: 0.7, delay: 0.2 }}
   className="max-w-4xl mx-auto py-12 rounded-xl" style={{ backgroundColor: '#F3F0F8' }}
       >
@@ -238,7 +253,7 @@ const HomePage: React.FC = () => {
       <motion.section
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.3 }}
+        viewport={{ once: true, amount: 0.1, margin: "0px 0px -100px 0px" }}
         transition={{ duration: 0.7, delay: 0.3 }}
   className="max-w-4xl mx-auto py-12 rounded-xl" style={{ backgroundColor: '#fff' }}
       >
@@ -305,7 +320,7 @@ const HomePage: React.FC = () => {
       <motion.section
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.3 }}
+        viewport={{ once: true, amount: 0.1, margin: "0px 0px -100px 0px" }}
         transition={{ duration: 0.7, delay: 0.4 }}
   className="max-w-4xl mx-auto py-12 rounded-xl" style={{ backgroundColor: '#F3F0F8' }}
       >
@@ -336,7 +351,7 @@ const HomePage: React.FC = () => {
       <motion.section
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.3 }}
+        viewport={{ once: true, amount: 0.1, margin: "0px 0px -100px 0px" }}
         transition={{ duration: 0.7, delay: 0.1 }}
   className="py-16 rounded-xl overflow-hidden relative" style={{ background: 'linear-gradient(135deg, #F3F0F8 0%, #E5E7EB 100%)' }}
       >
