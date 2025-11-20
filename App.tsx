@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { HashRouter, Routes, Route, NavLink, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, NavLink, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Home, BookOpen, Search, FileText, ImageIcon } from 'lucide-react';
 
@@ -232,10 +232,10 @@ const Header: React.FC = () => {
           <div className="flex sm:hidden">
             <ServerStatusIndicator status={status} showText={false} size="xs" />
           </div>
-          <a className="btn btn-primary min-h-[44px] h-11 px-3 sm:px-4 text-sm sm:text-base font-medium flex items-center justify-center text-center" href="#/course">
+          <NavLink to="/course" className="btn btn-primary min-h-[44px] h-11 px-3 sm:px-4 text-sm sm:text-base font-medium flex items-center justify-center text-center">
             <span className="hidden sm:inline w-full text-center">Start Learning</span>
             <span className="sm:hidden w-full text-center">Start</span>
-          </a>
+          </NavLink>
         </div>
       </div>
     </header>
@@ -275,9 +275,6 @@ const App: React.FC = () => {
   const [showServerPopup, setShowServerPopup] = useState(false);
   const [hasShownWarmingPopup, setHasShownWarmingPopup] = useState(false);
   const { status, isWarming, estimatedWaitTime, startWarmUp, checkStatus } = useServerStatus(true);
-  
-  // Extract route from hash for Speed Insights tracking
-  const currentRoute = location.pathname === '/' ? '/' : location.pathname;
 
   // Warm up server on initial load (non-blocking)
   useEffect(() => {
@@ -328,9 +325,9 @@ const App: React.FC = () => {
 
 
       {/* Vercel Web Analytics */}
-      <Analytics mode="production" />
-      {/* Vercel Speed Insights - with route tracking for HashRouter */}
-      <SpeedInsights debug={false} route={currentRoute} />
+      <Analytics />
+      {/* Vercel Speed Insights */}
+      <SpeedInsights />
 
       {/* Server Status Popup - Informational only */}
       <ServerStatusPopup
@@ -345,9 +342,9 @@ const App: React.FC = () => {
 }
 
 const RootApp: React.FC = () => (
-    <HashRouter>
+    <BrowserRouter>
         <App />
-    </HashRouter>
+    </BrowserRouter>
 );
 
 export default RootApp;
