@@ -326,8 +326,8 @@ const App: React.FC = () => {
 
       {/* Vercel Web Analytics */}
       <Analytics />
-      {/* Vercel Speed Insights */}
-      <SpeedInsights />
+      {/* Vercel Speed Insights - with explicit route for SPA */}
+      <SpeedInsights route={location.pathname} />
 
       {/* Server Status Popup - Informational only */}
       <ServerStatusPopup
