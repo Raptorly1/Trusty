@@ -208,7 +208,7 @@ const factCheckProcessorSchema = {
   properties: {
     annotatedSummary: {
       type: Type.STRING,
-      description: "A detailed summary of the fact-check findings. Include inline citations like [1], [2] that correspond to sources listed in `sourceDetails`."
+      description: "A detailed markdown-formatted summary with proper newlines (\\n). Include citations like [1], [2]. Use \\n\\n for paragraph breaks, \\n\\n### Header\\n\\n for section headers, and \\n* Item\\n for list items."
     },
     sourceDetails: {
       type: Type.ARRAY,
@@ -321,6 +321,13 @@ RULES (follow exactly):
 - Do NOT invent sources. Rate EXACTLY ${sources.length} sources, in the SAME ORDER as provided.
 - For each source, include: url (use the exact URL given), title, credibility (one of ${CRED_ENUM.join(', ')}), and a one-sentence explanation.
 - Output must conform to the provided schema; no extra keys.
+- CRITICAL: Use proper markdown with NEWLINES in the annotatedSummary JSON string:
+  * In JSON strings, use \\n for newlines (NOT actual line breaks in the JSON)
+  * Separate paragraphs with \\n\\n (double newline)
+  * Format headers as: \\n\\n### Header Text\\n\\n (with blank lines before and after)
+  * Format lists as: \\n* First item\\n* Second item\\n (each on new line)
+  * Use **bold** for key terms and *italics* for emphasis
+  * Example format: "First sentence.\\n\\nWhile **caffeine** is a known **diuretic**, its effects are mild [1, 2].\\n\\n### Key Findings\\n\\n* **Point one** with details [3]\\n* **Point two** with more info [4]\\n\\nConcluding paragraph with citations [5, 6]."
 
 CRITICAL: Evaluate each SOURCE INDIVIDUALLY based on the SPECIFIC PAGE/PAPER, not just the domain:
 - For academic papers (ArXiv, journal articles): Consider the specific paper's methodology, peer-review status, author credentials, and relevance to the claim
