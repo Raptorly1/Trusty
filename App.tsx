@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter, Routes, Route, NavLink, useLocation } from 'react-router-dom';
+import { HashRouter, Routes, Route, NavLink, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Home, BookOpen, Search, FileText, ImageIcon } from 'lucide-react';
 
@@ -324,14 +324,13 @@ const App: React.FC = () => {
       <Footer />
 
 
-      {/* Vercel Web Analytics - configured for SPA with route tracking */}
+      {/* Vercel Web Analytics - works automatically with HashRouter */}
       <Analytics 
         mode="production"
         debug={false}
-        route={location.pathname}
       />
-      {/* Vercel Speed Insights - with explicit route for SPA */}
-      <SpeedInsights route={location.pathname} />
+      {/* Vercel Speed Insights */}
+      <SpeedInsights />
 
       {/* Server Status Popup - Informational only */}
       <ServerStatusPopup
@@ -346,9 +345,9 @@ const App: React.FC = () => {
 }
 
 const RootApp: React.FC = () => (
-    <BrowserRouter>
+    <HashRouter>
         <App />
-    </BrowserRouter>
+    </HashRouter>
 );
 
 export default RootApp;
