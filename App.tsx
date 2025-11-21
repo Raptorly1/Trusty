@@ -324,8 +324,12 @@ const App: React.FC = () => {
       <Footer />
 
 
-      {/* Vercel Web Analytics */}
-      <Analytics />
+      {/* Vercel Web Analytics - configured for SPA with route tracking */}
+      <Analytics 
+        mode="production"
+        debug={false}
+        route={location.pathname}
+      />
       {/* Vercel Speed Insights - with explicit route for SPA */}
       <SpeedInsights route={location.pathname} />
 
