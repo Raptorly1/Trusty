@@ -130,7 +130,16 @@ const Header: React.FC = () => {
   }, [coursePanelOpen]);
 
   // simple modules list (keeps code local and avoids extra imports)
-  const modules = Array.from({ length: 8 }, (_, i) => ({ id: `${i + 1}`, title: `Module ${i + 1}` }));
+  const modules = [
+    { id: '1', title: 'Module 1 - The Basics' },
+    { id: '2', title: 'Module 2 - Common Scams Explained' },
+    { id: '3', title: 'Module 3 - Spotting Fake News' },
+    { id: '4', title: 'Module 4 - Safe Browsing & Websites' },
+    { id: '5', title: 'Module 5 - Strong Passwords & Privacy' },
+    { id: '6', title: 'Module 6 - AI & Misinformation' },
+    { id: '7', title: 'Module 7 - Cyber Hygiene Habits' },
+    { id: '8', title: 'Module 8 - Reporting & Getting Help' },
+  ];
 
   const isCourseActive = location.pathname.startsWith('/course');
 
