@@ -170,7 +170,7 @@ Update the frontend's API URLs to point to your Render backend.
   </li>
   <li>
     <details>
-      <summary><kbd>modules/</kbd> – course content</summary>
+      <summary><kbd>modules/</kbd> – course content | .md kept as a reference, we currently use .tsx</summary>
       <ul>
         <li><kbd>module1.md</kbd></li>
         <li><kbd>module2.md</kbd></li>
