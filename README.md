@@ -246,7 +246,7 @@ Update the frontend's API URLs to point to your Render backend.
 
 ---
 
-## Gallery
+<div align="center"><h2 style="font-size: 2.5em;"> Gallery</h2></div>
 
 ### Fact Checker
 
