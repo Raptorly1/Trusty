@@ -9,10 +9,22 @@ import LoadingSpinner from '../components/common/LoadingSpinner';
 const CredibilityBadge: React.FC<{ credibility: SourceCredibility['credibility'] }> = ({ credibility }) => {
     const baseClass = "badge badge-lg font-semibold";
     switch (credibility) {
-        case 'High': return <span className={`${baseClass} badge-success`}><CheckCircle className="mr-2" /> High</span>;
-        case 'Medium': return <span className={`${baseClass} badge-warning`}><HelpCircle className="mr-2" /> Medium</span>;
-        case 'Low': return <span className={`${baseClass} badge-error`}><XCircle className="mr-2" /> Low</span>;
-        default: return <span className={`${baseClass} badge-ghost`}>Unknown</span>;
+        case 'Very High':
+            return <span className={`${baseClass} badge-success`}><CheckCircle className="mr-2" /> Very High</span>;
+        case 'High':
+            return <span className={`${baseClass} badge-success`}><CheckCircle className="mr-2" /> High</span>;
+        case 'Medium High':
+            return <span className={`${baseClass} badge-success`}><HelpCircle className="mr-2" /> Medium High</span>;
+        case 'Medium':
+            return <span className={`${baseClass} badge-warning`}><HelpCircle className="mr-2" /> Medium</span>;
+        case 'Medium Low':
+            return <span className={`${baseClass} badge-warning`}><AlertCircle className="mr-2" /> Medium Low</span>;
+        case 'Low':
+            return <span className={`${baseClass} badge-error`}><XCircle className="mr-2" /> Low</span>;
+        case 'Very Low':
+            return <span className={`${baseClass} badge-error`}><XCircle className="mr-2" /> Very Low</span>;
+        default:
+            return <span className={`${baseClass} badge-ghost`}>Unknown</span>;
     }
 };
 
@@ -56,10 +68,22 @@ const cleanUrl = (url: string): string => {
 const getCredibilityClass = (credibility: SourceCredibility['credibility']) => {
     const base = 'p-4 rounded-lg border transition-all scroll-mt-24';
     switch (credibility) {
-        case 'High': return `${base} bg-green-50 border-green-200 hover:shadow-md hover:border-green-300`;
-        case 'Medium': return `${base} bg-yellow-50 border-yellow-200 hover:shadow-md hover:border-yellow-300`;
-        case 'Low': return `${base} bg-red-50 border-red-200 hover:shadow-md hover:border-red-300`;
-        default: return `${base} bg-slate-50 border-slate-200 hover:shadow-md hover:border-slate-300`;
+        case 'Very High':
+            return `${base} bg-green-200 border-green-400 hover:shadow-md hover:border-green-500`;
+        case 'High':
+            return `${base} bg-green-100 border-green-300 hover:shadow-md hover:border-green-400`;
+        case 'Medium High':
+            return `${base} bg-green-50 border-green-200 hover:shadow-md hover:border-green-300`;
+        case 'Medium':
+            return `${base} bg-yellow-50 border-yellow-200 hover:shadow-md hover:border-yellow-300`;
+        case 'Medium Low':
+            return `${base} bg-yellow-100 border-yellow-300 hover:shadow-md hover:border-yellow-400`;
+        case 'Low':
+            return `${base} bg-red-50 border-red-200 hover:shadow-md hover:border-red-300`;
+        case 'Very Low':
+            return `${base} bg-red-200 border-red-400 hover:shadow-md hover:border-red-500`;
+        default:
+            return `${base} bg-slate-50 border-slate-200 hover:shadow-md hover:border-slate-300`;
     }
 };
 
@@ -119,10 +143,14 @@ const FactCheckerPage: React.FC = () => {
 
     const sortedSources = useMemo(() => {
         const credibilityScore: Record<SourceCredibility['credibility'], number> = {
-            'High': 3,
-            'Medium': 2,
+            'Very High': 6,
+            'High': 5,
+            'Medium High': 4,
+            'Medium': 3,
+            'Medium Low': 2,
             'Low': 1,
-            'Unknown': 0
+            'Very Low': 0,
+            'Unknown': -1
         };
 
         const sourceWithOriginalIndex = sources.map((s, i) => ({ ...s, originalIndex: i }));
