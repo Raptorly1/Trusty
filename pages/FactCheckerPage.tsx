@@ -48,6 +48,7 @@ const cleanUrl = (url: string): string => {
         }
     } catch (e) {
         // Not a valid URL, or other error, return original
+        console.error('Error cleaning URL:', e);
     }
     return url;
 };
@@ -186,13 +187,14 @@ const FactCheckerPage: React.FC = () => {
                                     <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-4">
                                         <h2 className="card-title text-3xl">Sources Found</h2>
                                         <div className="form-control w-full sm:w-auto">
-                                            <label className="label hidden sm:block">
+                                            <label htmlFor="credibility-sort" className="label hidden sm:block">
                                                 <span className="label-text font-semibold">Sort by Credibility</span>
                                             </label>
                                             <select
+                                                id="credibility-sort"
                                                 className="select select-bordered"
                                                 value={sortOrder}
-                                                onChange={(e) => setSortOrder(e.target.value as any)}
+                                                onChange={(e) => setSortOrder(e.target.value)}
                                                 aria-label="Sort sources by credibility"
                                             >
                                                 <option value="default">Default Order</option>
