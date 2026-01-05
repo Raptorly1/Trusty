@@ -10,5 +10,12 @@
  *
  * Do NOT hardcode secrets in this file.
  */
+// Vite environment variable type declaration for TypeScript
+interface ImportMetaEnv {
+	readonly VITE_API_KEY: string;
+}
+interface ImportMeta {
+	readonly env: ImportMetaEnv;
+}
 
 export const API_KEY = import.meta.env.VITE_API_KEY;

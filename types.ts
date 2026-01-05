@@ -1,71 +1,110 @@
-export enum InteractiveType {
-  TAP_RISKY_BEHAVIOR = 'TAP_RISKY_BEHAVIOR',
-  REAL_OR_SCAM = 'REAL_OR_SCAM',
-  CHOOSE_REAL_SITE = 'CHOOSE_REAL_SITE',
+export enum ExerciseType {
+  QUIZ = 'QUIZ',
   PASSWORD_CHECKER = 'PASSWORD_CHECKER',
-  AI_IMAGE_GUESS = 'AI_IMAGE_GUESS',
-  GUIDED_REPORTING = 'GUIDED_REPORTING',
-  CHEAT_SHEET = 'CHEAT_SHEET',
+  SCAM_IDENTIFICATION = 'SCAM_IDENTIFICATION',
 }
 
-export interface InteractiveExercise {
-  type: InteractiveType;
-  prompt: string;
-  options?: { text: string; isCorrect: boolean; feedback: string }[];
-  correctAnswerFeedback?: string;
-  extraData?: any;
+export interface QuizOption {
+  text: string;
+  isCorrect: boolean;
 }
 
-export interface Module {
-  id: number;
-  title: string;
-  subtitle: string;
-  markdownContent: string;
-  interactive: InteractiveExercise;
+export interface QuizExerciseData {
+  type: ExerciseType.QUIZ;
+  question: string;
+  options: QuizOption[];
+  correctFeedback: string;
+  incorrectFeedback: string;
 }
 
-export interface QuizQuestion {
+export interface PasswordCheckerData {
+  type: ExerciseType.PASSWORD_CHECKER;
+}
+
+export interface ScamItem {
+  content: string;
+  isScam: boolean;
+  explanation: string;
+}
+
+export interface ScamIdentificationData {
+  type: ExerciseType.SCAM_IDENTIFICATION;
+  instructions: string;
+  items: ScamItem[];
+}
+
+export type ExerciseData = QuizExerciseData | PasswordCheckerData | ScamIdentificationData;
+
+export interface CourseModule {
+  title:string;
+  description: string;
+  content: React.ReactNode;
+  exercise: ExerciseData;
+}
+
+export interface FinalQuizQuestion {
   question: string;
   options: string[];
-  correctAnswerIndex: number;
+  correctAnswer: string;
 }
 
-// Types for the new AI Checker feature
-export interface AnalysisObservation {
-    trait: string;
-    explanation: string;
-    quote: string;
+// AI Text Checker
+export interface AIHighlight {
+  snippet: string;
+  reason: string;
 }
 
-export interface HighlightedSegment {
-    start: number;
-    end: number;
-    text: string;
+export interface AITextAnalysisResult {
+  likelihood: number;
+  summary: string;
+  forAI: AIHighlight[];
+  againstAI: AIHighlight[];
+  wordCount: number;
+  readability: string;
+  complexWords: number;
+}
+
+// Feedback Tool
+export enum AnnotationType {
+  CLARITY = 'Clarity',
+  LOGIC = 'Logic',
+  EVIDENCE = 'Evidence',
+  TONE = 'Tone',
+  AI_WARNING = 'AI Warning',
+  FACT_CLAIM = 'Fact Claim',
+}
+
+export interface Annotation {
+  snippet: string;
+  feedback: string;
+  suggestion?: string;
+  type: AnnotationType;
+}
+
+export interface FeedbackResult {
+  summary: {
+    strengths: string;
+    improvements: string;
+  };
+  annotations: Annotation[];
+}
+
+// AI Image Checker
+export interface ImageAnomaly {
     reason: string;
+    box: { x: number; y: number; width: number; height: number };
 }
 
-export interface AnalysisResult {
-    likelihood_score: number;
-    observations: AnalysisObservation[];
-    highlights?: HighlightedSegment[];
+export interface AIImageAnalysisResult {
+    isLikelyAI: boolean;
+    likelihood: number;
+    anomalies: ImageAnomaly[];
 }
 
-// Types for the Fact-Check feature
-export interface WebSource {
-    uri: string;
-    title: string;
-}
-
-export interface GroundingSource {
-    web: WebSource;
-}
-
-export interface SourceCheckResult {
-    analysis: string;
-    sources: GroundingSource[];
-}
-
-// Type for the human text explanation feature
-export interface HumanTextExplanationResult {
-    explanation: string;
+// Fact Checker
+export interface SourceCredibility {
+  url: string;
+  title: string;
+  credibility: 'High' | 'Medium' | 'Low' | 'Unknown';
+  explanation: string;
 }

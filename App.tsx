@@ -1,103 +1,115 @@
 
-import React, { useState, useEffect } from 'react';
-import { COURSE_MODULES } from './constants';
-import Homepage from './components/Homepage';
-import CourseModule from './components/CourseModule';
-import Quiz from './components/Quiz';
-import Certificate from './components/Certificate';
-import FactChecker from './components/FactChecker';
-import { ImprovedTeacherFeedback } from './components/ImprovedTeacherFeedback';
+import React from 'react';
+import { HashRouter, Routes, Route, NavLink, useLocation } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Home, BookOpen, Search, FileText, ImageIcon, CheckSquare, Shield } from 'lucide-react';
 
-type View = 'home' | 'course' | 'quiz' | 'certificate' | 'ai_checker' | 'teacher_feedback';
+import HomePage from './pages/HomePage';
+import CoursePage from './pages/CoursePage';
+import AITextCheckerPage from './pages/AITextCheckerPage';
+import FeedbackToolPage from './pages/FeedbackToolPage';
+import AIImageCheckerPage from './pages/AIImageCheckerPage';
+import FactCheckerPage from './pages/FactCheckerPage';
 
-const App: React.FC = () => {
-  const [view, setView] = useState<View>('home');
-  const [currentModuleIndex, setCurrentModuleIndex] = useState(0);
-  const [quizScore, setQuizScore] = useState({ score: 0, total: 0 });
-  
-  useEffect(() => {
-    // Scroll to top when view changes
-    window.scrollTo(0, 0);
-  }, [view, currentModuleIndex]);
+const navLinks = [
+  { path: '/', label: 'Home', icon: Home },
+  { path: '/course', label: 'Course', icon: BookOpen },
+  { path: '/text-checker', label: 'Text Checker', icon: FileText },
+  { path: '/feedback-tool', label: 'Feedback Tool', icon: CheckSquare },
+  { path: '/image-checker', label: 'Image Checker', icon: ImageIcon },
+  { path: '/fact-checker', label: 'Fact-Checker', icon: Search },
+];
 
-  const handleStartCourse = () => {
-    setCurrentModuleIndex(0);
-    setView('course');
-  };
-
-  const handleGoToAIChecker = () => {
-    setView('ai_checker');
-  };
-
-  const handleGoToTeacherFeedback = () => {
-    setView('teacher_feedback');
-  };
-
-  const handleNextModule = () => {
-    if (currentModuleIndex < COURSE_MODULES.length - 1) {
-      setCurrentModuleIndex(prev => prev + 1);
-    } else {
-      setView('quiz');
-    }
-  };
-
-  const handleQuizComplete = (score: number, total: number) => {
-    setQuizScore({ score, total });
-    setView('certificate');
-  };
-
-  const handleRestart = () => {
-    setCurrentModuleIndex(0);
-    setQuizScore({ score: 0, total: 0 });
-    setView('home');
-  };
-
-  const renderContent = () => {
-    switch (view) {
-      case 'home':
-        return <Homepage onStartCourse={handleStartCourse} onGoToAIChecker={handleGoToAIChecker} onGoToTeacherFeedback={handleGoToTeacherFeedback} />;
-      case 'ai_checker':
-        return <FactChecker onBack={handleRestart} />;
-      case 'teacher_feedback':
-        return <ImprovedTeacherFeedback onBack={handleRestart} />;
-      case 'course':
-        return (
-          <div className="py-12 sm:py-16 lg:py-20">
-            <CourseModule
-              key={currentModuleIndex}
-              module={COURSE_MODULES[currentModuleIndex]}
-              onNextModule={handleNextModule}
-              isLastModule={currentModuleIndex === COURSE_MODULES.length - 1}
-            />
-             <div className="text-center mt-8 text-slate-500 font-medium">
-                Module {currentModuleIndex + 1} of {COURSE_MODULES.length}
-            </div>
-          </div>
-        );
-      case 'quiz':
-        return (
-          <div className="py-12 sm:py-16 lg:py-20">
-            <Quiz onQuizComplete={handleQuizComplete} />
-          </div>
-        );
-      case 'certificate':
-        return (
-          <div className="py-12 sm:py-16 lg:py-20">
-            <Certificate score={quizScore.score} total={quizScore.total} onRestart={handleRestart} />
-          </div>
-        );
-      default:
-        return <Homepage onStartCourse={handleStartCourse} onGoToAIChecker={handleGoToAIChecker} onGoToTeacherFeedback={handleGoToTeacherFeedback} />;
-    }
-  };
-
+const Header: React.FC = () => {
   return (
-    <div className="min-h-screen flex flex-col">
-      <main className="flex-grow">
-          {renderContent()}
-      </main>
-    </div>
+    <header className="bg-base-200/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+      <div className="navbar container mx-auto px-4">
+        <div className="navbar-start">
+          <div className="dropdown">
+            <label tabIndex={0} className="btn btn-ghost lg:hidden">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" /></svg>
+            </label>
+            <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+              {navLinks.map(({ path, label, icon: Icon }) => (
+                <li key={path}><NavLink to={path} className={({ isActive }) => isActive ? "active" : ""}> <Icon className="h-4 w-4" /> {label}</NavLink></li>
+              ))}
+            </ul>
+          </div>
+          <NavLink to="/" className="btn btn-ghost text-2xl font-bold text-primary normal-case">
+            <Shield className="h-7 w-7" /> Trusty
+          </NavLink>
+        </div>
+        <div className="navbar-center hidden lg:flex">
+          <ul className="menu menu-horizontal px-1 text-base font-medium">
+            {navLinks.map(({ path, label }) => (
+              <li key={path}><NavLink to={path} className={({ isActive }) => isActive ? "active" : ""}>{label}</NavLink></li>
+            ))}
+          </ul>
+        </div>
+        <div className="navbar-end">
+          <a className="btn btn-primary" href="#/course">Start Learning</a>
+        </div>
+      </div>
+    </header>
   );
 };
 
-export default App;
+const Footer: React.FC = () => {
+  return (
+    <footer className="footer footer-center p-10 bg-base-200 text-base-content rounded mt-16">
+      <nav className="grid grid-flow-col gap-4">
+        {navLinks.map(({ path, label }) => (
+          <NavLink key={path} to={path} className="link link-hover">{label}</NavLink>
+        ))}
+      </nav>
+      <aside>
+        <p>Copyright © 2024 - All right reserved by Trusty Digital Guardian</p>
+        <p className="text-sm text-base-content/70">Empowering safe and confident digital navigation.</p>
+      </aside>
+    </footer>
+  );
+};
+
+const PageWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0, y: -20 }}
+    transition={{ duration: 0.3 }}
+    className="container mx-auto px-4 py-8"
+  >
+    {children}
+  </motion.div>
+);
+
+
+const App: React.FC = () => {
+  const location = useLocation();
+
+  return (
+    <div className="min-h-screen bg-base-100 flex flex-col">
+      <Header />
+      <main className="flex-grow">
+        <AnimatePresence mode="wait">
+          <Routes location={location} key={location.pathname}>
+            <Route path="/" element={<PageWrapper><HomePage /></PageWrapper>} />
+            <Route path="/course" element={<PageWrapper><CoursePage /></PageWrapper>} />
+            <Route path="/text-checker" element={<PageWrapper><AITextCheckerPage /></PageWrapper>} />
+            <Route path="/feedback-tool" element={<PageWrapper><FeedbackToolPage /></PageWrapper>} />
+            <Route path="/image-checker" element={<PageWrapper><AIImageCheckerPage /></PageWrapper>} />
+            <Route path="/fact-checker" element={<PageWrapper><FactCheckerPage /></PageWrapper>} />
+          </Routes>
+        </AnimatePresence>
+      </main>
+      <Footer />
+    </div>
+  );
+}
+
+const RootApp: React.FC = () => (
+    <HashRouter>
+        <App />
+    </HashRouter>
+);
+
+export default RootApp;
