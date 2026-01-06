@@ -153,8 +153,7 @@ const SingleQuizExercise: React.FC<{ module: CourseModule, onComplete: () => voi
 };
 
 // Checklist activity component
-const ChecklistExercise: React.FC<{ module: CourseModule }> = ({ module }) => {
-    // Always call useState, even if not used
+const ChecklistExercise: React.FC<{ module: CourseModule, onComplete: () => void }> = ({ module, onComplete }) => {
     const items = (module.exercise.type === ExerciseType.CHECKLIST)
         ? (module.exercise as import('../types').ChecklistExerciseData).items
         : [];
@@ -178,6 +177,12 @@ const ChecklistExercise: React.FC<{ module: CourseModule }> = ({ module }) => {
                 ))}
             </ul>
             <div className="alert alert-info mt-4">This activity is just for you. No need to submit!</div>
+            <div className="flex justify-end mt-8">
+                <button className="btn btn-primary btn-lg" onClick={onComplete} aria-label="Next">
+                    Next
+                    <ArrowRight />
+                </button>
+            </div>
         </div>
     );
 }
@@ -562,7 +567,7 @@ const CoursePage: React.FC = () => {
                                 )}
                                 {currentModule.exercise.type === ExerciseType.PASSWORD_CHECKER && <PasswordChecker />}
                                 {currentModule.exercise.type === ExerciseType.SCAM_IDENTIFICATION && <ScamIdentificationExercise module={currentModule} onComplete={handleNext} />}
-                                {currentModule.exercise.type === ExerciseType.CHECKLIST && <ChecklistExercise module={currentModule} />}
+                                {currentModule.exercise.type === ExerciseType.CHECKLIST && <ChecklistExercise module={currentModule} onComplete={handleNext} />}
                             </>
                         )}
                         
