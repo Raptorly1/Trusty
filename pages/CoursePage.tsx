@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { courseModules as originalCourseModules, finalQuizQuestions } from '../constants/courseData';
+import { finalQuizQuestions } from '../constants/courseData';
 import ReactMarkdown from 'react-markdown';
 import { CourseModule, ExerciseType, FinalQuizQuestion, QuizOption, ScamItem } from '../types';
 import { CheckCircle, XCircle, Star, ArrowRight, RotateCcw } from 'lucide-react';
@@ -237,23 +237,32 @@ const CoursePage: React.FC = () => {
     }
 
     // Vite dynamic import for markdown modules
-    const [courseModules, setCourseModules] = useState<{
-        title: string;
-        description: string;
-        content: string;
-        exercise: any;
-    }[]>([]);
+    const [courseModules, setCourseModules] = useState<CourseModule[]>([]);
     React.useEffect(() => {
         const loadModules = async () => {
             const modules = import.meta.glob('../modules/*.md', { as: 'raw' });
             const moduleEntries = Object.entries(modules);
             const loadedMarkdowns = await Promise.all(moduleEntries.map(async ([file, loader]) => {
                 const content = await loader();
-                return content;
+                // Extract title from first markdown heading, fallback to filename
+                let title = '';
+                let description = '';
+                const headingRegex = /^#\s+(.+)/m;
+                const match = headingRegex.exec(content);
+                if (match) {
+                    title = match[1].trim();
+                } else {
+                    // fallback: filename without extension
+                    title = file.split('/').pop()?.replace('.md', '') || 'Module';
+                }
+                // Optionally extract description from first paragraph after heading
+                const descRegex = /#.+\n+([^#\n][^\n]*)/;
+                const descMatch = descRegex.exec(content);
+                description = descMatch ? descMatch[1].trim() : '';
+                return { title, description, content };
             }));
-            // Define new exercises for each module
+            // Define new exercises for each module (order must match markdown file order)
             const newExercises = [
-                // Module 1: Quiz - Safe/Unsafe actions
                 {
                     type: ExerciseType.QUIZ,
                     question: "Which of the following is a safe online habit?",
@@ -266,7 +275,6 @@ const CoursePage: React.FC = () => {
                     correctFeedback: "Correct! Strong, unique passwords are a key part of online safety.",
                     incorrectFeedback: "Not quite. The safest habit is using strong, unique passwords for each account."
                 },
-                // Module 2: Scam Identification
                 {
                     type: ExerciseType.SCAM_IDENTIFICATION,
                     instructions: "Tap the messages below that you think are scams.",
@@ -277,7 +285,6 @@ const CoursePage: React.FC = () => {
                         { content: "Reminder: Your doctor's appointment is scheduled for next week.", isScam: false, explanation: "This is a normal reminder from a trusted source." },
                     ]
                 },
-                // Module 3: Quiz - Fake news verification
                 {
                     type: ExerciseType.QUIZ,
                     question: "You see a shocking news story online. What's the BEST first step?",
@@ -290,7 +297,6 @@ const CoursePage: React.FC = () => {
                     correctFeedback: "Excellent! Checking other reliable sources is the most important step.",
                     incorrectFeedback: "Pause before sharing. Checking other sources helps prevent misinformation."
                 },
-                // Module 4: Scam Identification - Safe websites/links
                 {
                     type: ExerciseType.SCAM_IDENTIFICATION,
                     instructions: "Select which of these websites or links are safe to use.",
@@ -301,11 +307,9 @@ const CoursePage: React.FC = () => {
                         { content: "http://face-book.net/login", isScam: true, explanation: "Fake domain and login prompt are signs of a scam." },
                     ]
                 },
-                // Module 5: Password Checker
                 {
                     type: ExerciseType.PASSWORD_CHECKER
                 },
-                // Module 6: Quiz - Spotting AI-generated fakes
                 {
                     type: ExerciseType.QUIZ,
                     question: "Which is a good way to spot AI-generated fake images?",
@@ -318,7 +322,6 @@ const CoursePage: React.FC = () => {
                     correctFeedback: "Correct! AI images often have odd details like too many fingers.",
                     incorrectFeedback: "Not quite. Odd details like too many fingers are a sign of AI fakes."
                 },
-                // Module 7: Quiz - Cyber hygiene habits
                 {
                     type: ExerciseType.QUIZ,
                     question: "What's the best cyber hygiene habit?",
@@ -331,7 +334,6 @@ const CoursePage: React.FC = () => {
                     correctFeedback: "Correct! Regular updates keep your devices secure.",
                     incorrectFeedback: "Nope. Installing updates is the best habit for security."
                 },
-                // Module 8: Quiz - Reporting scams
                 {
                     type: ExerciseType.QUIZ,
                     question: "If you think you've been scammed, what's the FIRST thing you should do?",
@@ -345,17 +347,40 @@ const CoursePage: React.FC = () => {
                     incorrectFeedback: "Not quite. Reporting is the most important first step."
                 }
             ];
-            // Merge markdown content with new exercises
-            const merged = originalCourseModules.map((mod, idx) => ({
-                ...mod,
-                content: loadedMarkdowns[idx] || '',
-                exercise: newExercises[idx]
-            }));
+            // Build courseModules from markdowns and exercises
+            const merged = loadedMarkdowns.map((mod, idx) => ({
+                title: mod.title,
+                description: mod.description,
+                content: mod.content,
+                exercise: (() => {
+                    const ex = newExercises[idx];
+                    if (ex.type === ExerciseType.QUIZ) {
+                        return {
+                            type: ExerciseType.QUIZ,
+                            question: ex.question,
+                            options: ex.options,
+                            correctFeedback: ex.correctFeedback,
+                            incorrectFeedback: ex.incorrectFeedback
+                        };
+                    } else if (ex.type === ExerciseType.SCAM_IDENTIFICATION) {
+                        return {
+                            type: ExerciseType.SCAM_IDENTIFICATION,
+                            instructions: ex.instructions,
+                            items: ex.items
+                        };
+                    } else if (ex.type === ExerciseType.PASSWORD_CHECKER) {
+                        return {
+                            type: ExerciseType.PASSWORD_CHECKER
+                        };
+                    }
+                    return ex;
+                })()
+            })) as CourseModule[];
             setCourseModules(merged);
         };
         loadModules();
     }, []);
-    const currentModule = courseModules[currentModuleIndex] || { title: '', description: '', content: '', exercise: null };
+    const currentModule = courseModules[currentModuleIndex] || { title: '', description: '', content: '', exercise: { type: ExerciseType.QUIZ, question: '', options: [], correctFeedback: '', incorrectFeedback: '' } };
     const progress = (currentModuleIndex + (isExerciseMode ? 0.5 : 0)) / courseModules.length * 100;
     
     if (quizScore !== null) {
