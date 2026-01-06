@@ -78,7 +78,7 @@ app.post('/api/gemini', async (req, res) => {
 
     switch (endpoint) {
       case 'generateContent':
-        if (params.config && params.config.tools) {
+        if (params.config?.tools) {
           // Handle requests with tools (like Google Search)
           result = await model.generateContent({
             contents: [{ role: 'user', parts: [{ text: params.contents }] }],
