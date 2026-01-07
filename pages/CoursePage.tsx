@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import FinalQuiz from '../components/common/FinalQuiz';
 import { motion, AnimatePresence } from 'framer-motion';
 import { finalQuizQuestions } from '../constants/courseData';
@@ -149,12 +150,32 @@ const courseModules: CourseModule[] = [
 ];
 
 const CoursePage: React.FC = () => {
+	const { moduleId } = useParams();
+	const navigate = useNavigate();
 	const [currentModuleIndex, setCurrentModuleIndex] = useState(0);
 	const [isExerciseMode, setIsExerciseMode] = useState(false);
 	const [isQuizMode, setIsQuizMode] = useState(false);
 	const [quizScore, setQuizScore] = useState<number | null>(null);
 	const [exerciseAnswers, setExerciseAnswers] = useState<any>({});
 	const [selectedAnswers, setSelectedAnswers] = useState<number[]>([]);
+	const [quizRetakeKey, setQuizRetakeKey] = useState(0);
+
+	// Sync moduleId from URL to state
+	useEffect(() => {
+		if (moduleId) {
+			const idx = parseInt(moduleId, 10) - 1;
+			if (!isNaN(idx) && idx >= 0 && idx < courseModules.length) {
+				setCurrentModuleIndex(idx);
+			}
+		}
+	}, [moduleId]);
+
+	// Update URL when module changes
+	useEffect(() => {
+		if (currentModuleIndex >= 0 && currentModuleIndex < courseModules.length) {
+			navigate(`/course/${currentModuleIndex + 1}`, { replace: true });
+		}
+	}, [currentModuleIndex, courseModules.length, navigate]);
 
 	const handleNext = () => {
 		if (!isExerciseMode) {
@@ -400,13 +421,28 @@ const CoursePage: React.FC = () => {
 	// Animation key: changes for every module/exercise view
 	const animationKey = `${currentModuleIndex}-${isExerciseMode ? 'exercise' : 'module'}`;
 
-	if (quizScore !== null) {
-		// Certificate UI is handled in FinalQuiz component
-		return null;
+	// Show certificate UI if score >= 8
+	if (quizScore !== null && quizScore >= 8) {
+		return (
+			<FinalQuiz
+				key={quizRetakeKey}
+				onComplete={() => {}}
+			/>
+		);
 	}
 
 	if (isQuizMode) {
-		return <FinalQuiz onComplete={score => setQuizScore(score)} />;
+		return (
+			<FinalQuiz
+				key={quizRetakeKey}
+				onComplete={score => {
+					if (score >= 8) {
+						setQuizScore(score);
+					}
+					// If score < 8, let FinalQuiz handle retake modal and reset
+				}}
+			/>
+		);
 	}
 
 	return (

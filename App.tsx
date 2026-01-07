@@ -94,6 +94,7 @@ const App: React.FC = () => {
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<PageWrapper><HomePage /></PageWrapper>} />
             <Route path="/course" element={<PageWrapper><CoursePage /></PageWrapper>} />
+            <Route path="/course/:moduleId" element={<PageWrapper><CoursePage /></PageWrapper>} />
             <Route path="/text-checker" element={<PageWrapper><AITextCheckerPage /></PageWrapper>} />
             <Route path="/feedback-tool" element={<PageWrapper><FeedbackToolPage /></PageWrapper>} />
             <Route path="/image-checker" element={<PageWrapper><AIImageCheckerPage /></PageWrapper>} />
