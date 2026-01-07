@@ -1,6 +1,6 @@
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Lightbulb, Users, Bot, FileText, BarChart2, AlertCircle } from 'lucide-react';
 import { analyzeTextForAI } from '../services/geminiService';
@@ -35,15 +35,16 @@ const HighlightedText: React.FC<{ text: string, highlights: AIHighlight[], color
             <Tippy
                 key={`highlight-${highlight.snippet}`}
                 content={
-                    <span className="text-base font-semibold px-4 py-3" style={{ minWidth: 180, maxWidth: 320, display: 'block', whiteSpace: 'pre-line' }}>
+                    <span className="tippy-content" style={{ whiteSpace: 'pre-line' }}>
                         {highlight.reason}
                     </span>
                 }
                 placement="top"
                 arrow={true}
-                animation="shift-away"
-                theme="light"
-                maxWidth={320}
+                animation="scale"
+                theme="custom-large"
+                maxWidth={500}
+                duration={[350, 250]}
             >
                 <span className={`${color} rounded p-1 font-bold cursor-pointer transition duration-200`} style={{ outline: '2px solid #333' }}>
                     {highlight.snippet}
@@ -128,6 +129,36 @@ const ResultsDisplay: React.FC<{ result: AITextAnalysisResult, originalText: str
 };
 
 const AITextCheckerPage: React.FC = () => {
+        useEffect(() => {
+                const style = document.createElement('style');
+                style.innerHTML = `
+                    .tippy-box[data-theme~='custom-large'] {
+                        background: rgba(30,30,30,0.98);
+                        color: #fff;
+                        border-radius: 1.25rem;
+                        font-size: 1.75rem;
+                        font-weight: 800;
+                        box-shadow: 0 12px 48px rgba(0,0,0,0.35);
+                        padding: 1.25rem 2.5rem;
+                        min-width: 320px;
+                        max-width: 500px;
+                        text-align: left;
+                    }
+                    .tippy-box[data-theme~='custom-large'] .tippy-arrow {
+                        color: rgba(30,30,30,0.98);
+                        width: 40px;
+                        height: 40px;
+                    }
+                    .tippy-box[data-theme~='custom-large'] .tippy-content {
+                        font-size: 1.75rem;
+                        font-weight: 800;
+                        padding: 0;
+                        margin: 0;
+                    }
+                `;
+                document.head.appendChild(style);
+                return () => { document.head.removeChild(style); };
+        }, []);
     const [text, setText] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
