@@ -9,7 +9,8 @@ export type FinalQuizQuestion = {
   explanation?: string;
 };
 
-const finalQuizQuestions: FinalQuizQuestion[] = [
+// Complete question bank with all 20 questions
+const allQuizQuestions: FinalQuizQuestion[] = [
   {
     question: "What does being safe online mean?",
     options: [
@@ -110,9 +111,123 @@ const finalQuizQuestions: FinalQuizQuestion[] = [
     ],
     correctIndex: 1,
   },
+  // Additional 10 questions
+  {
+    question: "What does practicing online safety involve?",
+    options: [
+      "Sharing your password with friends",
+      "Keeping your information private and making smart choices while on the internet",
+      "Only watching videos on safe websites",
+      "Never going online at all",
+    ],
+    correctIndex: 1,
+  },
+  {
+    question: "Why should you be careful of email addresses that look almost correct, like \"amaz0n.com\"?",
+    options: [
+      "They might be a new version of the company's website",
+      "It's probably a scam site pretending to be the real one",
+      "They usually offer better deals",
+      "They're safe if the email says \"Dear Customer\"",
+    ],
+    correctIndex: 1,
+  },
+  {
+    question: "Which of these tools can help you check if a story is true?",
+    options: [
+      "Google Translate",
+      "FactCheck.org",
+      "YouTube",
+      "Microsoft Word",
+    ],
+    correctIndex: 1,
+  },
+  {
+    question: "Is this web address (URL) trustworthy? \"bank-of-america.co\"",
+    options: [
+      "Yes, because it includes \"bank-of-america\"",
+      "No, the \".co\" is suspicious and not the official site",
+      "Yes, it looks professional enough",
+      "Only if it loads without pop-ups",
+    ],
+    correctIndex: 1,
+  },
+  {
+    question: "What should a strong password contain?",
+    options: [
+      "Only your first name",
+      "A mix of letters, numbers, and special characters",
+      "The word \"password\"",
+      "Your birthday only",
+    ],
+    correctIndex: 1,
+  },
+  {
+    question: "You find a blog post that repeats the same idea over and over in slightly different ways. This is likely:",
+    options: [
+      "AI",
+      "Real",
+    ],
+    correctIndex: 0,
+  },
+  {
+    question: "Which of the following is a good online safety habit?",
+    options: [
+      "Installing apps from random websites",
+      "Sharing your password with a trusted friend",
+      "Hovering over links to check them before clicking",
+      "Using the same password for multiple accounts",
+    ],
+    correctIndex: 2,
+  },
+  {
+    question: "Which action helps protect your devices and personal information online?",
+    options: [
+      "Clicking on pop-ups that say you've won a prize",
+      "Using antivirus software",
+      "Keeping unused apps on your phone forever",
+      "Ignoring privacy settings on social media",
+    ],
+    correctIndex: 1,
+  },
+  {
+    question: "What is the main purpose of freezing your credit?",
+    options: [
+      "To stop new accounts from being opened in your name",
+      "To erase your past credit history",
+      "To improve your credit score quickly",
+      "To close all your current accounts",
+    ],
+    correctIndex: 0,
+  },
+  {
+    question: "If you suspect you've fallen for an online scam, which of the following is the best first step?",
+    options: [
+      "Post about it on social media to warn friends",
+      "Change your phone number immediately",
+      "Delete all your emails to avoid future scams",
+      "Report it to the Federal Trade Commission (FTC) at ReportFraud.ftc.gov",
+    ],
+    correctIndex: 3,
+  },
 ];
 
+// Function to randomly select 10 questions from the bank
+const getRandomQuestions = (): FinalQuizQuestion[] => {
+  const questions = [...allQuizQuestions];
+  
+  // Use Fisher-Yates shuffle for true randomization
+  for (let i = questions.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [questions[i], questions[j]] = [questions[j], questions[i]];
+  }
+  
+  return questions.slice(0, 10);
+};
+
 const FinalQuiz: React.FC<{ onComplete: (score: number) => void }> = ({ onComplete }) => {
+  // Generate random questions only once when component mounts
+  const [finalQuizQuestions, setFinalQuizQuestions] = useState<FinalQuizQuestion[]>(() => getRandomQuestions());
   const [answers, setAnswers] = useState<(number | null)[]>(Array(finalQuizQuestions.length).fill(null));
   const [submitted, setSubmitted] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -183,7 +298,10 @@ const FinalQuiz: React.FC<{ onComplete: (score: number) => void }> = ({ onComple
                 <div className="text-lg mb-2">You answered <span className="font-bold text-error">{score} / 10</span> correctly.</div>
                 <div className="mb-4">You need at least <span className="font-bold">8 / 10</span> to pass. Please review your answers and try again.</div>
                 <button className="btn btn-primary" onClick={() => {
-                  setAnswers(Array(finalQuizQuestions.length).fill(null));
+                  // Generate new random questions for retake
+                  const newQuestions = getRandomQuestions();
+                  setFinalQuizQuestions(newQuestions);
+                  setAnswers(Array(newQuestions.length).fill(null));
                   setSubmitted(false);
                   setShowRetakeModal(false);
                   setShowModal(false);
