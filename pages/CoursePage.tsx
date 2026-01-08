@@ -946,7 +946,6 @@ const CoursePage: React.FC = () => {
 	const [isQuizMode, setIsQuizMode] = useState(false);
 	const [quizScore, setQuizScore] = useState<number | null>(null);
 	const [exerciseAnswers, setExerciseAnswers] = useState<any>({});
-	const [selectedAnswers, setSelectedAnswers] = useState<number[]>([]);
 	const [quizRetakeKey, setQuizRetakeKey] = useState(0);
 	const [showExtraQuestions, setShowExtraQuestions] = useState(false);
 	const [extraQuestionAnswers, setExtraQuestionAnswers] = useState<number[]>([]);
@@ -978,7 +977,6 @@ const CoursePage: React.FC = () => {
 			setCurrentModuleIndex(prev => prev + 1);
 			setIsExerciseMode(false);
 			setExerciseAnswers({});
-			setSelectedAnswers([]);
 			setShowExtraQuestions(false);
 			setExtraQuestionAnswers([]);
 			setExtraExerciseAnswers({});
@@ -992,7 +990,6 @@ const CoursePage: React.FC = () => {
 			setCurrentModuleIndex(prev => prev + 1);
 			setIsExerciseMode(false);
 			setExerciseAnswers({});
-			setSelectedAnswers([]);
 			setShowExtraQuestions(false);
 			setExtraQuestionAnswers([]);
 			setExtraExerciseAnswers({});
@@ -1158,25 +1155,23 @@ const CoursePage: React.FC = () => {
 										<p className="text-base mb-4">"{item.content}"</p>
 										<div className="flex gap-3">
 											<button 
-												className={`btn ${selectedAnswers.includes(index) && exerciseAnswers[index] === true ? 'btn-error' : 'btn-outline'}`}
+												className={`btn ${exerciseAnswers[index] === true ? 'btn-error' : 'btn-outline'}`}
 												onClick={() => {
-													setSelectedAnswers(prev => [...prev.filter(i => i !== index), index]);
 													setExerciseAnswers(prev => ({ ...prev, [index]: true }));
 												}}
 											>
 												Scam
 											</button>
 											<button 
-												className={`btn ${selectedAnswers.includes(index) && exerciseAnswers[index] === false ? 'btn-success' : 'btn-outline'}`}
+												className={`btn ${exerciseAnswers[index] === false ? 'btn-success' : 'btn-outline'}`}
 												onClick={() => {
-													setSelectedAnswers(prev => [...prev.filter(i => i !== index), index]);
 													setExerciseAnswers(prev => ({ ...prev, [index]: false }));
 												}}
 											>
 												Legitimate
 											</button>
 										</div>
-										{selectedAnswers.includes(index) && (
+										{exerciseAnswers.hasOwnProperty(index) && (
 											<div className={`mt-3 p-3 rounded ${item.isScam === exerciseAnswers[index] ? 'bg-success/20 text-success-content' : 'bg-error/20 text-error-content'}`}>
 												{item.explanation}
 											</div>
@@ -1201,37 +1196,40 @@ const CoursePage: React.FC = () => {
 					<div className="space-y-4">
 						{questions.map((question: any, qIndex: number) => (
 							<div key={`question-${question.question}`} className="space-y-4">
-								<h3 className="text-xl font-semibold">{question.question}</h3>
+								<h3 className="text-xl font-semibold">Question {qIndex + 1}: {question.question}</h3>
 								<div className="space-y-2">
 									{question.options.map((option: any, oIndex: number) => {
-										const isSelected = selectedAnswers.includes(oIndex);
-										const buttonClass = isSelected ? 
-											(option.isCorrect ? 'btn-success' : 'btn-error') : 
+										const isSelected = exerciseAnswers[qIndex] === oIndex;
+										const hasAnswered = exerciseAnswers.hasOwnProperty(qIndex);
+										const buttonClass = hasAnswered ? 
+											(option.isCorrect ? 'btn-success' : isSelected ? 'btn-error' : 'btn-outline') : 
 											'btn-outline';
 										return (
 											<button
 												key={`option-${qIndex}-${oIndex}`}
 												className={`btn ${buttonClass} w-full justify-start`}
 												onClick={() => {
-													setSelectedAnswers([oIndex]);
-													setExerciseAnswers({ [qIndex]: oIndex });
+													if (!hasAnswered) {
+														setExerciseAnswers(prev => ({ ...prev, [qIndex]: oIndex }));
+													}
 												}}
+												disabled={hasAnswered}
 											>
-												{option.text}
+												{String.fromCharCode(65 + oIndex)}. {option.text}
 											</button>
 										);
 									})}
 								</div>
-								{selectedAnswers.length > 0 && (
+								{exerciseAnswers.hasOwnProperty(qIndex) && (
 									<div className="mt-4">
 										<div className={`p-4 rounded ${
-											question.options[selectedAnswers[0]]?.isCorrect ? 
+											question.options[exerciseAnswers[qIndex]]?.isCorrect ? 
 												'bg-success/20 text-success-content' : 
 												'bg-error/20 text-error-content'
 										}`}>
-											{question.options[selectedAnswers[0]]?.isCorrect ? 
-												'Correct! Great job.' : 
-												`Incorrect. The correct answer is: ${question.options.find((o: any) => o.isCorrect)?.text}`
+											{question.options[exerciseAnswers[qIndex]]?.isCorrect ? 
+												'✅ Correct! Great job.' : 
+												`❌ Incorrect. The correct answer is: ${String.fromCharCode(65 + question.options.findIndex((o: any) => o.isCorrect))}. ${question.options.find((o: any) => o.isCorrect)?.text}`
 											}
 										</div>
 									</div>
@@ -1357,6 +1355,15 @@ const CoursePage: React.FC = () => {
 						
 						{/* Render extra questions if enabled for Module 3 */}
 						{currentModuleIndex === 2 && showExtraQuestions && renderExtraQuestions()}
+						
+						{/* Render extra questions if enabled for Module 4 */}
+						{currentModuleIndex === 3 && showExtraQuestions && renderExtraQuestions()}
+						
+						{/* Render extra questions if enabled for Module 5 */}
+						{currentModuleIndex === 4 && showExtraQuestions && renderExtraQuestions()}
+						
+						{/* Render extra questions if enabled for Module 6 */}
+						{currentModuleIndex === 5 && showExtraQuestions && renderExtraQuestions()}
 						
 						<div className="mt-8">
 							<button onClick={handleExerciseComplete} className="btn btn-primary btn-lg">
