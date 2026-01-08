@@ -63,7 +63,7 @@ const Footer: React.FC = () => {
         ))}
       </nav>
       <aside>
-        <p>All right reserved by Trusty</p>
+        <p>Made by Prahas Duggireddy and Chloesse Chang</p>
         <p className="text-sm text-base-content/70">Empowering safe and confident digital navigation.</p>
       </aside>
     </footer>
