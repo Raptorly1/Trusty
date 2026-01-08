@@ -266,14 +266,25 @@ const FinalQuiz: React.FC<{ onComplete: (score: number) => void }> = ({ onComple
       ctx.shadowOffsetX = 1;
       ctx.shadowOffsetY = 1;
 
-      // Draw the name in the center of the certificate
-      const centerX = canvas.width / 2;
-      const nameY = canvas.height * 0.55; // Position name roughly in the middle
-      ctx.fillText(name, centerX, nameY);
+    // Draw the name in the center of the certificate
+    const centerX = canvas.width / 2;
+    const nameY = canvas.height * 0.55; // Position name roughly in the middle
+    ctx.fillText(name, centerX, nameY);
 
-      // Generate the final certificate as data URL
-      const dataUrl = canvas.toDataURL('image/png', 1.0);
-      setGeneratedCertificate(dataUrl);
+  // Draw the current date in the lower left above the 'DATE' label
+  ctx.font = 'italic 32px serif';
+  ctx.fillStyle = '#34495e';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'middle';
+  const dateStr = new Date().toLocaleDateString();
+  // These coordinates are visually estimated for a 1200x900 canvas and your certificate layout
+  const dateX = 180; // left margin
+  const dateY = 760; // just above the DATE line
+  ctx.fillText(dateStr, dateX, dateY);
+
+    // Generate the final certificate as data URL
+    const dataUrl = canvas.toDataURL('image/png', 1.0);
+    setGeneratedCertificate(dataUrl);
     };
     
     img.src = '/assets/images/FinalCertificate.png';
@@ -302,7 +313,7 @@ const FinalQuiz: React.FC<{ onComplete: (score: number) => void }> = ({ onComple
     printWindow.document.head.innerHTML = `
       <style>
         body { margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        img { max-width: 100%; height: auto; }
+        img { max-width: 1![1754873825558](image/FinalQuiz/1754873825558.png)00%; height: auto; }
         @media print { body { margin: 0; } img { width: 100%; } }
       </style>
     `;
