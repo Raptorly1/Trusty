@@ -1,5 +1,6 @@
 import React from 'react';
 import { Phone, Mail, MessageSquare, Gift, AlertTriangle, Shield, Eye, ExternalLink } from 'lucide-react';
+import SourcesButton from '../common/SourcesButton';
 
 const Module2: React.FC = () => {
   return (
@@ -198,6 +199,7 @@ const Module2: React.FC = () => {
       </div>
 
       {/* Summary */}
+            {/* Summary */}
       <div className="card bg-primary text-primary-content">
         <div className="card-body text-center">
           <h3 className="text-2xl font-bold">Remember: When in doubt, trust your instincts!</h3>
@@ -206,6 +208,9 @@ const Module2: React.FC = () => {
           </p>
         </div>
       </div>
+
+      {/* Sources Button */}
+      <SourcesButton moduleNumber={2} />
     </div>
   );
 };
