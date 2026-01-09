@@ -23,46 +23,88 @@ const navLinks = [
   { path: '/fact-checker', label: 'Fact-Checker', icon: Search },
 ];
 
+
+
+// Move MobileDropdown out of Header
+const MobileDropdown: React.FC<{
+  navLinks: typeof navLinks,
+  dropdownOpen: boolean,
+  setDropdownOpen: React.Dispatch<React.SetStateAction<boolean>>
+}> = ({ navLinks, dropdownOpen, setDropdownOpen }) => (
+  <div className="relative">
+    <button
+      tabIndex={0}
+      aria-label="Open navigation menu"
+      className="btn btn-ghost min-h-[44px] h-11 w-11 p-0 rounded-lg flex items-center justify-center border border-transparent hover:border-primary hover:bg-primary/10 focus:border-primary focus:bg-primary/20"
+      onClick={() => setDropdownOpen((open) => !open)}
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" />
+      </svg>
+    </button>
+    <AnimatePresence>
+      {dropdownOpen && (
+        <motion.ul
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.2 }}
+          className="absolute left-0 mt-2 z-50 p-3 shadow-lg bg-base-100 rounded-2xl w-56 border border-base-300"
+        >
+          {navLinks.map(({ path, label, icon: Icon }) => (
+            <li key={path} className="mb-1 last:mb-0">
+              <NavLink
+                to={path}
+                className={({ isActive }) => `flex items-center gap-3 p-3 rounded-lg text-base font-medium transition-colors focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-base-100 ${
+                  isActive
+                    ? "bg-primary text-primary-content"
+                    : "hover:bg-base-200 text-base-content"
+                }`}
+                onClick={() => setDropdownOpen(false)}
+              >
+                <Icon className="h-5 w-5 flex-shrink-0" />
+                <span>{label}</span>
+              </NavLink>
+            </li>
+          ))}
+        </motion.ul>
+      )}
+    </AnimatePresence>
+  </div>
+);
+
 const Header: React.FC = () => {
   const { status } = useServerStatus(true);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const header = document.getElementById('trusty-header');
+      if (!header) return;
+      const rect = header.getBoundingClientRect();
+      setIsScrolled(rect.top < 0);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
-    <header className="bg-base-200/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+    <header id="trusty-header" className="bg-base-200/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
       <div className="navbar container mx-auto px-3 sm:px-4 min-h-[64px]">
         <div className="navbar-start">
-          <div className="dropdown">
-            <button 
-              tabIndex={0} 
-              aria-label="Open navigation menu" 
-              className="btn btn-ghost lg:hidden min-h-[44px] h-11 w-11 p-0 rounded-lg flex items-center justify-center border border-transparent hover:border-primary hover:bg-primary/10 focus:border-primary focus:bg-primary/20"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" />
-              </svg>
-            </button>
-            <ul className="menu menu-sm dropdown-content mt-3 z-[1] p-3 shadow-lg bg-base-100 rounded-2xl w-56 border border-base-300 animate-in slide-in-from-top-2 duration-200">
-              {navLinks.map(({ path, label, icon: Icon }) => (
-                <li key={path} className="mb-1 last:mb-0">
-                  <NavLink 
-                    to={path} 
-                    className={({ isActive }) => `flex items-center gap-3 p-3 rounded-lg text-base font-medium transition-colors focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-base-100 ${
-                      isActive 
-                        ? "bg-primary text-primary-content" 
-                        : "hover:bg-base-200 text-base-content"
-                    }`}
-                  > 
-                    <Icon className="h-5 w-5 flex-shrink-0" /> 
-                    <span>{label}</span>
-                  </NavLink>
-                </li>
-              ))}
-            </ul>
+          {/* Show mobile dropdown if scrolled or on small screens */}
+          <div className="lg:hidden">
+            {(isScrolled || window.innerWidth < 1024) ? (
+              <MobileDropdown navLinks={navLinks} dropdownOpen={dropdownOpen} setDropdownOpen={setDropdownOpen} />
+            ) : null}
           </div>
           <NavLink to="/" className="inline-flex items-center gap-2 px-3 py-2 text-xl sm:text-2xl font-bold text-primary normal-case rounded-full border border-transparent hover:border-primary hover:bg-primary/10 focus:border-primary focus:bg-primary/20 transition">
-                          <img src="/Logo.png" alt="Trusty Logo" className="h-8 w-8 sm:h-12 sm:w-12 object-contain" /> 
-                          <span className="hidden xs:inline sm:inline">Trusty</span>
+            <img src="/Logo.png" alt="Trusty Logo" className="h-8 w-8 sm:h-12 sm:w-12 object-contain" />
+            <span className="hidden xs:inline sm:inline">Trusty</span>
           </NavLink>
         </div>
+        {/* Desktop nav links */}
         <div className="navbar-center hidden lg:flex">
           <ul className="menu menu-horizontal px-1 text-base font-medium">
             {navLinks.map(({ path, label }) => (
