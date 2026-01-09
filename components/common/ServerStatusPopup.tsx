@@ -25,7 +25,7 @@ const ServerStatusPopup: React.FC<ServerStatusPopupProps> = ({
         return {
           icon: <Clock className="h-8 w-8 text-warning animate-spin" />,
           title: 'Server is Starting Up',
-          message: 'Our server is waking up to process your request. This usually takes about 30-45 seconds.',
+          message: 'Our server is waking up in the background. You can still submit requests - they\'ll be processed once the server is ready!',
           waitTime: estimatedWaitTime,
           variant: 'warning'
         };
@@ -33,19 +33,19 @@ const ServerStatusPopup: React.FC<ServerStatusPopupProps> = ({
         return {
           icon: <AlertCircle className="h-8 w-8 text-error" />,
           title: 'Server Unavailable',
-          message: 'We\'re having trouble connecting to our servers. Please try again in a few moments.',
+          message: 'We\'re having trouble connecting to our servers. You can still try submitting requests, but they may take longer than usual.',
           variant: 'error'
         };
       case 'ready':
         return {
           icon: <CheckCircle className="h-8 w-8 text-success" />,
           title: 'Server Ready!',
-          message: 'Everything is working perfectly. You can now use all features.',
+          message: 'Everything is working perfectly. You can now use all features at full speed.',
           variant: 'success'
         };
       default:
         return {
-          icon: <Server className="h-8 w-8 text-info" />,
+          icon: <Server className="h-8 w-8 text-info animate-pulse" />,
           title: 'Checking Server Status',
           message: 'Please wait while we check if our services are available.',
           variant: 'info'
@@ -127,7 +127,7 @@ const ServerStatusPopup: React.FC<ServerStatusPopupProps> = ({
               {status === 'warming' && (
                 <div className="text-sm text-base-content/60 bg-base-200 rounded-lg p-3">
                   <p className="font-medium mb-1">Why is this happening?</p>
-                  <p>Our server goes to sleep when not in use to save energy. It takes a moment to wake up when you first visit!</p>
+                  <p>Our server goes to sleep when not in use to save energy. You can still use the website normally - just submit your requests and they'll be processed when ready!</p>
                 </div>
               )}
             </div>
