@@ -1,5 +1,6 @@
 import React from 'react';
 import { RefreshCw, Smartphone, Key, Clock, Shield, Download, Eye, CheckCircle, FileText } from 'lucide-react';
+import SourcesButton from '../common/SourcesButton';
 
 const Module7: React.FC = () => {
   return (
@@ -410,6 +411,9 @@ const Module7: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Sources Button */}
+      <SourcesButton moduleNumber={7} />
     </div>
   );
 };
