@@ -125,7 +125,7 @@ const HomePage: React.FC = () => {
       >
   <h2 className="text-5xl font-bold mb-12" style={{ color: '#6C1BA0' }}>Why Trusty Matters</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-          {/* 1 in 4 Counter */}
+          {/* 1 in 4 */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -134,12 +134,10 @@ const HomePage: React.FC = () => {
             className="bg-base-100 rounded-xl shadow p-6 text-xl border border-base-300 transition hover:scale-105 hover:border-primary cursor-pointer flex flex-col items-center gap-2"
           >
             <Shield className="h-10 w-10 mb-2" style={{ color: '#6C1BA0' }} />
-            <p className="font-bold text-3xl mb-2" style={{ color: '#6C1BA0' }}>
-              {useCountUp({ end: 1, duration: 1 })} in {useCountUp({ end: 4, duration: 1 })}
-            </p>
-            <p>older adults gets targeted by an online scam every year</p>
+            <p className="font-bold text-3xl mb-2" style={{ color: '#6C1BA0' }}>1 in 4</p>
+            <p>Every year, one in four older adults is targeted by an online scam.</p>
           </motion.div>
-          {/* $3 Billion+ Counter */}
+          {/* $3 Billion+ */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -148,12 +146,10 @@ const HomePage: React.FC = () => {
             className="bg-base-100 rounded-xl shadow p-6 text-xl border border-base-300 transition hover:scale-105 hover:border-primary cursor-pointer flex flex-col items-center gap-2"
           >
             <DollarSign className="h-10 w-10 mb-2" style={{ color: '#6C1BA0' }} />
-            <p className="font-bold text-3xl mb-2" style={{ color: '#6C1BA0' }}>
-              ${useCountUp({ end: 3, duration: 1 })} Billion+
-            </p>
-            <p>seniors lost to fraud in 2023</p>
+            <p className="font-bold text-3xl mb-2" style={{ color: '#6C1BA0' }}>$3 Billion+</p>
+            <p>In 2023, seniors lost over $3 billion to fraud.</p>
           </motion.div>
-          {/* Static third card */}
+          {/* It's Getting Harder */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -162,8 +158,8 @@ const HomePage: React.FC = () => {
             className="bg-base-100 rounded-xl shadow p-6 text-xl border border-base-300 transition hover:scale-105 hover:border-primary cursor-pointer flex flex-col items-center gap-2"
           >
             <BookOpen className="h-10 w-10 mb-2" style={{ color: '#6C1BA0' }} />
-            <p className="font-bold text-3xl mb-2" style={{ color: '#6C1BA0' }}>It's Getting Harder</p>
-            <p>With AI, fake websites, and scam calls, it's harder to tell what's real</p>
+            <p className="font-bold text-3xl mb-2" style={{ color: '#6C1BA0' }}>It’s Getting Harder</p>
+            <p>With AI, fake websites, and scam calls, it’s becoming more difficult to know what’s real.</p>
           </motion.div>
         </div>
         <p className="text-2xl text-base-content/80 max-w-2xl mx-auto">But don't worry! You don't need to be a tech expert. Trusty will guide you, one simple step at a time. Trusty is always here for you.</p>
