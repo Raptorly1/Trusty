@@ -49,21 +49,21 @@ const MobileDropdown: React.FC<{
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.2 }}
-          className="absolute left-0 mt-2 z-50 p-3 shadow-lg bg-base-100 rounded-2xl w-56 border border-base-300"
+          className="absolute left-0 mt-2 z-50 p-3 shadow-lg bg-base-100 rounded-2xl w-56 border border-base-300 flex flex-col items-center"
         >
           {navLinks.map(({ path, label, icon: Icon }) => (
             <li key={path} className="mb-1 last:mb-0">
               <NavLink
                 to={path}
-                className={({ isActive }) => `flex items-center gap-3 p-3 rounded-lg text-base font-medium transition-colors focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-base-100 ${
+                className={({ isActive }) => `flex flex-col items-center justify-center gap-2 p-3 rounded-lg text-base font-medium transition-colors focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-base-100 text-center ${
                   isActive
                     ? "bg-primary text-primary-content"
                     : "hover:bg-base-200 text-base-content"
                 }`}
                 onClick={() => setDropdownOpen(false)}
               >
-                <Icon className="h-5 w-5 flex-shrink-0" />
-                <span>{label}</span>
+                <Icon className="h-5 w-5 flex-shrink-0 mx-auto" />
+                <span className="w-full text-center">{label}</span>
               </NavLink>
             </li>
           ))}
@@ -105,11 +105,11 @@ const Header: React.FC = () => {
           </NavLink>
         </div>
         {/* Desktop nav links - spread out */}
-        <nav className="hidden lg:flex flex-1 justify-start ml-8">
-          <ul className="flex gap-6 xl:gap-10 text-base font-medium">
+        <nav className="hidden lg:flex flex-1 justify-center ml-8">
+          <ul className="flex gap-6 xl:gap-10 text-base font-medium w-full justify-center">
             {navLinks.map(({ path, label }) => (
-              <li key={path}>
-                <NavLink to={path} className={({ isActive }) => isActive ? "active text-primary" : "hover:text-primary/80"}>{label}</NavLink>
+              <li key={path} className="w-full flex justify-center">
+                <NavLink to={path} className={({ isActive }) => isActive ? "active text-primary text-center" : "hover:text-primary/80 text-center"}>{label}</NavLink>
               </li>
             ))}
           </ul>
@@ -122,9 +122,9 @@ const Header: React.FC = () => {
           <div className="flex sm:hidden">
             <ServerStatusIndicator status={status} showText={false} size="xs" />
           </div>
-          <a className="btn btn-primary min-h-[44px] h-11 px-3 sm:px-4 text-sm sm:text-base font-medium" href="#/course">
-            <span className="hidden sm:inline">Start Learning</span>
-            <span className="sm:hidden">Start</span>
+          <a className="btn btn-primary min-h-[44px] h-11 px-3 sm:px-4 text-sm sm:text-base font-medium flex items-center justify-center text-center" href="#/course">
+            <span className="hidden sm:inline w-full text-center">Start Learning</span>
+            <span className="sm:hidden w-full text-center">Start</span>
           </a>
         </div>
       </div>
