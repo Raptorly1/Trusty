@@ -70,7 +70,6 @@ const ResultsDisplay: React.FC<{ result: AITextAnalysisResult, originalText: str
                 <div className="card-body">
                     <h2 className="card-title text-3xl">Analysis Summary</h2>
                     <p className="text-lg">{result.summary}</p>
-                    <button onClick={onAudioGenerate} className="btn btn-secondary mt-2 w-fit">Get Audio Summary</button>
                 </div>
             </div>
 
@@ -248,6 +247,12 @@ const AITextCheckerPage: React.FC = () => {
                 
                 {(result || isGenerating || isPlaying || audioError) && (
                     <div className="my-4">
+                        {/* Place the action button above the audio summary/player */}
+                        {result && (
+                            <div className="mb-4">
+                                <button onClick={handleGenerateAudio} className="btn btn-secondary w-fit">Get Audio Summary</button>
+                            </div>
+                        )}
                         <AudioPlayer 
                             isPlaying={isPlaying} 
                             isGenerating={isGenerating} 
