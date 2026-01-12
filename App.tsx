@@ -62,10 +62,10 @@ const MobileDropdown: React.FC<{
               <li key={path} className="mb-1 last:mb-0">
                 <NavLink
                   to={path}
-                  className={({ isActive }) => `flex flex-col items-center justify-center gap-2 p-3 rounded-lg text-base font-medium transition-colors focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-base-100 text-center ${
+                  className={({ isActive }) => `flex flex-col items-center justify-center gap-2 p-3 rounded-lg text-base font-medium transform transition duration-200 ease-in-out focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-base-100 text-center ${
                       isActive
                         ? "text-[#6C1BA0] font-bold"
-                        : "text-black hover:bg-base-200"
+                        : "text-black hover:bg-base-200 hover:-translate-y-1 hover:scale-105"
                     }`}
                   onClick={(e) => {
                     // Allow the navigation to process first, then close dropdown
@@ -128,11 +128,12 @@ const Header: React.FC = () => {
               <li key={path} className="w-full flex justify-center">
                 <NavLink
                   to={path}
-                  // Apply purple color only when active; otherwise use default text color
+                  // Apply purple color only when active; otherwise use default text color.
+                  // Add a subtle hover animation (lift + scale) without changing color on hover.
                   className={({ isActive }) =>
                     isActive
-                      ? "font-bold border-b-2 px-3 py-2 transition-all duration-200 text-[#6C1BA0]"
-                      : "px-3 py-2 transition-all duration-200 text-base-content"
+                      ? "font-bold border-b-2 px-3 py-2 transform transition duration-200 ease-in-out text-[#6C1BA0] hover:-translate-y-1 hover:scale-105"
+                      : "px-3 py-2 transform transition duration-200 ease-in-out text-base-content hover:-translate-y-1 hover:scale-105"
                   }
                   style={({ isActive }) => ({
                     borderBottomColor: isActive ? '#6C1BA0' : undefined,
