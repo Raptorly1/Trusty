@@ -406,71 +406,131 @@ footer {
     text-decoration: none;
 }
 
-/* Interactive Elements */
-.quiz-container {
-    margin: 20px 0;
+/* Module Navigation Styles */
+.module-navigation {
+    margin-top: 40px;
 }
 
-.quiz-question {
+.prev-next-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.prev-next-buttons a {
+    margin: 5px;
+    text-decoration: none;
+}
+
+/* Reporting Guide Styles */
+.reporting-guide {
+    background-color: var(--white);
+    border-radius: 8px;
+    padding: 25px;
+    margin: 20px 0;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.step-by-step {
+    margin-top: 20px;
+}
+
+.step {
+    background-color: var(--light-gray);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-left: 5px solid var(--primary-color);
+}
+
+.step h5 {
+    color: var(--primary-color);
     font-size: 1.2rem;
-    font-weight: 600;
     margin-bottom: 15px;
 }
 
-.quiz-options {
-    margin-bottom: 20px;
+.step p {
+    margin-bottom: 15px;
 }
 
-.quiz-option {
-    display: block;
-    padding: 12px 20px;
-    margin-bottom: 10px;
-    background-color: var(--white);
-    border: 1px solid var(--medium-gray);
+.next-step, .restart {
+    background-color: var(--primary-color);
+    color: var(--white);
+    border: none;
     border-radius: 5px;
+    padding: 8px 16px;
     cursor: pointer;
+    font-size: 0.9rem;
     transition: all 0.3s ease;
 }
 
-.quiz-option:hover {
-    background-color: var(--light-gray);
+.next-step:hover, .restart:hover {
+    background-color: #3367d6;
+    transform: translateY(-2px);
 }
 
-.quiz-option.selected {
-    background-color: var(--primary-color);
-    color: white;
-    border-color: var(--primary-color);
-}
-
-.quiz-option.correct {
+.restart {
     background-color: var(--secondary-color);
-    color: white;
-    border-color: var(--secondary-color);
 }
 
-.quiz-option.incorrect {
-    background-color: var(--warning-color);
-    color: white;
-    border-color: var(--warning-color);
+.restart:hover {
+    background-color: #2a8644;
 }
 
-.feedback {
-    padding: 15px;
-    border-radius: 5px;
-    margin-top: 15px;
-    display: none;
+/* Activity Box Styles */
+.activity-box {
+    background-color: var(--light-gray);
+    border-radius: 8px;
+    padding: 25px;
+    margin: 20px 0;
+    border-left: 5px solid var(--accent-color);
 }
 
-.feedback.success {
-    background-color: rgba(52, 168, 83, 0.1);
-    border: 1px solid rgba(52, 168, 83, 0.3);
+.activity-box h3 {
+    color: var(--accent-color);
+    margin-bottom: 15px;
+}
+
+/* Cheatsheet Styles */
+.cheatsheet {
+    background-color: var(--white);
+    border-radius: 8px;
+    padding: 25px;
+    margin: 20px 0;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    border-left: 5px solid var(--secondary-color);
+}
+
+.cheatsheet h3 {
     color: var(--secondary-color);
+    margin-bottom: 20px;
 }
 
-.feedback.error {
-    background-color: rgba(234, 67, 53, 0.1);
-    border: 1px solid rgba(234, 67, 53, 0.3);
-    color: var(--warning-color);
+.checklist {
+    margin-bottom: 25px;
+}
+
+.checklist-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+}
+
+.checklist-item input[type="checkbox"] {
+    margin-right: 10px;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--secondary-color);
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.checklist-item label {
+    cursor: pointer;
+    line-height: 1.5;
 }
 
 /* Media Queries */
