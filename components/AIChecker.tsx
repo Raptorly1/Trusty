@@ -1,5 +1,6 @@
 
 import React, { useState, useMemo, useRef, useEffect } from 'react';
+import ReactMarkdown from 'react-markdown';
 import type { JSX } from 'react';
 import { AnalysisResult, AnalysisObservation, SourceCheckResult, HumanTextExplanationResult } from '../types';
 import { analyzeTextForAI, findSourcesForText, explainHumanText } from '../services/geminiService';
@@ -102,7 +103,9 @@ const CommentBubble: React.FC<{ observation: AnalysisObservation; onClose: () =>
                 <ChatBubble className="h-6 w-6 text-amber-700 flex-shrink-0" />
                 <h3 className="font-kalam text-lg font-bold text-amber-800">{observation.trait}</h3>
             </div>
-            <p className="text-sm text-slate-700 leading-relaxed">{observation.explanation}</p>
+            <div className="text-sm text-slate-700 leading-relaxed">
+                <ReactMarkdown>{observation.explanation}</ReactMarkdown>
+            </div>
         </div>
     );
 };
@@ -186,7 +189,9 @@ const FactCheckModal: React.FC<{
 
                             <div>
                                 <h3 className="text-lg font-bold text-slate-800 mb-2 font-kalam">Analysis</h3>
-                                <p className="text-slate-700 leading-relaxed">{result.analysis}</p>
+                                <div className="text-slate-700 leading-relaxed">
+                                    <ReactMarkdown>{result.analysis}</ReactMarkdown>
+                                </div>
                             </div>
 
                             {activeSourceUrl && (
@@ -256,7 +261,9 @@ const ExplanationModal: React.FC<{
                 {explanation && (
                      <div>
                         <h3 className="text-lg font-bold text-slate-800 mb-2 font-kalam">My thoughts...</h3>
-                        <p className="text-slate-700 leading-relaxed">{explanation.explanation}</p>
+                        <div className="text-slate-700 leading-relaxed">
+                            <ReactMarkdown>{explanation.explanation}</ReactMarkdown>
+                        </div>
                     </div>
                 )}
             </div>
@@ -417,75 +424,40 @@ const AIChecker: React.FC<AICheckerProps> = ({ onBack }) => {
     };
     
     const renderHighlightedText = () => {
-        if (!result || !text || result.observations.length === 0) {
+        if (!result || !text || !Array.isArray(result.highlights) || result.highlights.length === 0) {
             return <div ref={resultsContainerRef} className="whitespace-pre-wrap leading-loose text-lg text-slate-800">{text}</div>;
         }
-    
-        const { observations } = result;
+
+        const highlights = result.highlights;
         let lastIndex = 0;
         const parts: (string | JSX.Element)[] = [];
-    
-        const tempObservations = observations
-            .map((obs, index) => ({ ...obs, originalIndex: index }))
-            .filter(obs => obs.quote?.trim());
-    
-        const foundIndices = new Set<number>();
-    
-        const locatedObs = tempObservations
-            .map(obs => {
-                let startIndex = -1;
-                let searchPos = 0;
-                while (searchPos < text.length) {
-                    const potentialIndex = text.indexOf(obs.quote, searchPos);
-                    if (potentialIndex === -1) break;
-    
-                    let isTaken = false;
-                    for (const foundIdx of foundIndices) {
-                        if (potentialIndex < foundIdx + 1 && potentialIndex + obs.quote.length > foundIdx) {
-                            isTaken = true;
-                            break;
-                        }
-                    }
-    
-                    if (!isTaken) {
-                        startIndex = potentialIndex;
-                        for(let i=0; i < obs.quote.length; i++) {
-                            foundIndices.add(startIndex + i);
-                        }
-                        break;
-                    }
-                    searchPos = potentialIndex + 1;
-                }
-                return { ...obs, startIndex };
-            })
-            .filter(obs => obs.startIndex !== -1)
-            .sort((a, b) => a.startIndex - b.startIndex);
-    
-        locatedObs.forEach(obs => {
-            if (obs.startIndex > lastIndex) {
-                parts.push(text.substring(lastIndex, obs.startIndex));
+
+        highlights.forEach((hl, idx) => {
+            if (hl.start > lastIndex) {
+                parts.push(text.substring(lastIndex, hl.start));
             }
             parts.push(
                 <span
-                    key={obs.originalIndex}
-                    ref={el => { highlightRefs.current[obs.originalIndex] = el; }}
-                    onClick={() => setActiveObservationIndex(activeObservationIndex === obs.originalIndex ? null : obs.originalIndex)}
-                    className={`ai-highlight p-0.5 rounded-md cursor-pointer transition-colors duration-300 ${activeObservationIndex === obs.originalIndex ? 'bg-amber-300' : 'bg-amber-200/70 hover:bg-amber-300/90'}`}
+                    key={idx}
+                    ref={el => { highlightRefs.current[idx] = el; }}
+                    onClick={() => setActiveObservationIndex(activeObservationIndex === idx ? null : idx)}
+                    className={`ai-highlight p-0.5 rounded-md cursor-pointer transition-colors duration-300 ${activeObservationIndex === idx ? 'bg-amber-300' : 'bg-amber-200/70 hover:bg-amber-300/90'}`}
+                    title={hl.reason}
                 >
-                    {obs.quote}
+                    {hl.text}
                 </span>
             );
-            lastIndex = obs.startIndex + obs.quote.length;
+            lastIndex = hl.end;
         });
-    
+
         if (lastIndex < text.length) {
             parts.push(text.substring(lastIndex));
         }
-    
+
         if (parts.length === 0) {
             return <div ref={resultsContainerRef} className="whitespace-pre-wrap leading-loose text-lg text-slate-800">{text}</div>;
         }
-    
+
         return <div ref={resultsContainerRef} className="whitespace-pre-wrap leading-loose text-lg text-slate-800">{parts}</div>;
     };
     
@@ -558,7 +530,7 @@ const AIChecker: React.FC<AICheckerProps> = ({ onBack }) => {
                         <div className="mt-4 p-4 bg-red-100 border border-red-300 text-red-800 rounded-lg flex items-center gap-4">
                             <AlertTriangle className="h-8 w-8 text-red-600 flex-shrink-0" />
                             <div>
-                                <h3 className="font-bold">Oh dear, a little snag!</h3>
+                                <h3 className="font-bold">Problem Analyzing Text</h3>
                                 <p>{error}</p>
                             </div>
                         </div>
