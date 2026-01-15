@@ -1,5 +1,6 @@
 
 import React, { useState, useMemo, useRef, useEffect } from 'react';
+import ReactMarkdown from 'react-markdown';
 import type { JSX } from 'react';
 import { AnalysisResult, AnalysisObservation, SourceCheckResult, HumanTextExplanationResult } from '../types';
 import { analyzeTextForAI, findSourcesForText, explainHumanText } from '../services/geminiService';
@@ -102,7 +103,9 @@ const CommentBubble: React.FC<{ observation: AnalysisObservation; onClose: () =>
                 <ChatBubble className="h-6 w-6 text-amber-700 flex-shrink-0" />
                 <h3 className="font-kalam text-lg font-bold text-amber-800">{observation.trait}</h3>
             </div>
-            <p className="text-sm text-slate-700 leading-relaxed">{observation.explanation}</p>
+            <div className="text-sm text-slate-700 leading-relaxed">
+                <ReactMarkdown>{observation.explanation}</ReactMarkdown>
+            </div>
         </div>
     );
 };
@@ -186,7 +189,9 @@ const FactCheckModal: React.FC<{
 
                             <div>
                                 <h3 className="text-lg font-bold text-slate-800 mb-2 font-kalam">Analysis</h3>
-                                <p className="text-slate-700 leading-relaxed">{result.analysis}</p>
+                                <div className="text-slate-700 leading-relaxed">
+                                    <ReactMarkdown>{result.analysis}</ReactMarkdown>
+                                </div>
                             </div>
 
                             {activeSourceUrl && (
@@ -256,7 +261,9 @@ const ExplanationModal: React.FC<{
                 {explanation && (
                      <div>
                         <h3 className="text-lg font-bold text-slate-800 mb-2 font-kalam">My thoughts...</h3>
-                        <p className="text-slate-700 leading-relaxed">{explanation.explanation}</p>
+                        <div className="text-slate-700 leading-relaxed">
+                            <ReactMarkdown>{explanation.explanation}</ReactMarkdown>
+                        </div>
                     </div>
                 )}
             </div>
@@ -301,7 +308,8 @@ const AIChecker: React.FC<AICheckerProps> = ({ onBack }) => {
     const resultsContainerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        highlightRefs.current = highlightRefs.current.slice(0, result?.observations.length ?? 0);
+        const obsLength = Array.isArray(result?.observations) ? result.observations.length : 0;
+        highlightRefs.current = highlightRefs.current.slice(0, obsLength);
     }, [result]);
     
     const resetAll = () => {
@@ -416,75 +424,40 @@ const AIChecker: React.FC<AICheckerProps> = ({ onBack }) => {
     };
     
     const renderHighlightedText = () => {
-        if (!result || !text || result.observations.length === 0) {
+        if (!result || !text || !Array.isArray(result.highlights) || result.highlights.length === 0) {
             return <div ref={resultsContainerRef} className="whitespace-pre-wrap leading-loose text-lg text-slate-800">{text}</div>;
         }
-    
-        const { observations } = result;
+
+        const highlights = result.highlights;
         let lastIndex = 0;
         const parts: (string | JSX.Element)[] = [];
-    
-        const tempObservations = observations
-            .map((obs, index) => ({ ...obs, originalIndex: index }))
-            .filter(obs => obs.quote?.trim());
-    
-        const foundIndices = new Set<number>();
-    
-        const locatedObs = tempObservations
-            .map(obs => {
-                let startIndex = -1;
-                let searchPos = 0;
-                while (searchPos < text.length) {
-                    const potentialIndex = text.indexOf(obs.quote, searchPos);
-                    if (potentialIndex === -1) break;
-    
-                    let isTaken = false;
-                    for (const foundIdx of foundIndices) {
-                        if (potentialIndex < foundIdx + 1 && potentialIndex + obs.quote.length > foundIdx) {
-                            isTaken = true;
-                            break;
-                        }
-                    }
-    
-                    if (!isTaken) {
-                        startIndex = potentialIndex;
-                        for(let i=0; i < obs.quote.length; i++) {
-                            foundIndices.add(startIndex + i);
-                        }
-                        break;
-                    }
-                    searchPos = potentialIndex + 1;
-                }
-                return { ...obs, startIndex };
-            })
-            .filter(obs => obs.startIndex !== -1)
-            .sort((a, b) => a.startIndex - b.startIndex);
-    
-        locatedObs.forEach(obs => {
-            if (obs.startIndex > lastIndex) {
-                parts.push(text.substring(lastIndex, obs.startIndex));
+
+        highlights.forEach((hl, idx) => {
+            if (hl.start > lastIndex) {
+                parts.push(text.substring(lastIndex, hl.start));
             }
             parts.push(
                 <span
-                    key={obs.originalIndex}
-                    ref={el => { highlightRefs.current[obs.originalIndex] = el; }}
-                    onClick={() => setActiveObservationIndex(activeObservationIndex === obs.originalIndex ? null : obs.originalIndex)}
-                    className={`ai-highlight p-0.5 rounded-md cursor-pointer transition-colors duration-300 ${activeObservationIndex === obs.originalIndex ? 'bg-amber-300' : 'bg-amber-200/70 hover:bg-amber-300/90'}`}
+                    key={idx}
+                    ref={el => { highlightRefs.current[idx] = el; }}
+                    onClick={() => setActiveObservationIndex(activeObservationIndex === idx ? null : idx)}
+                    className={`ai-highlight p-0.5 rounded-md cursor-pointer transition-colors duration-300 ${activeObservationIndex === idx ? 'bg-amber-300' : 'bg-amber-200/70 hover:bg-amber-300/90'}`}
+                    title={hl.reason}
                 >
-                    {obs.quote}
+                    {hl.text}
                 </span>
             );
-            lastIndex = obs.startIndex + obs.quote.length;
+            lastIndex = hl.end;
         });
-    
+
         if (lastIndex < text.length) {
             parts.push(text.substring(lastIndex));
         }
-    
+
         if (parts.length === 0) {
             return <div ref={resultsContainerRef} className="whitespace-pre-wrap leading-loose text-lg text-slate-800">{text}</div>;
         }
-    
+
         return <div ref={resultsContainerRef} className="whitespace-pre-wrap leading-loose text-lg text-slate-800">{parts}</div>;
     };
     
@@ -557,7 +530,7 @@ const AIChecker: React.FC<AICheckerProps> = ({ onBack }) => {
                         <div className="mt-4 p-4 bg-red-100 border border-red-300 text-red-800 rounded-lg flex items-center gap-4">
                             <AlertTriangle className="h-8 w-8 text-red-600 flex-shrink-0" />
                             <div>
-                                <h3 className="font-bold">Oh dear, a little snag!</h3>
+                                <h3 className="font-bold">Problem Analyzing Text</h3>
                                 <p>{error}</p>
                             </div>
                         </div>
@@ -565,36 +538,46 @@ const AIChecker: React.FC<AICheckerProps> = ({ onBack }) => {
                 </div>
 
                 {(isLoading || result) && (
-                     <div className="mt-6 relative">
+                    <div className="mt-6 relative">
                         <div ref={containerRef} onMouseUp={handleMouseUp} className="paper-texture bg-white rounded-2xl shadow-xl border border-slate-200 p-8 sm:p-12 min-h-[30rem] relative">
-                             {isLoading && <LoadingSpinner text="Analyzing your text..." />}
-                             {result && !isLoading && (
+                            {isLoading && <LoadingSpinner text="Analyzing your text..." />}
+                            {result && !isLoading && (
                                 <>
-                                    <LikelihoodMeter score={result.likelihood_score} />
-                                    <div className="border-t-2 border-dashed border-slate-300 pt-6">
-                                        {result.observations.length > 0 ? (
-                                            <>
-                                                <p className="text-center font-kalam text-slate-600 mb-6 -mt-2">Click highlights to see my notes, or select any text to fact-check it!</p>
-                                                {renderHighlightedText()}
-                                            </>
-                                        ) : (
-                                            <>
-                                                <div className="text-center p-6 bg-emerald-50 border border-emerald-200 rounded-lg">
-                                                    <CheckCircle className="h-10 w-10 mx-auto text-emerald-500 mb-2" />
-                                                    <h3 className="text-lg font-semibold text-emerald-800 font-kalam">All clear!</h3>
-                                                    <p className="text-emerald-700">This text appears to be written by a human. No common AI traits were detected.</p>
-                                                </div>
-                                                <div className="mt-4 border-t-2 border-dashed border-slate-300 pt-6">
-                                                     <p className="text-center font-kalam text-slate-600 mb-6 -mt-2">You can still select any text to fact-check it!</p>
-                                                     {renderHighlightedText()}
-                                                </div>
-                                            </>
-                                        )}
-                                    </div>
+                                    {typeof result.likelihood_score !== 'number' || !Array.isArray(result.observations) ? (
+                                        <div className="text-center p-6 bg-red-50 border border-red-200 rounded-lg">
+                                            <AlertTriangle className="h-10 w-10 mx-auto text-red-500 mb-2" />
+                                            <h3 className="text-lg font-semibold text-red-800 font-kalam">Unexpected response from API service</h3>
+                                            <p className="text-red-700">Sorry, we couldn't analyze your text due to a service error. Please try again later.</p>
+                                        </div>
+                                    ) : (
+                                        <>
+                                            <LikelihoodMeter score={result.likelihood_score} />
+                                            <div className="border-t-2 border-dashed border-slate-300 pt-6">
+                                                {result.observations.length > 0 ? (
+                                                    <>
+                                                        <p className="text-center font-kalam text-slate-600 mb-6 -mt-2">Click highlights to see my notes, or select any text to fact-check it!</p>
+                                                        {renderHighlightedText()}
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <div className="text-center p-6 bg-emerald-50 border border-emerald-200 rounded-lg">
+                                                            <CheckCircle className="h-10 w-10 mx-auto text-emerald-500 mb-2" />
+                                                            <h3 className="text-lg font-semibold text-emerald-800 font-kalam">All clear!</h3>
+                                                            <p className="text-emerald-700">This text appears to be written by a human. No common AI traits were detected.</p>
+                                                        </div>
+                                                        <div className="mt-4 border-t-2 border-dashed border-slate-300 pt-6">
+                                                            <p className="text-center font-kalam text-slate-600 mb-6 -mt-2">You can still select any text to fact-check it!</p>
+                                                            {renderHighlightedText()}
+                                                        </div>
+                                                    </>
+                                                )}
+                                            </div>
+                                        </>
+                                    )}
                                 </>
-                             )}
+                            )}
                         </div>
-                         {popupPosition && (
+                        {popupPosition && (
                             <div
                                 className="absolute z-20"
                                 style={{ top: `${popupPosition.top}px`, left: `${popupPosition.left}px`, transform: 'translateX(-50%)' }}
