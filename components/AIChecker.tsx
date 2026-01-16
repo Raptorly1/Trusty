@@ -154,15 +154,12 @@ const FactCheckModal: React.FC<{
                         <XCircle className="h-7 w-7" />
                     </button>
                 </header>
-                
                 <div className="p-6 overflow-y-auto">
                     <div className="mb-6 bg-slate-100 p-4 rounded-lg">
                         <p className="text-sm text-slate-600 font-semibold mb-1">You asked about:</p>
                         <p className="text-slate-800 italic">"{selectedText}"</p>
                     </div>
-                    
                     {isChecking && <LoadingSpinner text="Searching for sources..." />}
-                    
                     {error && (
                         <div className="p-4 bg-red-100 border border-red-300 text-red-800 rounded-lg flex items-center gap-4">
                             <AlertTriangle className="h-8 w-8 text-red-600 flex-shrink-0" />
@@ -172,25 +169,21 @@ const FactCheckModal: React.FC<{
                             </div>
                         </div>
                     )}
-
                     {result && (
                         <div className="space-y-6">
-                            {result.sources.length > 0 && (
+                            {/* Sources Section */}
+                            {result.sources && result.sources.length > 0 ? (
                                 <div>
-                                    <h3 className="text-lg font-bold text-slate-800 mb-3 font-kalam">
-                                        Sources
-                                    </h3>
+                                    <h3 className="text-lg font-bold text-slate-800 mb-3 font-kalam">Sources</h3>
                                     <div className="flex flex-col gap-3">
                                         {result.sources.map((source, index) => (
                                             <div key={source.web.uri || source.web.title || index} className="p-3 rounded-lg border border-slate-200 bg-slate-50">
                                                 <div className="flex items-center gap-2 mb-1">
-                                                    <span className="font-bold text-blue-700">[{source.credibility || 'Medium'}]</span>
                                                     <span className="font-semibold">{source.web.title || 'Untitled Source'}</span>
                                                     {source.web.uri && (
                                                         <a href={source.web.uri} target="_blank" rel="noopener noreferrer" className="ml-2 text-sky-600 underline text-xs">View Source</a>
                                                     )}
                                                 </div>
-                                                <div className="text-slate-600 text-sm mb-1">{source.justification || 'No justification provided.'}</div>
                                                 {activeSourceUrl === source.web.uri && source.web.uri && (
                                                     <div className="mt-2 border border-slate-300 rounded shadow-inner overflow-hidden" style={{height: '40vh'}}>
                                                         <iframe
@@ -213,21 +206,23 @@ const FactCheckModal: React.FC<{
                                         ))}
                                     </div>
                                 </div>
-                            )}
-                            
-                            {result.sources.length === 0 && (
-                                 <div className="text-center p-4 bg-amber-50 border border-amber-200 rounded-lg">
-                                    <p className="text-amber-700">No specific web sources were returned for this query, but you can still review the AI's analysis based on its general knowledge.</p>
+                            ) : (
+                                <div className="text-center p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                                    <p className="text-amber-700">No specific web sources were returned for this query. The AI's analysis is based on its general knowledge and training data.</p>
                                 </div>
                             )}
-
+                            {/* Analysis/Summary Section */}
                             <div>
                                 <h3 className="text-lg font-bold text-slate-800 mb-2 font-kalam">Analysis</h3>
                                 <div className="text-slate-700 leading-relaxed">
-                                    <ReactMarkdown>{result.analysis}</ReactMarkdown>
+                                    {result.analysis && result.analysis.trim().length > 0 ? (
+                                        <ReactMarkdown>{result.analysis}</ReactMarkdown>
+                                    ) : (
+                                        <span className="italic text-slate-500">No summary or analysis was returned for this query.</span>
+                                    )}
                                 </div>
                             </div>
-
+                            {/* Source Preview Section */}
                             {activeSourceUrl && (
                                 <div className="border border-slate-300 rounded-lg shadow-inner overflow-hidden" style={{height: '60vh'}}>
                                     <div className="p-2 bg-slate-200 border-b border-slate-300 text-xs text-slate-600 flex justify-between items-center">
@@ -248,7 +243,6 @@ const FactCheckModal: React.FC<{
                         </div>
                     )}
                 </div>
-
                 <footer className="p-4 border-t border-slate-200 text-right flex-shrink-0 bg-slate-50">
                     <button onClick={onClose} className="bg-slate-600 text-white font-semibold py-2 px-5 rounded-lg hover:bg-slate-700 transition-colors">
                         Close
@@ -292,12 +286,16 @@ const ExplanationModal: React.FC<{
                         </div>
                     </div>
                 )}
-                {explanation && (
-                     <div>
+                {explanation?.explanation?.trim().length > 0 ? (
+                    <div>
                         <h3 className="text-lg font-bold text-slate-800 mb-2 font-kalam">Our thoughts...</h3>
                         <div className="text-slate-700 leading-relaxed">
-                            <ReactMarkdown>{explanation.explanation}</ReactMarkdown>
+                            <ReactMarkdown>{explanation!.explanation}</ReactMarkdown>
                         </div>
+                    </div>
+                ) : (
+                    <div className="text-center p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                        <p className="text-amber-700">No explanation was returned for this query. The AI could not provide a reason why this sounds human.</p>
                     </div>
                 )}
             </div>
