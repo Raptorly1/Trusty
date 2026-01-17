@@ -5,7 +5,7 @@ import Homepage from './components/Homepage';
 import CourseModule from './components/CourseModule';
 import Quiz from './components/Quiz';
 import Certificate from './components/Certificate';
-import AIChecker from './components/AIChecker';
+import FactChecker from './components/FactChecker';
 
 type View = 'home' | 'course' | 'quiz' | 'certificate' | 'ai_checker';
 
@@ -52,7 +52,7 @@ const App: React.FC = () => {
       case 'home':
         return <Homepage onStartCourse={handleStartCourse} onGoToAIChecker={handleGoToAIChecker} />;
       case 'ai_checker':
-        return <AIChecker onBack={handleRestart} />;
+        return <FactChecker onBack={handleRestart} />;
       case 'course':
         return (
           <div className="py-12 sm:py-16 lg:py-20">
