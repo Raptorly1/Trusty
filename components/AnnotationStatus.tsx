@@ -67,6 +67,11 @@ export const AnnotationStatus: React.FC<AnnotationStatusProps> = ({
         <div className="text-center text-gray-500 py-4">
           <p className="text-sm">Enter some text above and I'll help you understand it!</p>
           <p className="text-xs text-gray-400 mt-1">I'll highlight complex words, check for AI content, and explain difficult concepts.</p>
+          <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <p className="text-xs text-yellow-700">
+              <strong>Note:</strong> If analysis services are temporarily unavailable, you'll still receive helpful fallback guidance.
+            </p>
+          </div>
         </div>
       )}
     </div>
