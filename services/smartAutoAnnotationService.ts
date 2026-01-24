@@ -43,31 +43,6 @@ export class SmartAutoAnnotationService {
       : 'https://trusty-ldqx.onrender.com/api/gemini';
   }
 
-  // Common words and phrases that shouldn't be flagged
-  private genericPhrases = [
-    'identify your',
-    'airbnb came in',
-    'business model',
-    'founders are',
-    'billion dollar',
-    'when needed',
-    'at the time',
-    'one thing',
-    'make you',
-    'would make',
-    'you want',
-    'consider',
-    'important',
-    'credibility',
-    'pillar'
-  ];
-
-  // Filter out generic content that shouldn't be annotated
-  private isGenericContent(text: string): boolean {
-    const lowerText = text.toLowerCase();
-    return this.genericPhrases.some(phrase => lowerText.includes(phrase));
-  }
-
   // Check if content is worth fact-checking (contains specific claims)
   private isFactCheckWorthy(text: string): boolean {
     const factIndicators = [
@@ -299,26 +274,28 @@ export class SmartAutoAnnotationService {
       return annotations;
     }
     
-    // Only annotate truly complex words (not common business terms)
+    // Annotate complex words (removed generic filtering per user request)
     const filteredWords = complexity.complexWords.filter(word => 
       word && 
       word.word && 
       typeof word.word === 'string' &&
-      !this.isGenericContent(word.word.toLowerCase()) &&
-      word.word.length > 8 &&
-      !['business', 'important', 'information', 'organization'].includes(word.word.toLowerCase())
+      word.word.length > 3 &&
+      typeof word.position === 'number'
     );
     
     filteredWords.slice(0, 3).forEach((word, index) => {
-      annotations.push({
-        id: `complex-word-${Date.now()}-${index}`,
-        start: word.position,
-        end: word.position + word.word.length,
-        text: word.word,
-        type: 'comment',
-        comment: `📚 Complex Term: "${word.word}" means ${word.simplification}. This might be helpful to know.`,
-        timestamp: Date.now()
-      });
+      // Double-check the word object is valid before using it
+      if (word && word.word && typeof word.word === 'string' && typeof word.position === 'number') {
+        annotations.push({
+          id: `complex-word-${Date.now()}-${index}`,
+          start: word.position,
+          end: word.position + word.word.length,
+          text: word.word,
+          type: 'comment',
+          comment: `📚 Complex Term: "${word.word}" means ${word.simplification || 'a more complex concept'}. This might be helpful to know.`,
+          timestamp: Date.now()
+        });
+      }
     });
 
     // Only flag truly problematic long sentences (over 30 words)
@@ -330,15 +307,19 @@ export class SmartAutoAnnotationService {
     );
     
     problematicSentences.slice(0, 2).forEach((sentence, index) => {
-      annotations.push({
-        id: `long-sentence-${Date.now()}-${index}`,
-        start: sentence.start,
-        end: sentence.end,
-        text: sentence.sentence,
-        type: 'comment',
-        comment: `📝 Long Sentence (${sentence.wordCount} words): This sentence is quite complex. Try reading it in smaller parts if needed.`,
-        timestamp: Date.now()
-      });
+      // Double-check the sentence object is valid before using it
+      if (sentence && sentence.sentence && typeof sentence.sentence === 'string' && 
+          typeof sentence.start === 'number' && typeof sentence.end === 'number') {
+        annotations.push({
+          id: `long-sentence-${Date.now()}-${index}`,
+          start: sentence.start,
+          end: sentence.end,
+          text: sentence.sentence,
+          type: 'comment',
+          comment: `📝 Long Sentence (${sentence.wordCount || 'many'} words): This sentence is quite complex. Try reading it in smaller parts if needed.`,
+          timestamp: Date.now()
+        });
+      }
     });
 
     return annotations;
@@ -353,13 +334,11 @@ export class SmartAutoAnnotationService {
       return annotations;
     }
     
-    // Filter out generic claims, keep only specific factual data
+    // Include all factual claims (removed generic filtering per user request)
     const meaningfulClaims = factual.claims.filter(claim => 
       claim &&
       claim.text &&
-      typeof claim.text === 'string' &&
-      !this.isGenericContent(claim.text) &&
-      (claim.type === 'statistic' || claim.type === 'date' || claim.confidence === 'high')
+      typeof claim.text === 'string'
     );
     
     meaningfulClaims.slice(0, 3).forEach((claim, index) => {
