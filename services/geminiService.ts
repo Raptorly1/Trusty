@@ -131,6 +131,13 @@ const createResponseFormat = (name: string, schema: JsonSchema) => ({
 
 const jsonHealingPlugin = [{ id: 'response-healing' }];
 
+const fileParserPdfPlugin = {
+  id: 'file-parser',
+  pdf: {
+    engine: 'cloudflare-ai' as const,
+  },
+};
+
 const openRouterWebSearchTool = {
   type: 'openrouter:web_search',
   parameters: {
@@ -197,6 +204,39 @@ const extractSearchSources = (response: any): { web: { uri: string; title: strin
 
   return [...sources.values()];
 };
+
+const PDF_URL_PATTERN = /\.pdf(?:[?#]|$)/i;
+
+const isPdfUrl = (value: string): boolean => {
+  try {
+    const parsedUrl = new URL(value);
+    return PDF_URL_PATTERN.test(parsedUrl.pathname) || parsedUrl.pathname.toLowerCase().endsWith('.pdf');
+  } catch {
+    return PDF_URL_PATTERN.test(value);
+  }
+};
+
+const inferPdfFilename = (pdfUrl: string): string => {
+  try {
+    const parsedUrl = new URL(pdfUrl);
+    const lastPathSegment = parsedUrl.pathname.split('/').filter(Boolean).pop();
+    if (lastPathSegment && PDF_URL_PATTERN.test(lastPathSegment)) {
+      return lastPathSegment;
+    }
+  } catch {
+    // Fall through to the default name below.
+  }
+
+  return 'document.pdf';
+};
+
+const buildPdfInput = (pdfUrl: string) => ({
+  type: 'file' as const,
+  file: {
+    filename: inferPdfFilename(pdfUrl),
+    fileData: pdfUrl,
+  },
+});
 
 const textAnalysisSchema: JsonSchema = {
   type: 'object',
@@ -394,7 +434,13 @@ Your response MUST be in JSON format and adhere to the provided schema. Highligh
   return jsonResponse as AITextAnalysisResult;
 };
 
-export const factCheckClaim = async (claim: string): Promise<{ summary: string, sources: any[] }> => {
+export const factCheckClaim = async (
+  claim: string,
+  options: { pdfUrls?: string[] } = {}
+): Promise<{ summary: string, sources: any[] }> => {
+  const pdfUrls = [...new Set([claim, ...(options.pdfUrls ?? [])].filter(isPdfUrl))];
+  const hasPdfInput = pdfUrls.length > 0;
+
   const response = await callOpenRouterProxy({
     model: 'deepseek/deepseek-v3.2-exp',
     messages: [
@@ -404,10 +450,19 @@ export const factCheckClaim = async (claim: string): Promise<{ summary: string, 
       },
       {
         role: 'user',
-        content: `Fact-check the following claim and provide a concise summary of your findings. Use the OpenRouter web search tool to find relevant sources. Claim: "${claim}"`
+        content: hasPdfInput
+          ? [
+              {
+                type: 'text',
+                text: `Fact-check the following claim and provide a concise summary of your findings. Use the OpenRouter web search tool to find relevant sources. Treat the attached PDF as primary evidence. Claim: "${claim}"`
+              },
+              ...pdfUrls.map(buildPdfInput)
+            ]
+          : `Fact-check the following claim and provide a concise summary of your findings. Use the OpenRouter web search tool to find relevant sources. Claim: "${claim}"`
       }
     ],
     tools: [openRouterWebSearchTool],
+    ...(hasPdfInput ? { plugins: [fileParserPdfPlugin] } : {}),
     temperature: 0.2,
   });
 
