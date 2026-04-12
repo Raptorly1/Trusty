@@ -216,8 +216,21 @@ export const generateMissingTitles = async (
     return sources.map(s => ({ uri: s.uri, title: s.title || MISSING_TITLE_PLACEHOLDER }));
   }
 
+  const pdfSources = needTitles.filter((source) => isPdfUrl(source.uri));
   const urls = needTitles.map(s => s.uri);
-  const prompt = `For each URL, return the exact page/article/source title only if you are 100% confident it is correct.
+  const prompt = pdfSources.length > 0
+    ? `For each source, return the exact title only if you are 100% confident it is correct.
+
+Rules:
+- PDFs are attached as file inputs in the same order as the PDF URLs in the list below.
+- Never guess a title from the domain, URL slug, or topic alone.
+- If you are not completely certain, set the title to "${MISSING_TITLE_PLACEHOLDER}" and confidence to 0.
+- Prefer exactness over completeness.
+- Keep the title short and verbatim when you do know it.
+
+URLs:
+${urls.map((u, i) => `${i + 1}. ${u}`).join('\n')}`
+    : `For each URL, return the exact page/article/source title only if you are 100% confident it is correct.
 
 Rules:
 - Never guess a title from the domain, URL slug, or topic alone.
@@ -230,10 +243,21 @@ ${urls.map((u, i) => `${i + 1}. ${u}`).join('\n')}`;
 
   try {
     const response = await callOpenRouterProxy({
-      model: 'google/gemini-2.0-flash-001',
-      messages: [
-        { role: 'user', content: prompt }
-      ],
+      model: 'liquid/lfm-2.5-1.2b-thinking:free',
+      messages: pdfSources.length > 0
+        ? [
+            {
+              role: 'user',
+              content: [
+                { type: 'text', text: prompt },
+                ...pdfSources.map((source) => buildPdfInput(source.uri))
+              ]
+            }
+          ]
+        : [
+            { role: 'user', content: prompt }
+          ],
+      ...(pdfSources.length > 0 ? { plugins: [fileParserPdfPlugin] } : {}),
       max_tokens: 256,
       _meta: {
         ...createResponseFormat('source_titles', {
