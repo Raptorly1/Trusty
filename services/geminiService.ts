@@ -195,14 +195,72 @@ const extractSearchSources = (response: any): { web: { uri: string; title: strin
       continue;
     }
 
-    const title = citation?.title ?? citation?.page_title ?? citation?.site_title ?? 'Untitled Source';
+    const title = citation?.title ?? citation?.page_title ?? citation?.site_title;
 
     if (!sources.has(url)) {
-      sources.set(url, { web: { uri: url, title } });
+      sources.set(url, { web: { uri: url, title: title ?? '' } });
     }
   }
 
   return [...sources.values()];
+};
+
+export const generateMissingTitles = async (
+  sources: { uri: string; title?: string }[]
+): Promise<{ uri: string; title: string }[]> => {
+  const needTitles = sources.filter(s => !s.title || s.title === 'Untitled Source');
+  
+  if (needTitles.length === 0) {
+    return sources.map(s => ({ uri: s.uri, title: s.title || 'Untitled Source' }));
+  }
+
+  const urls = needTitles.map(s => s.uri);
+  const prompt = `For each URL, provide a very short title (3-7 words) that describes the source. Focus on the organization or topic. URLs:\n${urls.map((u, i) => `${i + 1}. ${u}`).join('\n')}`;
+
+  try {
+    const response = await callOpenRouterProxy({
+      model: 'google/gemini-2.0-flash-001',
+      messages: [
+        { role: 'user', content: prompt }
+      ],
+      max_tokens: 512,
+      _meta: {
+        ...createResponseFormat('source_titles', {
+          type: 'object',
+          properties: {
+            titles: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  url: { type: 'string' },
+                  title: { type: 'string' }
+                },
+                required: ['url', 'title']
+              }
+            }
+          },
+          required: ['titles']
+        })
+      }
+    });
+
+    const content = response?.choices?.[0]?.message?.content || '';
+    const parsed = parseStructuredJson(content);
+    const titleEntries: { url: string; title: string }[] = parsed.titles || [];
+    const titleMap = new Map<string, string>(titleEntries.map((t) => [t.url, t.title]));
+
+    return sources.map(s => ({
+      uri: s.uri,
+      title: titleMap.get(s.uri) || s.title || new URL(s.uri).hostname.replace(/^www\./, '')
+    }));
+  } catch (error) {
+    console.warn('Failed to generate titles, using hostname fallback:', error);
+    return sources.map(s => ({
+      uri: s.uri,
+      title: s.title || new URL(s.uri).hostname.replace(/^www\./, '')
+    }));
+  }
 };
 
 const PDF_URL_PATTERN = /\.pdf(?:[?#]|$)/i;

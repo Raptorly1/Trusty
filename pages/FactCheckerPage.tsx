@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { Search, AlertCircle, CheckCircle, HelpCircle, XCircle } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { factCheckClaim, processFactCheckResults } from '../services/geminiService';
+import { factCheckClaim, processFactCheckResults, generateMissingTitles } from '../services/geminiService';
 import { SourceCredibility } from '../types';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 
@@ -295,18 +295,21 @@ const FactCheckerPage: React.FC = () => {
             setProgressPercentage(35);
 
             // Step 2: Extract unique sources with titles and clean URLs
-             const uniqueSources = Array.from(new Map(
+             const extractedSources = Array.from(new Map(
                 rawSources
                     .map(s => s.web)
                     .filter((s): s is { uri: string; title?: string } => !!s?.uri)
                     .map(s => {
                         const cleanedUri = cleanUrl(s.uri);
-                        return [cleanedUri, { uri: cleanedUri, title: s.title || 'Untitled Source' }];
+                        return [cleanedUri, { uri: cleanedUri, title: s.title || '' }];
                     })
             ).values());
             
             setProgressStage('Analyzing');
             setProgressPercentage(50);
+            
+            // Step 2.5: Generate titles for sources missing them
+            const uniqueSources = await generateMissingTitles(extractedSources);
             
             if (uniqueSources.length === 0) {
               setSummary(initialSummary); // Show at least the initial summary if no sources are found
