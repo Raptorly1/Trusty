@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { UploadCloud } from 'lucide-react';
 
 interface FileUploadProps {
-  onFileUpload: (content: string, fileName: string) => void;
+  onFileUpload: (content: string, fileName: string, mimeType?: string) => void;
   acceptedTypes: string[]; // e.g., ['text/plain', 'image/png']
   prompt: string;
 }
@@ -12,44 +12,101 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload, acceptedTypes, pr
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleFile = (file: File | null) => {
+  const matchesAcceptedType = (fileType: string) => acceptedTypes.some((acceptedType) => {
+    if (acceptedType.endsWith('/*')) {
+      return fileType.startsWith(acceptedType.slice(0, -1));
+    }
+
+    return fileType === acceptedType;
+  });
+
+  const readFileAsText = (file: File) => new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (event) => resolve(event.target?.result as string);
+    reader.onerror = () => reject(new Error('Unable to read text file.'));
+    reader.readAsText(file);
+  });
+
+  const readFileAsDataUrl = (file: File) => new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (event) => resolve(event.target?.result as string);
+    reader.onerror = () => reject(new Error('Unable to read image file.'));
+    reader.readAsDataURL(file);
+  });
+
+  const loadImage = (src: string) => new Promise<HTMLImageElement>((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = () => reject(new Error('Unable to decode image.'));
+    image.src = src;
+  });
+
+  const processImage = async (file: File) => {
+    const originalDataUrl = await readFileAsDataUrl(file);
+    const image = await loadImage(originalDataUrl);
+    const maxDimension = 1600;
+    const scale = Math.min(1, maxDimension / Math.max(image.width, image.height));
+
+    if (scale === 1 && file.size <= 3 * 1024 * 1024) {
+      return {
+        content: originalDataUrl.split(',')[1] ?? '',
+        mimeType: file.type,
+        fileName: file.name,
+      };
+    }
+
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.max(1, Math.round(image.width * scale));
+    canvas.height = Math.max(1, Math.round(image.height * scale));
+
+    const context = canvas.getContext('2d');
+    if (!context) {
+      throw new Error('Unable to process image.');
+    }
+
+    context.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+    const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.9);
+    return {
+      content: compressedDataUrl.split(',')[1] ?? '',
+      mimeType: 'image/jpeg',
+      fileName: file.name.replace(/\.[^.]+$/, '') + '.jpg',
+    };
+  };
+
+  const handleFile = async (file: File | null) => {
     if (file) {
       setError(null);
-  // Only allow image/jpeg and image/png
-  if (file.type === 'image/jpeg' || file.type === 'image/png') {
-        // Check file size (max 20MB)
-        if (file.size > 20 * 1024 * 1024) {
-          setError('File is too large. Maximum allowed size is 20MB.');
+      if (!matchesAcceptedType(file.type)) {
+        setError(`Unsupported file type. Accepted types: ${acceptedTypes.join(', ')}`);
+        return;
+      }
+
+      if (file.type.startsWith('text/')) {
+        const textContent = await readFileAsText(file);
+        onFileUpload(textContent, file.name, file.type);
+        return;
+      }
+
+      if (file.type.startsWith('image/')) {
+        if (file.size > 25 * 1024 * 1024) {
+          setError('File is too large. Maximum allowed size is 25MB.');
           return;
         }
-        const reader = new FileReader();
-        if (file.type.startsWith('text/')) {
-            reader.onload = (e) => {
-                onFileUpload(e.target?.result as string, file.name);
-            };
-            reader.readAsText(file);
-        } else if (file.type.startsWith('image/')) {
-             reader.onload = (e) => {
-                let b64 = (e.target?.result as string).split(',')[1];
-                // Validate base64: strip whitespace, check length, check padding
-                b64 = b64.replace(/\s/g, '');
-                if (!b64 || b64.length < 100) {
-                  setError('Image file appears to be corrupted or empty.');
-                  return;
-                }
-                // Check base64 padding
-                if (b64.length % 4 !== 0) {
-                  setError('Image encoding error: base64 string is not properly padded.');
-                  return;
-                }
-                onFileUpload(b64, file.name);
-             };
-             reader.readAsDataURL(file);
+
+        const imageData = await processImage(file);
+
+        if (!imageData.content || imageData.content.length < 100) {
+          setError('Image file appears to be corrupted or empty.');
+          return;
         }
-      } else {
-  setError('Unsupported file type. Only JPEG and PNG images are allowed.');
+
+        onFileUpload(imageData.content, imageData.fileName, imageData.mimeType);
+        return;
       }
-    }
+
+      setError(`Unsupported file type. Accepted types: ${acceptedTypes.join(', ')}`);
+      }
   };
 
   const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {

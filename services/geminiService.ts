@@ -537,11 +537,11 @@ ${text}
 Your response MUST be in JSON format and adhere to the provided schema. Highlight specific phrases, not just single words.`;
 
   const response = await callOpenRouterProxy({
-    model: 'qwen/qwen3-vl-32b-instruct',
+    model: 'openai/gpt-4o-mini',
     messages: [{ role: 'user', content: prompt }],
     response_format: createResponseFormat('textAnalysis', textAnalysisSchema),
     plugins: jsonHealingPlugin,
-    temperature: 0.2,
+    temperature: 0.0,
   });
 
   const jsonResponse = parseStructuredJson(extractResponseText(response));
@@ -719,7 +719,7 @@ OUTPUT
 `;
 
   const response = await callOpenRouterProxy({
-    model: 'qwen/qwen3-vl-32b-instruct',
+    model: 'openai/gpt-4o',
     messages: [
       {
         role: 'user',

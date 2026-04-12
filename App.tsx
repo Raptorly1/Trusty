@@ -289,6 +289,7 @@ const App: React.FC = () => {
   const [showServerPopup, setShowServerPopup] = useState(false);
   const [hasShownWarmingPopup, setHasShownWarmingPopup] = useState(false);
   const { status, isWarming, estimatedWaitTime, startWarmUp, checkStatus } = useServerStatus(true);
+  const showAnalytics = import.meta.env.PROD;
 
   // Warm up server on initial load (non-blocking)
   useEffect(() => {
@@ -338,13 +339,17 @@ const App: React.FC = () => {
       <Footer />
 
 
-      {/* Vercel Web Analytics - works automatically with HashRouter */}
-      <Analytics 
-        mode="production"
-        debug={false}
-      />
-      {/* Vercel Speed Insights */}
-      <SpeedInsights />
+      {showAnalytics && (
+        <>
+          {/* Vercel Web Analytics - works automatically with HashRouter */}
+          <Analytics 
+            mode="production"
+            debug={false}
+          />
+          {/* Vercel Speed Insights */}
+          <SpeedInsights />
+        </>
+      )}
 
       {/* Server Status Popup - Informational only */}
       <ServerStatusPopup

@@ -1,6 +1,3 @@
-import Tippy from '@tippyjs/react';
-import 'tippy.js/dist/tippy.css';
-
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { AlertCircle, Bot, Sparkles } from 'lucide-react';
@@ -29,26 +26,17 @@ const AnnotatedImage: React.FC<{ src: string; result: AIImageAnalysisResult }> =
             {result.anomalies.map((anomaly, index) => {
                 const { x, y, width, height } = anomaly.box;
                 return (
-                    <Tippy
+                    <div
                         key={`${x}-${y}-${width}-${height}-${anomaly.reason}`}
-                        content={<span className="text-sm font-medium">{anomaly.reason}</span>}
-                        placement="top"
-                        arrow={true}
-                        animation="shift-away"
-                        theme="light"
-                        delay={[100, 0]}
-                        maxWidth={300}
-                    >
-                        <div
-                            className="absolute w-6 h-6 bg-red-500 rounded-full border-2 border-white"
-                            style={{
-                                left: `${(x + width/2) * dimensions.width - 12}px`,
-                                top: `${(y + height/2) * dimensions.height - 12}px`,
-                                boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
-                                cursor: 'pointer',
-                            }}
-                        />
-                    </Tippy>
+                        title={anomaly.reason}
+                        aria-label={anomaly.reason}
+                        className="absolute w-6 h-6 bg-red-500 rounded-full border-2 border-white cursor-help"
+                        style={{
+                            left: `${(x + width/2) * dimensions.width - 12}px`,
+                            top: `${(y + height/2) * dimensions.height - 12}px`,
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
+                        }}
+                    />
                 );
             })}
         </div>
@@ -83,7 +71,7 @@ const AIImageCheckerPage: React.FC = () => {
                     setError('Sorry, something went wrong while analyzing your image. Please try again soon.');
                 }
                 // Optionally log technical details for devs only
-                if (process.env.NODE_ENV === 'development') {
+                if (import.meta.env.DEV) {
                     console.error(e);
                 }
         } finally {
@@ -91,9 +79,9 @@ const AIImageCheckerPage: React.FC = () => {
         }
     }, [imageData]);
 
-    const handleFileUpload = (b64Content: string, fileName: string) => {
-        const mimeType = fileName.endsWith('.png') ? 'image/png' : 'image/jpeg';
-        setImageData({ b64: b64Content, mime: mimeType, name: fileName });
+    const handleFileUpload = (b64Content: string, fileName: string, mimeType?: string) => {
+        const resolvedMimeType = mimeType ?? (fileName.endsWith('.png') ? 'image/png' : 'image/jpeg');
+        setImageData({ b64: b64Content, mime: resolvedMimeType, name: fileName });
         setResult(null); // Clear previous results
     };
 
