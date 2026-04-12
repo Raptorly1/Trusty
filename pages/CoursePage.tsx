@@ -1188,7 +1188,7 @@ const CoursePage: React.FC = () => {
 											onClick={() => {
 												if (!extraQuestionAnswers.includes(qIndex)) {
 													setExtraQuestionAnswers(prev => [...prev, qIndex]);
-													setExtraExerciseAnswers(prev => ({ ...prev, [qIndex]: oIndex }));
+													setExtraExerciseAnswers((prev: any) => ({ ...prev, [qIndex]: oIndex }));
 												}
 											}}
 											disabled={hasAnswered}
@@ -1260,7 +1260,7 @@ const CoursePage: React.FC = () => {
 										type="checkbox" 
 										className="checkbox checkbox-primary mt-1" 
 										onChange={(e) => {
-											setExerciseAnswers(prev => ({
+											setExerciseAnswers((prev: any) => ({
 												...prev,
 												[index]: e.target.checked
 											}));
@@ -1292,7 +1292,7 @@ const CoursePage: React.FC = () => {
 											<button 
 												className={`btn ${exerciseAnswers[index] === true ? 'btn-error' : 'btn-outline'}`}
 												onClick={() => {
-													setExerciseAnswers(prev => ({ ...prev, [index]: true }));
+													setExerciseAnswers((prev: any) => ({ ...prev, [index]: true }));
 												}}
 											>
 												Scam
@@ -1300,7 +1300,7 @@ const CoursePage: React.FC = () => {
 											<button 
 												className={`btn ${exerciseAnswers[index] === false ? 'btn-success' : 'btn-outline'}`}
 												onClick={() => {
-													setExerciseAnswers(prev => ({ ...prev, [index]: false }));
+													setExerciseAnswers((prev: any) => ({ ...prev, [index]: false }));
 												}}
 											>
 												Legitimate
@@ -1345,7 +1345,7 @@ const CoursePage: React.FC = () => {
 												className={`btn ${buttonClass} w-full justify-start`}
 												onClick={() => {
 													if (!hasAnswered) {
-														setExerciseAnswers(prev => ({ ...prev, [qIndex]: oIndex }));
+														setExerciseAnswers((prev: any) => ({ ...prev, [qIndex]: oIndex }));
 													}
 												}}
 												disabled={hasAnswered}
