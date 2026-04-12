@@ -19,7 +19,9 @@ function useCountUp({ end, duration = 1, format }: { end: number, duration?: num
       }
     }
     ref.current = requestAnimationFrame(animate);
-    return () => ref.current && cancelAnimationFrame(ref.current);
+    return () => {
+      if (ref.current) cancelAnimationFrame(ref.current);
+    };
   }, [end, duration]);
   return format ? format(count) : count;
 }
