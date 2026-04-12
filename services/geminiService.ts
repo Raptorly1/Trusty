@@ -719,7 +719,7 @@ OUTPUT
 `;
 
   const response = await callOpenRouterProxy({
-    model: 'openai/gpt-4o',
+    model: 'arcee-ai/spotlight',
     messages: [
       {
         role: 'user',
