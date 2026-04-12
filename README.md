@@ -1,7 +1,7 @@
 <div align="center">
   <img src="./public/Logo.png" alt="Trusty Logo" width="160" height="160">
   <h1>Trusty</h1>
-  <p style="text-align: center;"><strong>navigating a new era of misinformation</strong></p>
+  <p style="text-align: center;"><strong>A compass for navigating the misinformation era</strong></p>
   
   <div>
     <img alt="License" src="https://img.shields.io/badge/license-MIT-blue?style=flat-square">

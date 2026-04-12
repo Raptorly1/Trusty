@@ -90,7 +90,7 @@ const HomePage: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-6xl md:text-7xl font-bold mb-4" style={{ color: '#6C1BA0' }}>
-            Trusty: navigating a new era of misinformation
+            Trusty: A compass for navigating the misinformation era
           </motion.h1>
             <motion.p 
               initial={{ opacity: 0, y: 20 }}
