@@ -1,67 +1,59 @@
-import { Type } from "@google/genai";
 import { AITextAnalysisResult, AIImageAnalysisResult } from '../types';
 
-const PROXY_URL = 'https://trusty-ldqx.onrender.com/api/gemini';
+const isLocalhost = typeof window !== 'undefined' && ['localhost', '127.0.0.1'].includes(window.location.hostname);
+const PROXY_URL = isLocalhost
+  ? 'http://127.0.0.1:10000/api/openrouter'
+  : 'https://trusty-ldqx.onrender.com/api/openrouter';
 
-// Server status tracking
 let serverStatus: 'unknown' | 'warming' | 'ready' | 'error' = 'unknown';
 let lastServerCheck = 0;
-const SERVER_CHECK_INTERVAL = 30000; // 30 seconds
 
 export const getServerStatus = () => serverStatus;
 
-/**
- * Check if the Render server is ready by calling the health endpoint
- */
 export const checkServerHealth = async (): Promise<{ status: 'warming' | 'ready' | 'error', estimatedWaitTime?: number }> => {
   const now = Date.now();
-  
-  // Don't check too frequently
+
   if (now - lastServerCheck < 5000 && serverStatus !== 'unknown') {
-    return { 
+    return {
       status: serverStatus as 'warming' | 'ready' | 'error',
       estimatedWaitTime: serverStatus === 'warming' ? 30 : undefined
     };
   }
-  
+
   try {
-    const healthUrl = PROXY_URL.replace('/api/gemini', '/health');
+    const healthUrl = PROXY_URL.replace('/api/openrouter', '/health');
     const response = await fetch(healthUrl, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' }
+      method: 'GET'
     });
-    
+
     lastServerCheck = now;
-    
+
     if (response.ok) {
       serverStatus = 'ready';
       return { status: 'ready' };
-    } else if (response.status === 503) {
-      // Service unavailable - likely warming up
+    }
+
+    if (response.status === 503) {
       serverStatus = 'warming';
       return { status: 'warming', estimatedWaitTime: 30 };
-    } else {
-      serverStatus = 'error';
-      return { status: 'error' };
     }
+
+    serverStatus = 'error';
+    return { status: 'error' };
   } catch (error) {
     lastServerCheck = now;
     console.warn('Server health check failed:', error);
-    
-    // If it's a network error, the server might be warming up
+
     if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
       serverStatus = 'warming';
       return { status: 'warming', estimatedWaitTime: 45 };
     }
-    
+
     serverStatus = 'error';
     return { status: 'error' };
   }
 };
 
-/**
- * Warm up the server by making a simple request
- */
 export const warmUpServer = async (): Promise<void> => {
   try {
     serverStatus = 'warming';
@@ -71,184 +63,261 @@ export const warmUpServer = async (): Promise<void> => {
   }
 };
 
-/**
- * A helper function to call the backend proxy which in turn calls the Gemini API.
- * @param endpoint The Gemini SDK method to call (e.g., 'generateContent').
- * @param params The parameters for the SDK method.
- * @returns The response from the Gemini API, as returned by the proxy.
- */
-async function callGeminiProxy(endpoint: string, params: any): Promise<any> {
-  // Non-blocking approach: always attempt the request, handle warming gracefully
+async function callOpenRouterProxy(body: Record<string, unknown>): Promise<any> {
   try {
     const response = await fetch(PROXY_URL, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ endpoint, params }),
+      body: JSON.stringify(body)
     });
 
     if (!response.ok) {
       const errorText = await response.text();
       let errorMessage = `Proxy API call failed with status ${response.status}`;
-      
-      // Check if this is a server warming issue
+
       if (response.status === 503) {
         serverStatus = 'warming';
         throw new Error('SERVER_WARMING');
       }
-      
+
       try {
         const errorJson = JSON.parse(errorText);
         errorMessage = errorJson.message || errorJson.error || errorMessage;
-      } catch (e) {
-        console.error('Error parsing error response:', e);
+      } catch (parseError) {
+        console.error('Error parsing error response:', parseError);
         if (errorText) {
           errorMessage = `${errorMessage}: ${errorText}`;
         }
       }
+
       throw new Error(errorMessage);
     }
 
-    // Server is working, mark as ready
     serverStatus = 'ready';
     return response.json();
   } catch (error) {
-    console.error('Error calling Gemini proxy:', error);
-    
-    // If it's a network error, the server might be warming up
+    console.error('Error calling OpenRouter proxy:', error);
+
     if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
       serverStatus = 'warming';
       throw new Error('SERVER_WARMING');
     }
-    
-    // Re-throw the error to be caught by the calling function's try/catch block
+
     throw error;
   }
 }
 
+type JsonSchema = {
+  type: string;
+  properties?: Record<string, any>;
+  required?: string[];
+  additionalProperties?: boolean;
+  items?: any;
+  minItems?: number;
+  description?: string;
+  enum?: string[];
+};
 
-const textAnalysisSchema = {
-  type: Type.OBJECT,
-  properties: {
-    likelihood: { type: Type.NUMBER, description: "A score from 0 to 100 representing the likelihood the text is AI-generated." },
-    summary: { type: Type.STRING, description: "A brief, one-paragraph summary of the analysis." },
-    forAI: {
-      type: Type.ARRAY,
-      description: "Snippets and reasons supporting the conclusion that the text is AI-generated.",
-      items: {
-        type: Type.OBJECT,
-        properties: {
-          snippet: { type: Type.STRING },
-          reason: { type: Type.STRING }
-        }
-      }
-    },
-    againstAI: {
-      type: Type.ARRAY,
-      description: "Snippets and reasons supporting the conclusion that the text is human-written.",
-      items: {
-        type: Type.OBJECT,
-        properties: {
-          snippet: { type: Type.STRING },
-          reason: { type: Type.STRING }
-        }
-      }
-    },
-    wordCount: { type: Type.INTEGER },
-    readability: { type: Type.STRING, description: "e.g., 'Easy to read', 'College level'" },
-    complexWords: { type: Type.INTEGER }
+const createResponseFormat = (name: string, schema: JsonSchema) => ({
+  type: 'json_schema' as const,
+  json_schema: {
+    name,
+    strict: true,
+    schema,
+  },
+});
+
+const jsonHealingPlugin = [{ id: 'response-healing' }];
+
+const openRouterWebSearchTool = {
+  type: 'openrouter:web_search',
+  parameters: {
+    max_results: 5,
+    max_total_results: 10,
+    search_context_size: 'medium'
   }
 };
 
-export const analyzeTextForAI = async (text: string): Promise<AITextAnalysisResult> => {
-  const prompt = `Analyze the following text. Determine the likelihood it was generated by an AI. Provide specific snippets from the text as evidence for and against this conclusion. Also, provide a general analysis of its complexity and readability.
+const extractResponseText = (response: any): string => {
+  const content = response?.choices?.[0]?.message?.content;
 
-Text to analyze:
----
-${text}
----
+  if (typeof content === 'string') {
+    return content;
+  }
 
-Your response MUST be in JSON format and adhere to the provided schema. Highlight specific phrases, not just single words.`;
+  if (Array.isArray(content)) {
+    return content
+      .map((part) => {
+        if (typeof part === 'string') {
+          return part;
+        }
+        if (part && typeof part === 'object' && 'text' in part && typeof part.text === 'string') {
+          return part.text;
+        }
+        return '';
+      })
+      .join('');
+  }
 
-  const params = {
-    model: 'gemini-2.5-flash',
-    contents: prompt,
-    config: {
-      responseMimeType: 'application/json',
-      responseSchema: textAnalysisSchema,
-      temperature: 0.2,
+  return response?.text || '';
+};
+
+const parseStructuredJson = (content: string): any => {
+  const trimmed = content.trim();
+  const fencedMatch = trimmed.match(/^```(?:json)?\s*([\s\S]*?)```$/i);
+  const candidate = fencedMatch?.[1]?.trim() ?? trimmed;
+  return JSON.parse(candidate);
+};
+
+const extractSearchSources = (response: any): { web: { uri: string; title: string } }[] => {
+  const annotations = response?.choices?.[0]?.message?.annotations;
+
+  if (!Array.isArray(annotations)) {
+    return [];
+  }
+
+  const sources = new Map<string, { web: { uri: string; title: string } }>();
+
+  for (const annotation of annotations) {
+    const citation = annotation?.url_citation ?? annotation?.citation ?? annotation;
+    const url = citation?.url ?? citation?.source_url ?? citation?.uri;
+
+    if (!url || typeof url !== 'string') {
+      continue;
     }
-  };
-  
-  const response = await callGeminiProxy('generateContent', params);
-  const jsonResponse = JSON.parse(response.text);
-  return jsonResponse as AITextAnalysisResult;
+
+    const title = citation?.title ?? citation?.page_title ?? citation?.site_title ?? 'Untitled Source';
+
+    if (!sources.has(url)) {
+      sources.set(url, { web: { uri: url, title } });
+    }
+  }
+
+  return [...sources.values()];
 };
 
-export const factCheckClaim = async (claim: string): Promise<{ summary: string, sources: any[] }> => {
-  const params = {
-    model: "gemini-2.5-flash",
-    contents: `Fact-check the following claim and provide a summary of your findings. Use Google Search to find relevant sources. Claim: "${claim}"`,
-    config: {
-      tools: [{ googleSearch: {} }],
-      temperature: 0.2,
+const textAnalysisSchema: JsonSchema = {
+  type: 'object',
+  additionalProperties: false,
+  properties: {
+    likelihood: { type: 'number', description: 'A score from 0 to 100 representing the likelihood the text is AI-generated.' },
+    summary: { type: 'string', description: 'A brief, one-paragraph summary of the analysis.' },
+    forAI: {
+      type: 'array',
+      description: 'Snippets and reasons supporting the conclusion that the text is AI-generated.',
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          snippet: { type: 'string' },
+          reason: { type: 'string' }
+        },
+        required: ['snippet', 'reason']
+      }
     },
-  };
-    
-    const response = await callGeminiProxy('generateContent', params);
-    const summary = response.text;
-    const sources = response.candidates?.[0]?.groundingMetadata?.groundingChunks ?? [];
-    return { summary, sources };
+    againstAI: {
+      type: 'array',
+      description: 'Snippets and reasons supporting the conclusion that the text is human-written.',
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          snippet: { type: 'string' },
+          reason: { type: 'string' }
+        },
+        required: ['snippet', 'reason']
+      }
+    },
+    wordCount: { type: 'integer' },
+    readability: { type: 'string', description: "e.g., 'Easy to read', 'College level'" },
+    complexWords: { type: 'integer' }
+  },
+  required: ['likelihood', 'summary', 'forAI', 'againstAI', 'wordCount', 'readability', 'complexWords']
 };
 
-const factCheckProcessorSchema = {
-  type: Type.OBJECT,
-  description: "Schema for structured fact-checking output with annotated summary and detailed source analysis.",
+const factCheckProcessorSchema: JsonSchema = {
+  type: 'object',
+  additionalProperties: false,
+  description: 'Schema for structured fact-checking output with annotated summary and detailed source analysis.',
   properties: {
     annotatedSummary: {
-      type: Type.STRING,
-      description: "A detailed markdown-formatted summary with proper newlines (\\n). Include citations like [1], [2]. Use \\n\\n for paragraph breaks, \\n\\n### Header\\n\\n for section headers, and \\n* Item\\n for list items."
+      type: 'string',
+      description: 'A detailed markdown-formatted summary with proper newlines (\\n). Include citations like [1], [2]. Use \\n\\n for paragraph breaks, \\n\\n### Header\\n\\n for section headers, and \\n* Item\\n for list items.'
     },
     sourceDetails: {
-      type: Type.ARRAY,
-      description: "List of sources used in the fact-check, each with its credibility rating and a short explanation.",
+      type: 'array',
+      description: 'List of sources used in the fact-check, each with its credibility rating and a short explanation.',
       minItems: 1,
       items: {
-        type: Type.OBJECT,
+        type: 'object',
+        additionalProperties: false,
         properties: {
-          url: { 
-            type: Type.STRING,
-            description: "Direct link to the source." 
+          url: {
+            type: 'string',
+            description: 'Direct link to the source.'
           },
-          title: { 
-            type: Type.STRING,
-            description: "Title of the source as it appears on the page." 
+          title: {
+            type: 'string',
+            description: 'Title of the source as it appears on the page.'
           },
-          credibility: { 
-            type: Type.STRING, 
+          credibility: {
+            type: 'string',
             enum: [
-              'Very High', 
-              'High', 
-              'Medium High', 
-              'Medium', 
-              'Medium Low', 
-              'Low', 
-              'Very Low', 
+              'Very High',
+              'High',
+              'Medium High',
+              'Medium',
+              'Medium Low',
+              'Low',
+              'Very Low',
               'Unknown'
             ],
-            description: "Credibility rating for the source based on reliability, accuracy, relevance, and reputation."
+            description: 'Credibility rating for the source based on reliability, accuracy, relevance, and reputation.'
           },
-          explanation: { 
-            type: Type.STRING,
-            description: "One-sentence justification for the credibility rating."
+          explanation: {
+            type: 'string',
+            description: 'One-sentence justification for the credibility rating.'
           }
         },
-        required: ["url", "title", "credibility", "explanation"]
+        required: ['url', 'title', 'credibility', 'explanation']
       }
     }
   },
-  required: ["annotatedSummary", "sourceDetails"]
+  required: ['annotatedSummary', 'sourceDetails']
+};
+
+const imageAnalysisSchema: JsonSchema = {
+  type: 'object',
+  additionalProperties: false,
+  properties: {
+    isLikelyAI: { type: 'boolean' },
+    likelihood: { type: 'number', description: 'A score from 0-100 of AI likelihood.' },
+    anomalies: {
+      type: 'array',
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          reason: { type: 'string' },
+          box: {
+            type: 'object',
+            additionalProperties: false,
+            properties: {
+              x: { type: 'number' },
+              y: { type: 'number' },
+              width: { type: 'number' },
+              height: { type: 'number' }
+            },
+            required: ['x', 'y', 'width', 'height']
+          }
+        },
+        required: ['reason', 'box']
+      }
+    }
+  },
+  required: ['isLikelyAI', 'likelihood', 'anomalies']
 };
 
 type Credibility =
@@ -263,13 +332,13 @@ export interface SourceCredibility {
 }
 
 const CRED_ENUM: Credibility[] = [
-  'Very High','High','Medium High','Medium',
-  'Medium Low','Low','Very Low','Unknown'
+  'Very High', 'High', 'Medium High', 'Medium',
+  'Medium Low', 'Low', 'Very Low', 'Unknown'
 ];
 
 const extractCitations = (text: string): number[] => {
-  const m = text.match(/\[(\d+)\]/g) ?? [];
-  return m.map(x => Number(x.slice(1, -1)));
+  const matches = text.match(/\[(\d+)\]/g) ?? [];
+  return matches.map((match) => Number(match.slice(1, -1)));
 };
 
 const validateResponse = (
@@ -284,24 +353,65 @@ const validateResponse = (
     throw new Error(`sourceDetails must have exactly ${sourceCount} items.`);
   }
 
-  sourceDetails.forEach((s, i) => {
-    if (typeof s.url !== 'string') throw new Error(`sourceDetails[${i}].url missing.`);
-    if (typeof s.title !== 'string') throw new Error(`sourceDetails[${i}].title missing.`);
-    if (!CRED_ENUM.includes(s.credibility)) {
-      throw new Error(`Invalid credibility at index ${i}: ${s.credibility}`);
+  sourceDetails.forEach((source: any, index: number) => {
+    if (typeof source.url !== 'string') throw new Error(`sourceDetails[${index}].url missing.`);
+    if (typeof source.title !== 'string') throw new Error(`sourceDetails[${index}].title missing.`);
+    if (!CRED_ENUM.includes(source.credibility)) {
+      throw new Error(`Invalid credibility at index ${index}: ${source.credibility}`);
     }
-    if (typeof s.explanation !== 'string' || !s.explanation.trim()) {
-      throw new Error(`sourceDetails[${i}].explanation missing.`);
+    if (typeof source.explanation !== 'string' || !source.explanation.trim()) {
+      throw new Error(`sourceDetails[${index}].explanation missing.`);
     }
   });
 
-  // Citations must be within [1..N]
-  const cites = extractCitations(annotatedSummary);
-  if (cites.some(n => n < 1 || n > sourceCount)) {
+  const citations = extractCitations(annotatedSummary);
+  if (citations.some((n) => n < 1 || n > sourceCount)) {
     throw new Error('Annotated summary contains out-of-range citations.');
   }
 
   return { annotatedSummary, sourceDetails };
+};
+
+export const analyzeTextForAI = async (text: string): Promise<AITextAnalysisResult> => {
+  const prompt = `Analyze the following text. Determine the likelihood it was generated by an AI. Provide specific snippets from the text as evidence for and against this conclusion. Also, provide a general analysis of its complexity and readability.
+
+Text to analyze:
+---
+${text}
+---
+
+Your response MUST be in JSON format and adhere to the provided schema. Highlight specific phrases, not just single words.`;
+
+  const response = await callOpenRouterProxy({
+    model: 'openai/gpt-4o-mini',
+    messages: [{ role: 'user', content: prompt }],
+    response_format: createResponseFormat('textAnalysis', textAnalysisSchema),
+    plugins: jsonHealingPlugin,
+    temperature: 0.2,
+  });
+
+  const jsonResponse = parseStructuredJson(extractResponseText(response));
+  return jsonResponse as AITextAnalysisResult;
+};
+
+export const factCheckClaim = async (claim: string): Promise<{ summary: string, sources: any[] }> => {
+  const response = await callOpenRouterProxy({
+    model: 'openai/gpt-4o',
+    messages: [
+      {
+        role: 'system',
+        content: 'You fact-check claims using live web research. Be concise, direct, and evidence-based.'
+      },
+      {
+        role: 'user',
+        content: `Fact-check the following claim and provide a concise summary of your findings. Use the OpenRouter web search tool to find relevant sources. Claim: "${claim}"`
+      }
+    ],
+    tools: [openRouterWebSearchTool],
+    temperature: 0.2,
+  });
+
+  return { summary: extractResponseText(response), sources: extractSearchSources(response) };
 };
 
 export const processFactCheckResults = async (
@@ -309,7 +419,7 @@ export const processFactCheckResults = async (
   sources: { uri: string; title: string }[]
 ): Promise<{ annotatedSummary: string; sources: SourceCredibility[] }> => {
   const sourceList = sources
-    .map((s, i) => `[${i + 1}] ${s.title || 'Untitled'}\nURL: ${s.uri}`)
+    .map((source, index) => `[${index + 1}] ${source.title || 'Untitled'}\nURL: ${source.uri}`)
     .join('\n\n');
 
   const prompt = `
@@ -372,77 +482,45 @@ Schema (shape, not instructions):
     {
       "url": string,
       "title": string,
-      "credibility": "${CRED_ENUM.join('" | "')}",
+      "credibility": "${CRED_ENUM.join(' | ')}",
       "explanation": string
     }
   ]
 }
 `;
 
-  const params = {
-    model: "gemini-2.5-flash",
-    contents: prompt,
-    config: {
-      responseMimeType: "application/json",
-      responseSchema: factCheckProcessorSchema, // keep your strict schema
-      temperature: 0.0
-    }
-  };
+  const response = await callOpenRouterProxy({
+    model: 'openai/gpt-4o',
+    messages: [
+      {
+        role: 'system',
+        content: 'You are a fact-checking assistant. Return only valid JSON that follows the provided schema.'
+      },
+      {
+        role: 'user',
+        content: prompt
+      }
+    ],
+    response_format: createResponseFormat('factCheckResults', factCheckProcessorSchema),
+    plugins: jsonHealingPlugin,
+    temperature: 0.0
+  });
 
-  const response = await callGeminiProxy('generateContent', params);
-
-  let parsed: any;
-  try {
-    parsed = JSON.parse(response.text);
-  } catch {
-    throw new Error('Model did not return valid JSON.');
-  }
-
-  // Validate and also enforce original URLs in case the model “fixes” them
+  const parsed = parseStructuredJson(extractResponseText(response));
   const { annotatedSummary, sourceDetails } = validateResponse(parsed, sources.length);
 
-  // Ensure URLs/titles exactly match the provided list order
-  const normalizedDetails: SourceCredibility[] = sourceDetails.map((s, i) => ({
-    url: sources[i].uri,               // override with ground truth
-    title: sources[i].title || s.title,
-    credibility: s.credibility,
-    explanation: s.explanation
+  const normalizedDetails: SourceCredibility[] = sourceDetails.map((source, index) => ({
+    url: sources[index].uri,
+    title: sources[index].title || source.title,
+    credibility: source.credibility,
+    explanation: source.explanation
   }));
 
   return { annotatedSummary, sources: normalizedDetails };
 };
 
-
 export const analyzeImageForAI = async (base64Image: string, mimeType: string): Promise<AIImageAnalysisResult> => {
-    const imagePart = { inlineData: { data: base64Image, mimeType } };
-    
-    const imageAnalysisSchema = {
-        type: Type.OBJECT,
-        properties: {
-            isLikelyAI: { type: Type.BOOLEAN },
-            likelihood: { type: Type.NUMBER, description: "A score from 0-100 of AI likelihood." },
-            anomalies: {
-                type: Type.ARRAY,
-                items: {
-                    type: Type.OBJECT,
-                    properties: {
-                        reason: { type: Type.STRING },
-                        box: {
-                            type: Type.OBJECT,
-                            properties: {
-                                x: { type: Type.NUMBER },
-                                y: { type: Type.NUMBER },
-                                width: { type: Type.NUMBER },
-                                height: { type: Type.NUMBER }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    };
-
-    const prompt = `
+  const prompt = `
 You are an image-forensics assistant. Return a SINGLE JSON object only (no prose) that follows the provided schema.
 
 GOAL
@@ -471,19 +549,23 @@ OUTPUT
 - Keep numbers to reasonable precision (≤3 decimals).
 `;
 
+  const response = await callOpenRouterProxy({
+    model: 'openai/gpt-4o',
+    messages: [
+      {
+        role: 'user',
+        content: [
+          { type: 'text', text: prompt },
+          { type: 'image_url', image_url: { url: `data:${mimeType};base64,${base64Image}` } }
+        ]
+      }
+    ],
+    response_format: createResponseFormat('imageAnalysis', imageAnalysisSchema),
+    plugins: jsonHealingPlugin,
+    temperature: 0.0,
+  });
 
-    const params = {
-        model: 'gemini-2.5-flash',
-        contents: { parts: [imagePart, { text: prompt }] },
-        config: {
-            responseMimeType: 'application/json',
-            responseSchema: imageAnalysisSchema,
-            temperature: 0.0,
-        }
-    };
-    
-    const response = await callGeminiProxy('generateContent', params);
-    return JSON.parse(response.text) as AIImageAnalysisResult;
+  return parseStructuredJson(extractResponseText(response)) as AIImageAnalysisResult;
 };
 
 export const generateAudioSummary = async (text: string): Promise<string> => {
@@ -496,11 +578,20 @@ ${text}
 
 Spoken summary:`;
 
-  const params = {
-      model: 'gemini-2.5-flash',
-      contents: prompt
-  };
-  
-  const response = await callGeminiProxy('generateContent', params);
-  return response.text;
+  const response = await callOpenRouterProxy({
+    model: 'openai/gpt-4o-mini',
+    messages: [
+      {
+        role: 'system',
+        content: 'You are a helpful assistant that writes short, natural spoken summaries.'
+      },
+      {
+        role: 'user',
+        content: prompt
+      }
+    ],
+    temperature: 0.5
+  });
+
+  return extractResponseText(response);
 };
