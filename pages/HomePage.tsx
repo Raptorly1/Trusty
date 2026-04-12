@@ -26,7 +26,7 @@ function useCountUp({ end, duration = 1, format }: { end: number, duration?: num
   return format ? format(count) : count;
 }
 
-import { BookOpen, Shield, DollarSign, CheckCircle, User } from 'lucide-react';
+import { BookOpen, Shield, DollarSign, CheckCircle } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { motion } from 'framer-motion';
 // import TestimonialCarousel from '../components/common/TestimonialCarousel';
@@ -180,7 +180,7 @@ const HomePage: React.FC = () => {
         <p className="text-2xl text-base-content/80 max-w-2xl mx-auto">But don't worry! You don't need to be a tech expert. Trusty will guide you, one simple step at a time. Trusty is always here for you.</p>
       </motion.section>
 
-      {/* 3. Clara's Story */}
+      {/* 3. Clara's Story
       <motion.section
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -208,6 +208,7 @@ const HomePage: React.FC = () => {
           <p className="text-center italic text-base-content/70 text-lg">And I know Trusty will always be by my side.<br/>— Clara, Trusty user</p>
         </motion.div>
       </motion.section>
+      </motion.section> */}
 
       {/* 4. What You'll Learn */}
       <motion.section
