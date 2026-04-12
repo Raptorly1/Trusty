@@ -659,7 +659,7 @@ Schema (shape, not instructions):
 `;
 
   const response = await callOpenRouterProxy({
-    model: 'deepseek/deepseek-r1',
+    model: 'google/gemini-2.5-flash',
     messages: [
       {
         role: 'system',
