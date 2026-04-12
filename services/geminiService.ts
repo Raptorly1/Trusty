@@ -719,7 +719,7 @@ OUTPUT
 `;
 
   const response = await callOpenRouterProxy({
-    model: 'arcee-ai/spotlight',
+    model: 'google/gemini-3.1-flash-lite-preview',
     messages: [
       {
         role: 'user',
