@@ -92,13 +92,7 @@ const HomePage: React.FC = () => {
             className="text-6xl md:text-7xl font-bold mb-4" style={{ color: '#6C1BA0' }}>
             A compass for navigating the misinformation era
           </motion.h1>
-            <motion.p 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              className="text-2xl md:text-3xl text-base-content/80 mb-6">
-              Build resilience against <span style={{ color: '#6C1BA0' }}>AI-powered misinformation</span> and digital manipulation
-            </motion.p>
+
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
