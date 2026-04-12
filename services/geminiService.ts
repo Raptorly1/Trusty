@@ -147,6 +147,8 @@ const openRouterWebSearchTool = {
   }
 };
 
+const MISSING_TITLE_PLACEHOLDER = 'Title unavailable';
+
 const extractResponseText = (response: any): string => {
   const content = response?.choices?.[0]?.message?.content;
 
@@ -211,11 +213,20 @@ export const generateMissingTitles = async (
   const needTitles = sources.filter(s => !s.title || s.title === 'Untitled Source');
   
   if (needTitles.length === 0) {
-    return sources.map(s => ({ uri: s.uri, title: s.title || 'Untitled Source' }));
+    return sources.map(s => ({ uri: s.uri, title: s.title || MISSING_TITLE_PLACEHOLDER }));
   }
 
   const urls = needTitles.map(s => s.uri);
-  const prompt = `For each URL, provide a very short title (3-7 words) that describes the source. Focus on the organization or topic. URLs:\n${urls.map((u, i) => `${i + 1}. ${u}`).join('\n')}`;
+  const prompt = `For each URL, return the exact page/article/source title only if you are 100% confident it is correct.
+
+Rules:
+- Never guess a title from the domain, URL slug, or topic alone.
+- If you are not completely certain, set the title to "${MISSING_TITLE_PLACEHOLDER}" and confidence to 0.
+- Prefer exactness over completeness.
+- Keep the title short and verbatim when you do know it.
+
+URLs:
+${urls.map((u, i) => `${i + 1}. ${u}`).join('\n')}`;
 
   try {
     const response = await callOpenRouterProxy({
@@ -223,7 +234,7 @@ export const generateMissingTitles = async (
       messages: [
         { role: 'user', content: prompt }
       ],
-      max_tokens: 512,
+      max_tokens: 256,
       _meta: {
         ...createResponseFormat('source_titles', {
           type: 'object',
@@ -232,11 +243,16 @@ export const generateMissingTitles = async (
               type: 'array',
               items: {
                 type: 'object',
+                additionalProperties: false,
                 properties: {
                   url: { type: 'string' },
-                  title: { type: 'string' }
+                  title: { type: 'string' },
+                  confidence: {
+                    type: 'number',
+                    description: '100 only when the title is exact and you are fully confident.'
+                  }
                 },
-                required: ['url', 'title']
+                required: ['url', 'title', 'confidence']
               }
             }
           },
@@ -247,18 +263,34 @@ export const generateMissingTitles = async (
 
     const content = response?.choices?.[0]?.message?.content || '';
     const parsed = parseStructuredJson(content);
-    const titleEntries: { url: string; title: string }[] = parsed.titles || [];
-    const titleMap = new Map<string, string>(titleEntries.map((t) => [t.url, t.title]));
+    const titleEntries: { url: string; title: string; confidence?: number }[] = parsed.titles || [];
+    const titleMap = new Map<string, { title: string; confidence: number }>(
+      titleEntries.map((t) => [t.url, { title: t.title, confidence: typeof t.confidence === 'number' ? t.confidence : 0 }])
+    );
 
     return sources.map(s => ({
       uri: s.uri,
-      title: titleMap.get(s.uri) || s.title || new URL(s.uri).hostname.replace(/^www\./, '')
+      title: (() => {
+        const existingTitle = s.title && s.title !== 'Untitled Source' ? s.title : undefined;
+
+        if (existingTitle) {
+          return existingTitle;
+        }
+
+        const generated = titleMap.get(s.uri);
+
+        if (generated && generated.confidence === 100 && generated.title.trim() && generated.title.trim() !== MISSING_TITLE_PLACEHOLDER) {
+          return generated.title.trim();
+        }
+
+        return MISSING_TITLE_PLACEHOLDER;
+      })()
     }));
   } catch (error) {
-    console.warn('Failed to generate titles, using hostname fallback:', error);
+    console.warn('Failed to generate titles, using placeholder fallback:', error);
     return sources.map(s => ({
       uri: s.uri,
-      title: s.title || new URL(s.uri).hostname.replace(/^www\./, '')
+      title: s.title && s.title !== 'Untitled Source' ? s.title : MISSING_TITLE_PLACEHOLDER
     }));
   }
 };
@@ -603,7 +635,7 @@ Schema (shape, not instructions):
 `;
 
   const response = await callOpenRouterProxy({
-    model: 'google/gemini-3.1-flash-lite-preview',
+    model: 'deepseek/deepseek-r1',
     messages: [
       {
         role: 'system',
