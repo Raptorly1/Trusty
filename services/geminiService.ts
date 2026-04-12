@@ -134,8 +134,8 @@ const jsonHealingPlugin = [{ id: 'response-healing' }];
 const openRouterWebSearchTool = {
   type: 'openrouter:web_search',
   parameters: {
-    max_results: 5,
-    max_total_results: 10,
+  max_results: 8,
+  max_total_results: 8,
     search_context_size: 'medium'
   }
 };
@@ -383,7 +383,7 @@ ${text}
 Your response MUST be in JSON format and adhere to the provided schema. Highlight specific phrases, not just single words.`;
 
   const response = await callOpenRouterProxy({
-    model: 'openai/gpt-4o-mini',
+    model: 'qwen/qwen3-vl-32b-instruct',
     messages: [{ role: 'user', content: prompt }],
     response_format: createResponseFormat('textAnalysis', textAnalysisSchema),
     plugins: jsonHealingPlugin,
@@ -396,7 +396,7 @@ Your response MUST be in JSON format and adhere to the provided schema. Highligh
 
 export const factCheckClaim = async (claim: string): Promise<{ summary: string, sources: any[] }> => {
   const response = await callOpenRouterProxy({
-    model: 'openai/gpt-4o',
+    model: 'deepseek/deepseek-v3.2-exp',
     messages: [
       {
         role: 'system',
@@ -550,7 +550,7 @@ OUTPUT
 `;
 
   const response = await callOpenRouterProxy({
-    model: 'openai/gpt-4o',
+    model: 'qwen/qwen3-vl-32b-instruct',
     messages: [
       {
         role: 'user',
