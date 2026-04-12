@@ -442,7 +442,7 @@ export const factCheckClaim = async (
   const hasPdfInput = pdfUrls.length > 0;
 
   const response = await callOpenRouterProxy({
-    model: 'deepseek/deepseek-v3.2-exp',
+    model: 'deepseek/deepseek-v3.2',
     messages: [
       {
         role: 'system',
@@ -545,7 +545,7 @@ Schema (shape, not instructions):
 `;
 
   const response = await callOpenRouterProxy({
-    model: 'openai/gpt-4o',
+    model: 'google/gemini-3.1-flash-lite-preview',
     messages: [
       {
         role: 'system',
