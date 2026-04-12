@@ -27,8 +27,8 @@ function useCountUp({ end, duration = 1, format }: { end: number, duration?: num
 import { BookOpen, Shield, DollarSign, CheckCircle, User } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import TestimonialCarousel from '../components/common/TestimonialCarousel';
-import { topCarouselTestimonials, bottomCarouselTestimonials } from '../constants/testimonialsData';
+// import TestimonialCarousel from '../components/common/TestimonialCarousel';
+// import { topCarouselTestimonials, bottomCarouselTestimonials } from '../constants/testimonialsData';
 
 const FeatureCard: React.FC<{ icon: React.ReactNode, title: string, description: string, link: string }> = ({ icon, title, description, link }) => (
   <motion.div
@@ -347,7 +347,7 @@ const HomePage: React.FC = () => {
         </div>
       </motion.section>
 
-      {/* 7. Testimonials Section - Counter-rotating carousels */}
+      {/* 7. Testimonials Section - Counter-rotating carousels
       <motion.section
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -355,7 +355,6 @@ const HomePage: React.FC = () => {
         transition={{ duration: 0.7, delay: 0.1 }}
   className="py-16 rounded-xl overflow-hidden relative" style={{ background: 'linear-gradient(135deg, #F3F0F8 0%, #E5E7EB 100%)' }}
       >
-        {/* Background pattern */}
         <div className="absolute inset-0 opacity-5">
           <svg className="w-full h-full" viewBox="0 0 100 100" fill="none">
             <defs>
@@ -388,7 +387,6 @@ const HomePage: React.FC = () => {
           </motion.p>
         </div>
         
-        {/* Top carousel - moving left */}
         <motion.div 
           className="mb-8"
           initial={{ opacity: 0, x: -100 }}
@@ -404,7 +402,6 @@ const HomePage: React.FC = () => {
           />
         </motion.div>
         
-        {/* Bottom carousel - moving right */}
         <motion.div
           initial={{ opacity: 0, x: 100 }}
           whileInView={{ opacity: 1, x: 0 }}
@@ -419,6 +416,7 @@ const HomePage: React.FC = () => {
           />
         </motion.div>
       </motion.section>
+      </motion.section> */}
 
       {/* Floating Sticky CTA Button */}
       <motion.div
