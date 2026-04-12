@@ -97,7 +97,7 @@ const HomePage: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 }}
               className="text-2xl md:text-3xl text-base-content/80 mb-6">
-              <span style={{ color: '#6C1BA0' }}>Trusty</span> is a <span style={{ color: '#6C1BA0' }}>FREE online guide</span> created to empower seniors to identify online threats, prevent scams, and navigate the digital world safely, one simple step at a time.
+              <span style={{ color: '#6C1BA0' }}>Trusty</span> is a <span style={{ color: '#6C1BA0' }}>FREE online guide</span> created to help everyone identify online threats, prevent scams, and navigate the digital world safely—one simple step at a time.
             </motion.p>
             <motion.p
               initial={{ opacity: 0, y: 20 }}
@@ -105,7 +105,7 @@ const HomePage: React.FC = () => {
               transition={{ duration: 0.6, delay: 0.5 }}
               className="text-xl md:text-2xl text-base-content/90 mb-4"
             >
-              We understand that scams can be difficult to spot, and with technology changing so quickly, keeping up can feel overwhelming. Backed by a dedicated team of volunteers, Trusty shares your goal of staying secure. Through simple lessons and easy-to-use tools, you'll learn how to protect yourself and navigate the digital world with greater confidence and peace of mind.
+              Online threats are evolving faster than ever—with AI-generated deepfakes, sophisticated phishing, and disinformation campaigns. Trusty helps you stay ahead. Through interactive lessons and practical tools, you'll learn how to protect yourself, your family, and your organization from digital threats.
             </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -123,7 +123,7 @@ const HomePage: React.FC = () => {
                 style={{ backgroundColor: '#6C1BA0', color: '#fff' }}
                 aria-label="Start Free Course"
               >
-                <BookOpen className="mr-2" /> Start Your Free Course
+                <BookOpen className="mr-2" /> Start Learning
               </NavLink>
             </motion.div>
           </motion.div>
@@ -139,7 +139,7 @@ const HomePage: React.FC = () => {
   className="max-w-4xl mx-auto text-center py-12 rounded-xl" style={{ backgroundColor: '#fff' }}
       >
   <h2 className="text-5xl font-bold mb-12" style={{ color: '#6C1BA0' }}>Why Trusty Matters</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+<div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           {/* 1 in 4 */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -150,7 +150,7 @@ const HomePage: React.FC = () => {
           >
             <Shield className="h-10 w-10 mb-2" style={{ color: '#6C1BA0' }} />
             <p className="font-bold text-3xl mb-2" style={{ color: '#6C1BA0' }}>3 in 4</p>
-            <p>Every year, three in four older adults is targeted by an online scam.</p>
+            <p>Every year, three in four people are targeted by an online scam.</p>
           </motion.div>
           {/* $3 Billion+ */}
           <motion.div
@@ -161,8 +161,8 @@ const HomePage: React.FC = () => {
             className="bg-base-100 rounded-xl shadow p-6 text-xl border border-base-300 transition hover:scale-105 hover:border-primary cursor-pointer flex flex-col items-center gap-2"
           >
             <DollarSign className="h-10 w-10 mb-2" style={{ color: '#6C1BA0' }} />
-            <p className="font-bold text-3xl mb-2" style={{ color: '#6C1BA0' }}>$3 Billion+</p>
-            <p>In 2023, seniors lost over $3 billion to fraud.</p>
+            <p className="font-bold text-3xl mb-2" style={{ color: '#6C1BA0' }}>$4.2 Billion+</p>
+            <p>In 2024, Americans lost over $4.2 billion to fraud.</p>
           </motion.div>
           {/* It's Getting Harder */}
           <motion.div
@@ -173,11 +173,11 @@ const HomePage: React.FC = () => {
             className="bg-base-100 rounded-xl shadow p-6 text-xl border border-base-300 transition hover:scale-105 hover:border-primary cursor-pointer flex flex-col items-center gap-2"
           >
             <BookOpen className="h-10 w-10 mb-2" style={{ color: '#6C1BA0' }} />
-            <p className="font-bold text-3xl mb-2" style={{ color: '#6C1BA0' }}>It’s Getting Harder</p>
-            <p>With AI, fake websites, and scam calls, it’s becoming more difficult to know what’s real.</p>
+            <p className="font-bold text-3xl mb-2" style={{ color: '#6C1BA0' }}>It's Getting Harder</p>
+            <p>With AI-generated deepfakes and sophisticated attacks, it's becoming harder to tell what's real.</p>
           </motion.div>
         </div>
-        <p className="text-2xl text-base-content/80 max-w-2xl mx-auto">But don't worry! You don't need to be a tech expert. Trusty will guide you, one simple step at a time. Trusty is always here for you.</p>
+        <p className="text-2xl text-base-content/80 max-w-2xl mx-auto">Whether you're a student, professional, or security expert, Trusty helps you navigate the digital world with confidence.</p>
       </motion.section>
 
       {/* 3. Clara's Story
@@ -223,33 +223,33 @@ const HomePage: React.FC = () => {
           <div className="flex items-start gap-4">
             <CheckCircle className="h-8 w-8 text-success mt-1" />
             <div>
-              <span className="font-bold text-2xl">Scam spotting</span>
-              <div className="text-lg">How to recognize online scams</div>
+              <span className="font-bold text-2xl">Scam detection</span>
+              <div className="text-lg">How to recognize modern phishing & social engineering</div>
             </div>
           </div>
           <div className="flex items-start gap-4">
             <CheckCircle className="h-8 w-8 text-success mt-1" />
             <div>
-              <span className="font-bold text-2xl">Fake news detection</span>
-              <div className="text-lg">How to spot fake news and photos</div>
+              <span className="font-bold text-2xl">Deepfake recognition</span>
+              <div className="text-lg">How to identify AI-generated media</div>
             </div>
           </div>
           <div className="flex items-start gap-4">
             <CheckCircle className="h-8 w-8 text-success mt-1" />
             <div>
-              <span className="font-bold text-2xl">Safe browsing</span>
-              <div className="text-lg">How to browse the internet safely</div>
+              <span className="font-bold text-2xl">Secure browsing</span>
+              <div className="text-lg">Best practices for safe online behavior</div>
             </div>
           </div>
           <div className="flex items-start gap-4">
             <CheckCircle className="h-8 w-8 text-success mt-1" />
             <div>
-              <span className="font-bold text-2xl">Getting help</span>
-              <div className="text-lg">Where to go for help if something seems suspicious</div>
+              <span className="font-bold text-2xl">Incident response</span>
+              <div className="text-lg">How to report threats and get help</div>
             </div>
           </div>
         </div>
-        <p className="text-xl text-center text-base-content/70 mt-10">All explained in a calm, friendly way, with big text, short lessons, and helpful examples!</p>
+        <p className="text-xl text-center text-base-content/70 mt-10">Practical skills for staying safe in an AI-powered world.</p>
       </motion.section>
 
       {/* 5. Curriculum Overview */}
@@ -260,7 +260,7 @@ const HomePage: React.FC = () => {
         transition={{ duration: 0.7, delay: 0.3 }}
   className="max-w-4xl mx-auto py-12 rounded-xl" style={{ backgroundColor: '#fff' }}
       >
-  <h2 className="text-5xl font-bold text-center mb-12" style={{ color: '#6C1BA0' }}>TRUSTY Digital Safety Course</h2>
+  <h2 className="text-5xl font-bold text-center mb-12" style={{ color: '#6C1BA0' }}>Digital Safety Curriculum</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {[
             {
@@ -327,24 +327,24 @@ const HomePage: React.FC = () => {
         transition={{ duration: 0.7, delay: 0.4 }}
   className="max-w-4xl mx-auto py-12 rounded-xl" style={{ backgroundColor: '#F3F0F8' }}
       >
-  <h2 className="text-5xl font-bold text-center mb-10" style={{ color: '#6C1BA0' }}>Helpful Tools to Use</h2>
+  <h2 className="text-5xl font-bold text-center mb-10" style={{ color: '#6C1BA0' }}>Interactive Tools</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           <FeatureCard 
             icon={<BookOpen size={48} style={{ color: '#6C1BA0' }} />} 
-            title="Trusty Text Checker" 
-            description="Quickly find out if that email or article was written by a computer." 
+            title="Trusty Text Detector" 
+            description="Determine if text was generated by AI using advanced analysis." 
             link="/text-checker" 
           />
           <FeatureCard 
             icon={<Shield size={48} style={{ color: '#6C1BA0' }} />} 
-            title="Trusty Image Checker" 
-            description="Upload a picture to check for signs of AI-generation." 
+            title="Trusty Image Analyzer" 
+            description="Detect signs of AI-generation in images." 
             link="/image-checker" 
           />
           <FeatureCard 
             icon={<CheckCircle size={48} style={{ color: '#6C1BA0' }} />} 
             title="Fact-Checker" 
-            description="Quickly check the credibility of a claim or news story." 
+            description="Verify claims against credible sources." 
             link="/fact-checker" 
           />
         </div>
