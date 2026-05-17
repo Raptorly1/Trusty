@@ -243,7 +243,7 @@ ${urls.map((u, i) => `${i + 1}. ${u}`).join('\n')}`;
 
   try {
     const response = await callOpenRouterProxy({
-      model: 'deepseek/deepseek-v4-flash:free',
+      model: 'liquid/lfm-2.5-1.2b-thinking:free',
       messages: pdfSources.length > 0
         ? [
             {
@@ -537,7 +537,7 @@ ${text}
 Your response MUST be in JSON format and adhere to the provided schema. Highlight specific phrases, not just single words.`;
 
   const response = await callOpenRouterProxy({
-    model: 'deepseek/deepseek-v4-flash',
+    model: 'openai/gpt-4o-mini',
     messages: [{ role: 'user', content: prompt }],
     response_format: createResponseFormat('textAnalysis', textAnalysisSchema),
     plugins: jsonHealingPlugin,
@@ -556,7 +556,7 @@ export const factCheckClaim = async (
   const hasPdfInput = pdfUrls.length > 0;
 
   const response = await callOpenRouterProxy({
-    model: 'deepseek/deepseek-v4-flash',
+    model: 'deepseek/deepseek-v3.2',
     messages: [
       {
         role: 'system',
@@ -659,7 +659,7 @@ Schema (shape, not instructions):
 `;
 
   const response = await callOpenRouterProxy({
-    model: 'deepseek/deepseek-v4-flash',
+    model: 'google/gemini-2.5-flash',
     messages: [
       {
         role: 'system',
@@ -748,7 +748,7 @@ ${text}
 Spoken summary:`;
 
   const response = await callOpenRouterProxy({
-    model: 'deepseek/deepseek-v4-flash',
+    model: 'openai/gpt-4o-mini',
     messages: [
       {
         role: 'system',
